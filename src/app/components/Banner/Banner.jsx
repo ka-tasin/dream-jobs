@@ -171,57 +171,59 @@ const InteractiveBanner = () => {
         onMouseLeave={handleMouseLeave}
         style={{ overflow: "hidden" }}
       >
-        {/* Spacetime Grid */}
-        <div className="absolute inset-0 z-0 pointer-events-none">
-          {gridLines}
-        </div>
+        <banner className="container mx-auto">
+          {/* Spacetime Grid */}
+          <div className="absolute inset-0 z-0 pointer-events-none">
+            {gridLines}
+          </div>
 
-        {/* Background texts with parallax */}
-        {backgroundTexts.map((item) => (
-          <motion.div
-            key={item.id}
-            className={`absolute font-semibold select-none ${item.size}`}
-            style={{
-              left: item.x,
-              top: item.y,
-              x: xSpring,
-              y: ySpring,
-              transform: "translate(-50%, -50%)",
-              color: "#2E2E2E",
-              zIndex: 1,
-            }}
-            initial={{ opacity: 0.4 }}
-            whileHover={{
-              opacity: 1,
-              scale: 1.1,
-              color: "#ec2e3a",
-              transition: { duration: 0.3 },
-            }}
-            onHoverStart={() => setHoveredId(item.id)}
-            onHoverEnd={() => setHoveredId(null)}
-          >
-            {item.text}
-          </motion.div>
-        ))}
+          {/* Background texts with parallax */}
+          {backgroundTexts.map((item) => (
+            <motion.div
+              key={item.id}
+              className={`absolute font-semibold select-none ${item.size}`}
+              style={{
+                left: item.x,
+                top: item.y,
+                x: xSpring,
+                y: ySpring,
+                transform: "translate(-50%, -50%)",
+                color: "#2E2E2E",
+                zIndex: 1,
+              }}
+              initial={{ opacity: 0.4 }}
+              whileHover={{
+                opacity: 1,
+                scale: 1.1,
+                color: "#ec2e3a",
+                transition: { duration: 0.3 },
+              }}
+              onHoverStart={() => setHoveredId(item.id)}
+              onHoverEnd={() => setHoveredId(null)}
+            >
+              {item.text}
+            </motion.div>
+          ))}
 
-        {/* Foreground content */}
-        <div className="relative z-10 text-center p-4">
-          <motion.h1
-            className={`text-4xl md:text-7xl font-bold text-gray-800 mb-4 ${quicksand.className}`}
-          >
-            <span className="text-red-700"> Dream </span>bigger, Start today
-          </motion.h1>
-          <p className="text-lg md:text-2xl text-gray-600 max-w-2xl pt-5 mx-auto">
-            Land Your Dream Career with Professional Solutions
-          </p>
-          <motion.button
-            className="mt-8 px-6 py-3 bg-[#0d0d0d] text-white rounded-xl hover:bg-[#2f2c2d] transition-colors"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            Connect With Us
-          </motion.button>
-        </div>
+          {/* Foreground content */}
+          <div className="relative z-10 text-center p-4">
+            <motion.h1
+              className={`text-4xl md:text-7xl font-bold text-gray-800 mb-4 ${quicksand.className}`}
+            >
+              <span className="text-red-700"> Dream </span>bigger, Start today
+            </motion.h1>
+            <p className="text-lg md:text-2xl text-gray-600 max-w-2xl pt-5 mx-auto">
+              Land Your Dream Career with Professional Solutions
+            </p>
+            <motion.button
+              className="mt-8 px-6 py-3 bg-[#0d0d0d] text-white rounded-xl hover:bg-[#2f2c2d] transition-colors"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              Connect With Us
+            </motion.button>
+          </div>
+        </banner>
       </motion.div>
     </div>
   );
