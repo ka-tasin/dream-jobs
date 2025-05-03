@@ -1,6 +1,13 @@
 "use client";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useState, useRef, useMemo, useEffect } from "react";
+import { Open_Sans } from "next/font/google";
+
+const quicksand = Open_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+});
 
 const GridLine = ({ type, position, cursor, dimensions }) => {
   const strength = 20;
@@ -46,13 +53,14 @@ const GridLine = ({ type, position, cursor, dimensions }) => {
 
 const InteractiveBanner = () => {
   const backgroundTexts = [
-    { id: 45, text: "Graphic Designer", x: "20%", y: "30%", size: "text-xl" },
-    { id: 456, text: "UI/UX Designer", x: "75%", y: "25%", size: "text-xl" },
-    { id: 3, text: "Web Development", x: "35%", y: "70%", size: "text-2xl" },
-    { id: 4, text: "CREATE", x: "80%", y: "70%", size: "text-xl" },
-    { id: 5, text: "CREATE", x: "80%", y: "70%", size: "text-xl" },
-    { id: 6, text: "CREATE", x: "10%", y: "10%", size: "text-xl" },
-    { id: 7, text: "CREATE", x: "20%", y: "60%", size: "text-xl" },
+    { id: 1, text: "Graphic Designer", x: "20%", y: "20%", size: "text-xl" },
+    { id: 2, text: "UI/UX Designer", x: "75%", y: "25%", size: "text-xl" },
+    { id: 3, text: "Web Development", x: "35%", y: "78%", size: "text-2xl" },
+    { id: 4, text: "MERN Stack", x: "80%", y: "70%", size: "text-xl" },
+    { id: 8, text: "MERN Stack", x: "85%", y: "50%", size: "text-xl" },
+    { id: 5, text: "Backend Developer", x: "60%", y: "15%", size: "text-xl" },
+    { id: 6, text: "Node JS Dev", x: "10%", y: "10%", size: "text-xl" },
+    { id: 7, text: "Nest JS", x: "14%", y: "60%", size: "text-xl" },
   ];
 
   const containerRef = useRef(null);
@@ -146,15 +154,15 @@ const InteractiveBanner = () => {
   return (
     <div className="w-full h-[500px] md:h-[600px] overflow-hidden">
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
+        initial={{ opacity: 0, scale: 0.85 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{
-          duration: 0.6,
+          duration: 0.5,
           scale: {
             type: "spring",
             damping: 10,
             stiffness: 100,
-            bounce: 0.3,
+            bounce: 0.9,
           },
         }}
         ref={containerRef}
@@ -172,7 +180,7 @@ const InteractiveBanner = () => {
         {backgroundTexts.map((item) => (
           <motion.div
             key={item.id}
-            className={`absolute font-bold select-none ${item.size}`}
+            className={`absolute font-semibold select-none ${item.size}`}
             style={{
               left: item.x,
               top: item.y,
@@ -186,7 +194,7 @@ const InteractiveBanner = () => {
             whileHover={{
               opacity: 1,
               scale: 1.1,
-              color: "#0a66c2",
+              color: "#ec2e3a",
               transition: { duration: 0.3 },
             }}
             onHoverStart={() => setHoveredId(item.id)}
@@ -199,18 +207,15 @@ const InteractiveBanner = () => {
         {/* Foreground content */}
         <div className="relative z-10 text-center p-4">
           <motion.h1
-            className="text-4xl md:text-6xl font-bold text-gray-800 mb-4"
-            animate={{
-              textShadow: hoveredId ? "0 0 10px rgba(10,102,194,0.3)" : "none",
-            }}
+            className={`text-4xl md:text-7xl font-bold text-gray-800 mb-4 ${quicksand.className}`}
           >
-            Professional Solutions
+            <span className="text-red-700"> Dream </span>bigger, Start today
           </motion.h1>
-          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
-            Hover over the background elements to discover our services
+          <p className="text-lg md:text-2xl text-gray-600 max-w-2xl pt-5 mx-auto">
+            Land Your Dream Career with Professional Solutions
           </p>
           <motion.button
-            className="mt-8 px-6 py-3 bg-[#0a66c2] text-white rounded-full hover:bg-[#004182] transition-colors"
+            className="mt-8 px-6 py-3 bg-[#0d0d0d] text-white rounded-xl hover:bg-[#2f2c2d] transition-colors"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
           >

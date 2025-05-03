@@ -1,4 +1,4 @@
-"use client"; 
+"use client";
 
 import Link from "next/link";
 import Navdrawer from "../../NavDrawer/Navdrawer";
@@ -10,7 +10,7 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50); 
+      setIsScrolled(window.scrollY > 50);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -20,15 +20,15 @@ const Navbar = () => {
   return (
     <motion.div
       initial={{ y: -100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }} 
+      animate={{ y: 0, opacity: 1 }}
       transition={{
-        type: "tween", 
-        stiffness: 100, 
-        damping: 5, 
+        type: "tween",
+        stiffness: 100,
+        damping: 5,
       }}
     >
       {" "}
-      <header className="sticky top-0 z-50 bg-white shadow-lg">
+      <header className="sticky top-0 z-50 bg-white shadow-gray-200">
         {/* Top Story - Only visible at top of page */}
         <div
           className={`transition-all duration-300 ${
