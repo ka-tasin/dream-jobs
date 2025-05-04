@@ -5,15 +5,34 @@ import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import apiClient from "@/lib/utils/axiosFetcher";
 
 export function TopJobsSection() {
-  const [tabKey, setTabKey] = useState("featured");
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [tabKey, setTabKey] = useState("all");
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
   });
 
-  // Animation variants
+  // Group jobs by their type and take first 3 of each
+  const groupedJobs = jobs.reduce((acc, job) => {
+    const type = job.job_type;
+    if (!acc[type]) {
+      acc[type] = [];
+    }
+    if (acc[type].length < 3) {
+      acc[type].push(job);
+    }
+    return acc;
+  }, {});
+
+  // Get unique job types
+  const jobTypes = [...new Set(jobs.map((job) => job.job_type))];
+
+  // Animation variants (keep your original animations)
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
@@ -51,13 +70,31 @@ export function TopJobsSection() {
     },
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await apiClient.get("/jobs");
+        setJobs(response.data || response);
+      } catch (err) {
+        setError(err.message || "Failed to fetch data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) return <div className="h-[20rem]">Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
   return (
     <motion.section
       ref={ref}
       initial="hidden"
       animate={inView ? "visible" : "hidden"}
       variants={containerVariants}
-      className="container mx-auto py-16 bg-white"
+      className="container mx-auto py-20 bg-white"
     >
       <div className="container mx-auto px-4">
         <motion.h2
@@ -69,28 +106,28 @@ export function TopJobsSection() {
 
         <motion.div variants={itemVariants}>
           <Tabs
-            defaultValue="featured"
+            defaultValue="all"
             className="w-full"
             onValueChange={(value) => setTabKey(value)}
           >
             <TabsList className="grid w-[50%] grid-cols-3 mx-auto bg-white border border-gray-200">
               <TabsTrigger
-                value="featured"
+                value="all"
                 className="data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:bg-gray-800 text-black"
               >
-                Featured
+                All
               </TabsTrigger>
               <TabsTrigger
-                value="trending"
+                value="remote"
                 className="data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:bg-gray-800 text-black"
               >
-                Trending
+                Remote
               </TabsTrigger>
               <TabsTrigger
-                value="recent"
+                value="on-site"
                 className="data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:bg-gray-800 text-black"
               >
-                Recent
+                On-site
               </TabsTrigger>
             </TabsList>
 
@@ -100,74 +137,54 @@ export function TopJobsSection() {
               animate="visible"
               variants={tabContentVariants}
             >
-              <TabsContent value="featured" className="mt-6">
+              {/* All Jobs Tab */}
+              <TabsContent value="all" className="mt-6">
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mx-14">
-                  <JobCard
-                    title="Senior Frontend Developer"
-                    company="TechCorp"
-                    location="Remote"
-                    salary="$120,000 - $150,000"
-                    type="Full-time"
-                  />
-                  <JobCard
-                    title="UX Designer"
-                    company="DesignHub"
-                    location="New York, NY"
-                    salary="$90,000 - $110,000"
-                    type="Full-time"
-                  />
-                  <JobCard
-                    title="DevOps Engineer"
-                    company="CloudSystems"
-                    location="San Francisco, CA"
-                    salary="$130,000 - $160,000"
-                    type="Full-time"
-                  />
+                  {jobs.slice(0, 3).map((job) => (
+                    <JobCard
+                      key={job.id}
+                      title={job.job_title}
+                      company={job.company}
+                      location={job.location}
+                      salary_min={job.salary_min}
+                      salary_max={job.salary_max}
+                      type={job.job_type}
+                    />
+                  ))}
                 </div>
               </TabsContent>
 
-              <TabsContent value="trending" className="mt-6">
+              {/* Remote Jobs Tab */}
+              <TabsContent value="remote" className="mt-6">
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mx-14">
-                  <JobCard
-                    title="AI Researcher"
-                    company="FutureAI"
-                    location="Boston, MA"
-                    salary="$140,000 - $180,000"
-                    type="Full-time"
-                  />
-                  <JobCard
-                    title="Data Scientist"
-                    company="AnalyticsPro"
-                    location="Remote"
-                    salary="$110,000 - $140,000"
-                    type="Full-time"
-                  />
+                  {groupedJobs["Remote"]?.map((job) => (
+                    <JobCard
+                      key={job.id}
+                      title={job.job_title}
+                      company={job.company}
+                      location={job.location}
+                      salary_min={job.salary_min}
+                      salary_max={job.salary_max}
+                      type={job.job_type}
+                    />
+                  ))}
                 </div>
               </TabsContent>
 
-              <TabsContent value="recent" className="mt-6">
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6  mx-14">
-                  <JobCard
-                    title="Product Manager"
-                    company="ProductLabs"
-                    location="Chicago, IL"
-                    salary="$100,000 - $130,000"
-                    type="Full-time"
-                  />
-                  <JobCard
-                    title="Backend Engineer"
-                    company="ServerTech"
-                    location="Austin, TX"
-                    salary="$115,000 - $145,000"
-                    type="Full-time"
-                  />
-                  <JobCard
-                    title="Marketing Specialist"
-                    company="GrowthMarketing"
-                    location="Remote"
-                    salary="$70,000 - $90,000"
-                    type="Full-time"
-                  />
+              {/* On-site Jobs Tab */}
+              <TabsContent value="on-site" className="mt-6">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mx-14">
+                  {groupedJobs["On-site"]?.map((job) => (
+                    <JobCard
+                      key={job.id}
+                      title={job.job_title}
+                      company={job.company}
+                      location={job.location}
+                      salary_min={job.salary_min}
+                      salary_max={job.salary_max}
+                      type={job.job_type}
+                    />
+                  ))}
                 </div>
               </TabsContent>
             </motion.div>

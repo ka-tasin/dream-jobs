@@ -57,7 +57,7 @@ const InteractiveBanner = () => {
     { id: 2, text: "UI/UX Designer", x: "75%", y: "25%", size: "text-xl" },
     { id: 3, text: "Web Development", x: "35%", y: "78%", size: "text-2xl" },
     { id: 4, text: "MERN Stack", x: "80%", y: "70%", size: "text-xl" },
-    { id: 8, text: "MERN Stack", x: "85%", y: "50%", size: "text-xl" },
+    { id: 8, text: "Frontend Developer", x: "85%", y: "50%", size: "text-xl" },
     { id: 5, text: "Backend Developer", x: "60%", y: "15%", size: "text-xl" },
     { id: 6, text: "Node JS Dev", x: "10%", y: "10%", size: "text-xl" },
     { id: 7, text: "Nest JS", x: "14%", y: "60%", size: "text-xl" },
@@ -171,7 +171,7 @@ const InteractiveBanner = () => {
         onMouseLeave={handleMouseLeave}
         style={{ overflow: "hidden" }}
       >
-        <banner className="container mx-auto">
+        <section className="container mx-auto">
           {/* Spacetime Grid */}
           <div className="absolute inset-0 z-0 pointer-events-none">
             {gridLines}
@@ -223,7 +223,7 @@ const InteractiveBanner = () => {
               Connect With Us
             </motion.button>
           </div>
-        </banner>
+        </section>
       </motion.div>
     </div>
   );
