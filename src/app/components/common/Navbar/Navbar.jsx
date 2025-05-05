@@ -31,7 +31,7 @@ const Navbar = () => {
           isScrolled ? "transform -translate-y-full" : ""
         }`}
       >
-        <div className="max-w-6xl mx-auto px-4 h-12 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 h-12 p3-2 flex items-center justify-between">
           <div className="text-sm text-gray-600">
             Welcome message or top navigation
           </div>
@@ -225,7 +225,7 @@ const Navbar = () => {
       </motion.nav>
 
       {/* Spacer to prevent content from being hidden behind fixed navbars */}
-      <div className="pt-24 pb-16"></div>
+      {/* <div className="pt-24 pb-16"></div> */}
     </>
   );
 };

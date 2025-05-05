@@ -12,7 +12,7 @@ export function StatsSection() {
   }, [inView, controls]);
 
   return (
-    <section ref={ref} className="py-24">
+    <section ref={ref} className="py-20">
       <motion.div
         initial="hidden"
         animate={controls}

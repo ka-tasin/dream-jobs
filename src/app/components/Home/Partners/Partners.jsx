@@ -22,8 +22,8 @@ export function PartnersSection() {
   });
 
   return (
-    <section ref={ref} className="py-16 bg-black">
-      <div className="container mx-auto px-4">
+    <section ref={ref} className="py-16">
+      <div className="px-4">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -54,7 +54,7 @@ export function PartnersSection() {
             >
               {[...partners, ...partners].map((partner, i) => (
                 <div key={`first-${i}`} className="inline-block mx-8">
-                  <span className="text-2xl font-medium text-white">
+                  <span className="text-2xl font-medium text-black">
                     {partner}
                   </span>
                 </div>
@@ -75,7 +75,7 @@ export function PartnersSection() {
             >
               {[...partners, ...partners].map((partner, i) => (
                 <div key={`second-${i}`} className="inline-block mx-8">
-                  <span className="text-2xl font-medium text-white">
+                  <span className="text-2xl font-medium text-black">
                     {partner}
                   </span>
                 </div>

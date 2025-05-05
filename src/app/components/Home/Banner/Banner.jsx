@@ -152,7 +152,7 @@ const InteractiveBanner = () => {
   }, [dimensions, cursor]);
 
   return (
-    <div className="w-full h-[500px] md:h-[600px] overflow-hidden">
+    <div className="w-full mt-24 h-[500px] md:h-[600px] overflow-hidden">
       <motion.div
         initial={{ opacity: 0, scale: 0.85 }}
         animate={{ opacity: 1, scale: 1 }}

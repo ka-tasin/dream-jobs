@@ -6,6 +6,8 @@ import { useInView } from "react-intersection-observer";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import apiClient from "@/lib/utils/axiosFetcher";
+import { ProgressLoader } from "../../common/PageLoading/Loading";
+import { DreamJobsLoader } from "../../common/DataLoading/DataLoading";
 
 export function TopJobsSection() {
   const [jobs, setJobs] = useState([]);
@@ -85,7 +87,7 @@ export function TopJobsSection() {
     fetchData();
   }, []);
 
-  if (loading) return <div className="h-[20rem]">Loading...</div>;
+  if (loading) return <DreamJobsLoader title={"Top Jobs Available"} />;
   if (error) return <div>Error: {error}</div>;
 
   return (
