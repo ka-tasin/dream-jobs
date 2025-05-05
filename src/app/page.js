@@ -1,6 +1,7 @@
 import ParallaxBanner from "./components/Home/Banner/Banner";
 import { StatsSection } from "./components/Home/Counts/Counts";
 import EmailSubscription from "./components/Home/EmailSubscription/EmailSubscription";
+import { FAQSection } from "./components/Home/FAQ/FAQ";
 import { PartnersSection } from "./components/Home/Partners/Partners";
 import { TestimonialSlider } from "./components/Home/Testimonials/TestimonialSlider";
 import { TopJobsSection } from "./components/Home/TopJobs/TopJobsSection";
@@ -16,6 +17,7 @@ export default function Home() {
       <PartnersSection />
       <TestimonialSlider />
       <EmailSubscription />
+      <FAQSection />
     </main>
   );
 }

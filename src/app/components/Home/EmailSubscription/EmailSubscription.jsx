@@ -10,7 +10,7 @@ const EmailSubscription = () => {
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
       viewport={{ once: true }}
-      className="bg-gray-800 container mb-20 mx-auto  py-12 px-4 sm:px-6 lg:px-8 rounded-xl shadow-lg"
+      className="bg-gray-800 container mb-20 mt-10 mx-auto  py-12 px-4 sm:px-6 lg:px-8 rounded-xl shadow-lg"
     >
       <div className="max-w-3xl mx-auto text-center">
         <h2 className="text-3xl font-bold text-white mb-4">

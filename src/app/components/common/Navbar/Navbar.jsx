@@ -70,7 +70,7 @@ const Navbar = () => {
             {/* Logo */}
             <div className="flex-shrink-0 flex items-center">
               <Link href="/" className="text-xl font-bold text-gray-800">
-                YourLogo
+                <span className="text-red-700">Dream</span>Jobs
               </Link>
             </div>
 
@@ -83,16 +83,16 @@ const Navbar = () => {
                 Home
               </Link>
               <Link
-                href="/about"
+                href="/about-us"
                 className="text-gray-800 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
               >
                 About
               </Link>
               <Link
-                href="/services"
+                href="/jobs"
                 className="text-gray-800 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
               >
-                Services
+                Jobs
               </Link>
               <Link
                 href="/contact"

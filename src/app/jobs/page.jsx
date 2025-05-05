@@ -108,7 +108,7 @@ export default function AllJobsPage() {
       initial="hidden"
       animate={inView ? "visible" : "hidden"}
       variants={containerVariants}
-      className="container mx-auto min-h-screen py-12 bg-white"
+      className="container mx-auto min-h-screen mt-24 py-12 bg-white"
     >
       <div className="container mx-auto px-4">
         <motion.h2
@@ -121,7 +121,7 @@ export default function AllJobsPage() {
         {/* Search and Filter Bar */}
         <motion.div
           variants={itemVariants}
-          className="flex flex-col md:flex-row gap-4 mb-8 p-6 bg-white mt-12 rounded-lg border border-gray-300 shadow-sm"
+          className="flex flex-col md:flex-row gap-4 mb-8 p-6 bg-white rounded-lg border border-gray-300 shadow-sm"
         >
           {/* Search Input with Icon */}
           <div className="relative flex-1">
