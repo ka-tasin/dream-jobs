@@ -15,7 +15,7 @@ export default function AboutUsPage() {
       name: "Kausar Ahmad Tasin",
       role: "Founder & CEO",
       bio: "Tech entrepreneur with 10+ years in HR technology",
-      image: "/team/tasin.jpg",
+      image: "/images/kat.jpg",
     },
     {
       name: "Sarah Johnson",
@@ -133,7 +133,7 @@ export default function AboutUsPage() {
               }}
             >
               <img
-                src="/office-team.jpg"
+                src="/images/team.png"
                 alt="DreamJobs team working"
                 className="rounded-lg shadow-xl"
               />

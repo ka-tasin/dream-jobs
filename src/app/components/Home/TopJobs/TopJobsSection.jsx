@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import apiClient from "@/lib/utils/axiosFetcher";
 import { ProgressLoader } from "../../common/PageLoading/Loading";
 import { DreamJobsLoader } from "../../common/DataLoading/DataLoading";
+import Link from "next/link";
 
 export function TopJobsSection() {
   const [jobs, setJobs] = useState([]);
@@ -75,7 +76,7 @@ export function TopJobsSection() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await apiClient.get("/jobs");
+        const response = await apiClient("/jobs");
         setJobs(response.data || response);
       } catch (err) {
         setError(err.message || "Failed to fetch data");
@@ -144,7 +145,7 @@ export function TopJobsSection() {
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mx-14">
                   {jobs.slice(0, 3).map((job) => (
                     <JobCard
-                      key={job.id}
+                      key={job._id}
                       title={job.job_title}
                       company={job.company}
                       location={job.location}
@@ -194,12 +195,15 @@ export function TopJobsSection() {
         </motion.div>
 
         <div className="flex justify-center">
-          <Button
-            variants={itemVariants}
-            className="mt-8 hover:scale-110 text-center py-5"
-          >
-            View All Jobs
-          </Button>
+          <Link href={"/jobs"}>
+            {" "}
+            <Button
+              variants={itemVariants}
+              className="mt-8 hover:scale-110 text-center py-5"
+            >
+              View All Jobs
+            </Button>
+          </Link>
         </div>
       </div>
     </motion.section>

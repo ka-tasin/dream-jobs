@@ -1,50 +1,51 @@
 // lib/api.js
-import axios from "axios";
 
-// Create axios instance with base URL from environment variables
-const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
-  headers: {
-    "Content-Type": "application/json",
-    // Other default headers can be added here
-  },
-});
+const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-// Request interceptor (empty for now, ready for future token implementation)
-apiClient.interceptors.request.use(
-  (config) => {
-    /*
-     * Future token implementation can go here:
-     * const token = getAuthToken();
-     * if (token) config.headers.Authorization = `Bearer ${token}`;
-     */
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// Response interceptor (basic error handling)
-apiClient.interceptors.response.use(
-  (response) => response.data, // Directly return the data
-  (error) => {
-    /*
-     * Future error handling can be expanded here:
-     * - Global error notifications
-     * - Automatic token refresh on 401
-     * - Redirect to login on auth errors
-     */
-
-    // Convert to consistent error format
-    const apiError = {
-      message: error.response?.data?.message || "An error occurred",
-      status: error.response?.status,
-      data: error.response?.data,
+// Helper to handle fetch requests
+const fetchClient = async (
+  endpoint,
+  { method = "GET", body, headers = {} } = {}
+) => {
+  try {
+    const config = {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+        ...headers,
+      },
     };
 
-    return Promise.reject(apiError);
-  }
-);
+    // Attach body only if present and not GET
+    if (body && method !== "GET") {
+      config.body = JSON.stringify(body);
+    }
 
-export default apiClient;
+    // Future token logic can be added here:
+    // const token = getAuthToken();
+    // if (token) config.headers.Authorization = `Bearer ${token}`;
+
+    const res = await fetch(`${BASE_URL}${endpoint}`, config);
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw {
+        message: data?.message || "An error occurred",
+        status: res.status,
+        data,
+      };
+    }
+
+    return data;
+  } catch (error) {
+    // Format error consistently
+    throw {
+      message: error.message || "Network error",
+      status: error.status || 500,
+      data: error.data || null,
+    };
+  }
+};
+
+export default fetchClient;

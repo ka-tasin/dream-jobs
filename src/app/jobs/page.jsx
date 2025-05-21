@@ -56,7 +56,7 @@ export default function AllJobsPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await apiClient.get("/jobs");
+        const response = await apiClient("/jobs");
         setAllJobs(response.data || response);
         setFilteredJobs(response.data || response);
       } catch (err) {
@@ -234,7 +234,7 @@ export default function AllJobsPage() {
             className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
             {filteredJobs.map((job) => (
-              <motion.div key={job.id} variants={itemVariants}>
+              <motion.div key={job._id} variants={itemVariants}>
                 <JobCard
                   title={job.job_title}
                   company={job.company}
