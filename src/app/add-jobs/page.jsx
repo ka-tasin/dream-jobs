@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,55 +10,41 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
-import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
+import AuthContext from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 
 export default function AddJobPage() {
+  const { user } = useContext(AuthContext);
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
-    // Step 1
-    jobTitle: "",
-    company: "",
-    photoURL: "",
-    vacancies: "",
+  const formRef = useRef(null);
+  const router = useRouter();
 
-    // Step 2
-    employerName: "Kausar Ahmad Tasin",
-    employerEmail: "kausar.ahmad.tasin01@gmail.com",
-    requirements: "",
-    responsibilities: "",
-
-    // Step 3
-    deadlineStart: undefined,
-    deadlineEnd: undefined,
-    salaryMin: "",
-    salaryMax: "",
-
-    // Step 4
-    location: "",
-    jobType: "On-site",
-    probationPeriod: "",
-    yearlyBonus: "",
-    otherBenefits: "",
-    yearlyIncrement: "",
-    postingDate: undefined,
-    weekends: "2",
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  if (!user) {
+    router.push("/login");
+  }
 
   const nextStep = () => setStep((prev) => Math.min(prev + 1, 4));
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Job Posted:", formData);
+    const formData = new FormData(formRef.current);
+    const formValues = Object.fromEntries(formData.entries());
+
+    // Get select values that might not be included in formData
+    const jobType = e.currentTarget.elements.jobType?.value;
+    const weekends = e.currentTarget.elements.weekends?.value;
+
+    const finalData = {
+      ...formValues,
+      jobType: jobType || "On-site",
+      weekends: weekends || "2",
+      // Add other select values here if needed
+    };
+
+    console.log("Job Posted:", finalData);
     // Add your submission logic here
   };
 
@@ -99,7 +85,7 @@ export default function AddJobPage() {
         ))}
       </div>
 
-      <form onSubmit={handleSubmit}>
+      <form ref={formRef} onSubmit={handleSubmit}>
         <AnimatePresence mode="wait">
           {/* Step 1 */}
           {step === 1 && (
@@ -120,8 +106,7 @@ export default function AddJobPage() {
                   <label className="block mb-2 font-medium">Job Title</label>
                   <Input
                     name="jobTitle"
-                    value={formData.jobTitle}
-                    onChange={handleChange}
+                    defaultValue=""
                     placeholder="Software Engineer"
                     required
                   />
@@ -131,8 +116,7 @@ export default function AddJobPage() {
                   <label className="block mb-2 font-medium">Company</label>
                   <Input
                     name="company"
-                    value={formData.company}
-                    onChange={handleChange}
+                    defaultValue=""
                     placeholder="DreamJobs Inc."
                     required
                   />
@@ -142,8 +126,7 @@ export default function AddJobPage() {
                   <label className="block mb-2 font-medium">Photo URL</label>
                   <Input
                     name="photoURL"
-                    value={formData.photoURL}
-                    onChange={handleChange}
+                    defaultValue=""
                     placeholder="https://example.com/logo.png"
                     type="url"
                   />
@@ -155,8 +138,7 @@ export default function AddJobPage() {
                   </label>
                   <Input
                     name="vacancies"
-                    value={formData.vacancies}
-                    onChange={handleChange}
+                    defaultValue=""
                     placeholder="5"
                     type="number"
                     min="1"
@@ -186,8 +168,7 @@ export default function AddJobPage() {
                   </label>
                   <Input
                     name="employerName"
-                    value={formData.employerName}
-                    onChange={handleChange}
+                    defaultValue="Kausar Ahmad Tasin"
                     required
                   />
                 </div>
@@ -198,8 +179,7 @@ export default function AddJobPage() {
                   </label>
                   <Input
                     name="employerEmail"
-                    value={formData.employerEmail}
-                    onChange={handleChange}
+                    defaultValue="kausar.ahmad.tasin01@gmail.com"
                     type="email"
                     required
                   />
@@ -209,8 +189,7 @@ export default function AddJobPage() {
                   <label className="block mb-2 font-medium">Requirements</label>
                   <Textarea
                     name="requirements"
-                    value={formData.requirements}
-                    onChange={handleChange}
+                    defaultValue=""
                     placeholder="List the job requirements..."
                     rows={4}
                     required
@@ -223,8 +202,7 @@ export default function AddJobPage() {
                   </label>
                   <Textarea
                     name="responsibilities"
-                    value={formData.responsibilities}
-                    onChange={handleChange}
+                    defaultValue=""
                     placeholder="Describe the responsibilities..."
                     rows={4}
                     required
@@ -254,11 +232,7 @@ export default function AddJobPage() {
                   <div className="relative">
                     <Input
                       name="deadlineStart"
-                      value={
-                        formData.deadlineStart
-                          ? format(formData.deadlineStart, "MM/dd/yyyy")
-                          : ""
-                      }
+                      defaultValue=""
                       readOnly
                       className="pl-10"
                     />
@@ -271,11 +245,7 @@ export default function AddJobPage() {
                   <div className="relative">
                     <Input
                       name="deadlineEnd"
-                      value={
-                        formData.deadlineEnd
-                          ? format(formData.deadlineEnd, "MM/dd/yyyy")
-                          : ""
-                      }
+                      defaultValue=""
                       readOnly
                       className="pl-10"
                     />
@@ -289,8 +259,7 @@ export default function AddJobPage() {
                   </label>
                   <Input
                     name="salaryMin"
-                    value={formData.salaryMin}
-                    onChange={handleChange}
+                    defaultValue=""
                     placeholder="30000"
                     type="number"
                     required
@@ -303,8 +272,7 @@ export default function AddJobPage() {
                   </label>
                   <Input
                     name="salaryMax"
-                    value={formData.salaryMax}
-                    onChange={handleChange}
+                    defaultValue=""
                     placeholder="50000"
                     type="number"
                     required
@@ -333,8 +301,7 @@ export default function AddJobPage() {
                   <label className="block mb-2 font-medium">Location</label>
                   <Input
                     name="location"
-                    value={formData.location}
-                    onChange={handleChange}
+                    defaultValue=""
                     placeholder="Dhaka, Bangladesh"
                     required
                   />
@@ -342,13 +309,7 @@ export default function AddJobPage() {
 
                 <div>
                   <label className="block mb-2 font-medium">Job Type</label>
-                  <Select
-                    name="jobType"
-                    value={formData.jobType}
-                    onValueChange={(value) =>
-                      setFormData({ ...formData, jobType: value })
-                    }
-                  >
+                  <Select name="jobType" defaultValue="On-site">
                     <SelectTrigger>
                       <SelectValue placeholder="Select job type" />
                     </SelectTrigger>
@@ -367,8 +328,7 @@ export default function AddJobPage() {
                   </label>
                   <Input
                     name="probationPeriod"
-                    value={formData.probationPeriod}
-                    onChange={handleChange}
+                    defaultValue=""
                     placeholder="3"
                     type="number"
                   />
@@ -378,8 +338,7 @@ export default function AddJobPage() {
                   <label className="block mb-2 font-medium">Bonus/Year</label>
                   <Input
                     name="yearlyBonus"
-                    value={formData.yearlyBonus}
-                    onChange={handleChange}
+                    defaultValue=""
                     placeholder="2 months salary"
                   />
                 </div>
@@ -390,8 +349,7 @@ export default function AddJobPage() {
                   </label>
                   <Input
                     name="otherBenefits"
-                    value={formData.otherBenefits}
-                    onChange={handleChange}
+                    defaultValue=""
                     placeholder="Health insurance, lunch, etc."
                   />
                 </div>
@@ -402,8 +360,7 @@ export default function AddJobPage() {
                   </label>
                   <Input
                     name="yearlyIncrement"
-                    value={formData.yearlyIncrement}
-                    onChange={handleChange}
+                    defaultValue=""
                     placeholder="10%"
                   />
                 </div>
@@ -415,11 +372,7 @@ export default function AddJobPage() {
                   <div className="relative">
                     <Input
                       name="postingDate"
-                      value={
-                        formData.postingDate
-                          ? format(formData.postingDate, "MM/dd/yyyy")
-                          : ""
-                      }
+                      defaultValue=""
                       readOnly
                       className="pl-10"
                     />
@@ -431,13 +384,7 @@ export default function AddJobPage() {
                   <label className="block mb-2 font-medium">
                     Weekends (Days/Week)
                   </label>
-                  <Select
-                    name="weekends"
-                    value={formData.weekends}
-                    onValueChange={(value) =>
-                      setFormData({ ...formData, weekends: value })
-                    }
-                  >
+                  <Select name="weekends" defaultValue="2">
                     <SelectTrigger>
                       <SelectValue placeholder="Select weekends" />
                     </SelectTrigger>

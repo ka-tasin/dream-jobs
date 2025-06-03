@@ -1,16 +1,17 @@
-import ParallaxBanner from "./components/Home/Banner/Banner";
-import { StatsSection } from "./components/Home/Counts/Counts";
-import EmailSubscription from "./components/Home/EmailSubscription/EmailSubscription";
-import { FAQSection } from "./components/Home/FAQ/FAQ";
-import { PartnersSection } from "./components/Home/Partners/Partners";
-import { TestimonialSlider } from "./components/Home/Testimonials/TestimonialSlider";
-import { TopJobsSection } from "./components/Home/TopJobs/TopJobsSection";
-import { WhatWeOffer } from "./components/Home/WeOffer/WeOffer";
+// import ParallaxBanner from "./components/Home/Banner/Banner";
+import InteractiveBanner from "@/custom-components/Home/Banner/Banner";
+import { TopJobsSection } from "@/custom-components/Home/TopJobs/TopJobsSection";
+import { StatsSection } from "@/custom-components/Home/Counts/Counts";
+import { WhatWeOffer } from "@/custom-components/Home/WeOffer/WeOffer";
+import { PartnersSection } from "@/custom-components/Home/Partners/Partners";
+import { TestimonialSlider } from "@/custom-components/Home/Testimonials/TestimonialSlider";
+import EmailSubscription from "@/custom-components/Home/EmailSubscription/EmailSubscription";
+import { FAQSection } from "@/custom-components/Home/FAQ/FAQ";
 
 export default function Home() {
   return (
     <main>
-      <ParallaxBanner />
+      <InteractiveBanner />
       <TopJobsSection />
       <StatsSection />
       <WhatWeOffer />

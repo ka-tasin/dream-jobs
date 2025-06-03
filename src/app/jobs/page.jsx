@@ -13,8 +13,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import apiClient from "@/lib/utils/axiosFetcher";
-import { JobCard } from "../components/Home/TopJobs/JobCard";
-import { DreamJobsLoader } from "../components/common/DataLoading/DataLoading";
+import { JobCard } from "@/custom-components/Home/TopJobs/JobCard";
+import { DreamJobsLoader } from "@/custom-components/common/DataLoading/DataLoading";
 
 export default function AllJobsPage() {
   const [allJobs, setAllJobs] = useState([]);

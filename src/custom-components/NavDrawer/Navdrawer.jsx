@@ -11,6 +11,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import Link from "next/link";
 
 const Navdrawer = () => {
   return (
@@ -42,7 +43,23 @@ const Navdrawer = () => {
             </div>
           </DrawerHeader>
           <div className="p-4">
-            <p>Your content goes here.</p>
+            {/* Desktop Navigation */}
+            <div className="block">
+              <Link
+                href="/add-jobs"
+                className="text-gray-800 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
+              >
+                <p className=" border border-gray-300 px-2 py-2 hover:border-gray-600 rounded-md">
+                  Post a Job
+                </p>
+              </Link>
+              <Link
+                href="/about-us"
+                className="text-gray-800 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
+              >
+                <p>About</p>
+              </Link>
+            </div>
           </div>
           <DrawerFooter></DrawerFooter>
         </DrawerContent>
