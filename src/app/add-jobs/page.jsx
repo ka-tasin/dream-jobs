@@ -1,5 +1,5 @@
 "use client";
-import { useContext, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,16 +14,34 @@ import { CalendarIcon } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import AuthContext from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
 
 export default function AddJobPage() {
-  const { user } = useContext(AuthContext);
   const [step, setStep] = useState(1);
   const formRef = useRef(null);
   const router = useRouter();
+  const { user, loading } = useContext(AuthContext);
 
-  if (!user) {
-    router.push("/login");
-  }
+  // Date states
+  const [deadlineStart, setDeadlineStart] = useState();
+  const [deadlineEnd, setDeadlineEnd] = useState();
+  const [jobPostingDate, setJobPostingDate] = useState(new Date());
+
+  useEffect(() => {
+    if (loading) return;
+    if (!user) {
+      router.push("/login");
+    }
+  }, [user, router, loading]);
+
+  if (loading) return <p>Loading...</p>;
 
   const nextStep = () => setStep((prev) => Math.min(prev + 1, 4));
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
@@ -33,15 +51,16 @@ export default function AddJobPage() {
     const formData = new FormData(formRef.current);
     const formValues = Object.fromEntries(formData.entries());
 
-    // Get select values that might not be included in formData
     const jobType = e.currentTarget.elements.jobType?.value;
     const weekends = e.currentTarget.elements.weekends?.value;
 
     const finalData = {
       ...formValues,
+      deadline_start: deadlineStart ? format(deadlineStart, "yyyy-MM-dd") : "",
+      deadline: deadlineEnd ? format(deadlineEnd, "yyyy-MM-dd") : "",
+      job_posting_date: format(jobPostingDate, "yyyy-MM-dd"),
       jobType: jobType || "On-site",
       weekends: weekends || "2",
-      // Add other select values here if needed
     };
 
     console.log("Job Posted:", finalData);
@@ -105,7 +124,7 @@ export default function AddJobPage() {
                 <div>
                   <label className="block mb-2 font-medium">Job Title</label>
                   <Input
-                    name="jobTitle"
+                    name="job_title"
                     defaultValue=""
                     placeholder="Software Engineer"
                     required
@@ -125,7 +144,7 @@ export default function AddJobPage() {
                 <div>
                   <label className="block mb-2 font-medium">Photo URL</label>
                   <Input
-                    name="photoURL"
+                    name="photoUrl"
                     defaultValue=""
                     placeholder="https://example.com/logo.png"
                     type="url"
@@ -137,7 +156,7 @@ export default function AddJobPage() {
                     Number of Vacancies
                   </label>
                   <Input
-                    name="vacancies"
+                    name="vacancy"
                     defaultValue=""
                     placeholder="5"
                     type="number"
@@ -167,8 +186,9 @@ export default function AddJobPage() {
                     Employer Name
                   </label>
                   <Input
-                    name="employerName"
-                    defaultValue="Kausar Ahmad Tasin"
+                    name="employer"
+                    readOnly
+                    value={user?.displayName}
                     required
                   />
                 </div>
@@ -178,8 +198,9 @@ export default function AddJobPage() {
                     Employer Email
                   </label>
                   <Input
-                    name="employerEmail"
-                    defaultValue="kausar.ahmad.tasin01@gmail.com"
+                    name="employer_email"
+                    readOnly
+                    value={user?.email}
                     type="email"
                     required
                   />
@@ -229,36 +250,75 @@ export default function AddJobPage() {
                   <label className="block mb-2 font-medium">
                     Deadline Start
                   </label>
-                  <div className="relative">
-                    <Input
-                      name="deadlineStart"
-                      defaultValue=""
-                      readOnly
-                      className="pl-10"
-                    />
-                    <CalendarIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
-                  </div>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant={"outline"}
+                        className="w-full pl-3 text-left font-normal"
+                      >
+                        {deadlineStart ? (
+                          format(deadlineStart, "PPP")
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={deadlineStart}
+                        onSelect={setDeadlineStart}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <input
+                    type="hidden"
+                    name="deadline_start"
+                    value={
+                      deadlineStart ? format(deadlineStart, "yyyy-MM-dd") : ""
+                    }
+                  />
                 </div>
 
                 <div>
                   <label className="block mb-2 font-medium">Deadline End</label>
-                  <div className="relative">
-                    <Input
-                      name="deadlineEnd"
-                      defaultValue=""
-                      readOnly
-                      className="pl-10"
-                    />
-                    <CalendarIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
-                  </div>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant={"outline"}
+                        className="w-full pl-3 text-left font-normal"
+                      >
+                        {deadlineEnd ? (
+                          format(deadlineEnd, "PPP")
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={deadlineEnd}
+                        onSelect={setDeadlineEnd}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <input
+                    type="hidden"
+                    name="deadline"
+                    value={deadlineEnd ? format(deadlineEnd, "yyyy-MM-dd") : ""}
+                  />
                 </div>
-
                 <div>
                   <label className="block mb-2 font-medium">
                     Salary Range Min (৳)
                   </label>
                   <Input
-                    name="salaryMin"
+                    name="salary_min"
                     defaultValue=""
                     placeholder="30000"
                     type="number"
@@ -271,7 +331,7 @@ export default function AddJobPage() {
                     Salary Range Max (৳)
                   </label>
                   <Input
-                    name="salaryMax"
+                    name="salary_max"
                     defaultValue=""
                     placeholder="50000"
                     type="number"
@@ -309,7 +369,7 @@ export default function AddJobPage() {
 
                 <div>
                   <label className="block mb-2 font-medium">Job Type</label>
-                  <Select name="jobType" defaultValue="On-site">
+                  <Select name="job_type" defaultValue="On-site">
                     <SelectTrigger>
                       <SelectValue placeholder="Select job type" />
                     </SelectTrigger>
@@ -317,6 +377,7 @@ export default function AddJobPage() {
                       <SelectItem value="On-site">On-site</SelectItem>
                       <SelectItem value="Remote">Remote</SelectItem>
                       <SelectItem value="Hybrid">Hybrid</SelectItem>
+                      <SelectItem value="Part-time">Part-time</SelectItem>
                       <SelectItem value="Internship">Internship</SelectItem>
                     </SelectContent>
                   </Select>
@@ -327,7 +388,7 @@ export default function AddJobPage() {
                     Probation Period (Months)
                   </label>
                   <Input
-                    name="probationPeriod"
+                    name="probation_period"
                     defaultValue=""
                     placeholder="3"
                     type="number"
@@ -337,7 +398,7 @@ export default function AddJobPage() {
                 <div>
                   <label className="block mb-2 font-medium">Bonus/Year</label>
                   <Input
-                    name="yearlyBonus"
+                    name="bonus"
                     defaultValue=""
                     placeholder="2 months salary"
                   />
@@ -348,7 +409,7 @@ export default function AddJobPage() {
                     Other Benefits
                   </label>
                   <Input
-                    name="otherBenefits"
+                    name="other_benefits"
                     defaultValue=""
                     placeholder="Health insurance, lunch, etc."
                   />
@@ -358,26 +419,37 @@ export default function AddJobPage() {
                   <label className="block mb-2 font-medium">
                     Increment/Year
                   </label>
-                  <Input
-                    name="yearlyIncrement"
-                    defaultValue=""
-                    placeholder="10%"
-                  />
+                  <Input name="increment" defaultValue="" placeholder="10%" />
                 </div>
 
                 <div>
                   <label className="block mb-2 font-medium">
                     Job Posting Date
                   </label>
-                  <div className="relative">
-                    <Input
-                      name="postingDate"
-                      defaultValue=""
-                      readOnly
-                      className="pl-10"
-                    />
-                    <CalendarIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
-                  </div>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant={"outline"}
+                        className="w-full pl-3 text-left font-normal"
+                      >
+                        {format(jobPostingDate, "PPP")}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={jobPostingDate}
+                        onSelect={setJobPostingDate}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <input
+                    type="hidden"
+                    name="job_posting_date"
+                    value={format(jobPostingDate, "yyyy-MM-dd")}
+                  />
                 </div>
 
                 <div>

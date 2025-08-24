@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useState, useRef, useMemo, useEffect } from "react";
 import { Open_Sans } from "next/font/google";
+import Link from "next/link";
 
 const quicksand = Open_Sans({
   subsets: ["latin"],
@@ -215,13 +217,15 @@ const InteractiveBanner = () => {
             <p className="text-lg md:text-2xl text-gray-600 max-w-2xl pt-5 mx-auto">
               Land Your Dream Career with Professional Solutions
             </p>
-            <motion.button
-              className="mt-8 px-6 py-3 bg-[#0d0d0d] text-white rounded-xl hover:bg-[#2f2c2d] transition-colors"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              Connect With Us
-            </motion.button>
+            <Link href={"/contact-us"}>
+              <motion.button
+                className="mt-8 px-6 py-3 bg-[#0d0d0d] text-white rounded-xl hover:bg-[#2f2c2d] transition-colors"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                Connect With Us
+              </motion.button>
+            </Link>
           </div>
         </section>
       </motion.div>
