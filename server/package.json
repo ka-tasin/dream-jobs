@@ -1,8 +1,9 @@
 {
   "name": "server",
   "version": "1.0.0",
+  "type": "module",
   "scripts": {
-    "dev": "ts-node src/server.ts",
+    "server": "ts-node src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js"
   },
