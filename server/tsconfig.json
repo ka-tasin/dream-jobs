@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    // "module": "CommonJS", // change from NodeNext to CommonJS
+    "module": "CommonJS", // change from NodeNext to CommonJS
     "moduleResolution": "Node",
     "esModuleInterop": true,
     "strict": true,
