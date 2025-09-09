@@ -5,5 +5,5 @@ export interface UserDto {
   name: string;
   email: string;
   role?: Role;
-  password: string;
+  password?: string | null;
 }
