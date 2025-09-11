@@ -8,7 +8,7 @@ import { CreateUserModel } from "../models/user.model";
 import { Role } from "../../prisma/generated/prisma";
 
 @injectable()
-export default class Account {
+export default class AccountController {
   constructor(
     @inject(TYPES.IUnitOfService) private unitOfService: IUnitOfService
   ) {}
@@ -17,6 +17,7 @@ export default class Account {
     req: Request,
     res: Response
   ): Promise<Response<CustomResponse<UserDto>>> {
+    console.log("first");
     const data = req.body as CreateUserModel;
     const user = await this.unitOfService.User.getUserByEmail(data.email);
 
