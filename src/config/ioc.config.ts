@@ -1,7 +1,7 @@
 import { Container } from "inversify";
 import { IUnitOfService } from "../services/interfaces/iunitOf.service";
 import { TYPES } from "./ioc.types";
-import unitOfService from "../services/unitOf.services";
+import UnitOfService from "../services/unitOf.services";
 import AccountController from "../controllers/account.controller";
 import { IUserService } from "../services/interfaces/iuser.service";
 import UserService from "../services/user.service";
@@ -12,7 +12,7 @@ import UserRepository from "../repositories/user.repository";
 
 const container = new Container();
 
-container.bind<IUnitOfService>(TYPES.IUnitOfService).to(unitOfService);
+container.bind<IUnitOfService>(TYPES.IUnitOfService).to(UnitOfService);
 container
   .bind<AccountController>(TYPES.AccountController)
   .to(AccountController);

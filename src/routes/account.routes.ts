@@ -9,6 +9,8 @@ const accountController = container.get<AccountController>(
   TYPES.AccountController
 );
 
-accountRouter.post("/register", accountController.register);
+accountRouter.post("/register", (req, res) =>
+  accountController.register(req, res)
+);
 
 export default accountRouter;
