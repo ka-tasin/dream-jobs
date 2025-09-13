@@ -6,9 +6,10 @@ import { CustomResponse } from "../dtos/custom-response";
 import { Role } from "../../prisma/generated/prisma";
 import PasswordUtils from "../utils/password.utils";
 import { UserDto } from "../dtos/user.dto";
+import { IUserService } from "./interfaces/iuser.service";
 
 @injectable()
-export default class UserService {
+export default class UserService implements IUserService {
   constructor(@inject(TYPES.IUnitOfWork) private unitOfWork: IUnitOfWork) {}
 
   async create(
@@ -28,6 +29,7 @@ export default class UserService {
             password: hashedPassword,
             role: role,
           },
+          select: { id: true, name: true, email: true, role: true },
         });
       }
     );

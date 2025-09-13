@@ -8,7 +8,7 @@ import { CreateUserModel } from "../models/user.model";
 import { Role } from "../../prisma/generated/prisma";
 
 @injectable()
-export default class Account {
+export default class AccountController {
   constructor(
     @inject(TYPES.IUnitOfService) private unitOfService: IUnitOfService
   ) {}
