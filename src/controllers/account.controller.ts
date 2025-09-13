@@ -19,7 +19,6 @@ export default class AccountController {
   ): Promise<Response<CustomResponse<UserDto>>> {
     const data = req.body as CreateUserModel;
     const user = await this.unitOfService.User.getUserByEmail(data.email);
-    console.log("first");
 
     if (user) return res.status(409).json({ message: "User Already exists!" });
 

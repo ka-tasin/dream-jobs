@@ -29,6 +29,7 @@ export default class UserService implements IUserService {
             password: hashedPassword,
             role: role,
           },
+          select: { id: true, name: true, email: true, role: true },
         });
       }
     );
