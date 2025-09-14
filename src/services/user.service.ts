@@ -7,6 +7,7 @@ import { Role } from "../../prisma/generated/prisma";
 import PasswordUtils from "../utils/password.utils";
 import { UserDto } from "../dtos/user.dto";
 import { IUserService } from "./interfaces/iuser.service";
+import bcrypt from "bcrypt";
 
 @injectable()
 export default class UserService implements IUserService {
@@ -16,9 +17,12 @@ export default class UserService implements IUserService {
     data: CreateUserModel,
     role: Role
   ): Promise<CustomResponse<UserDto>> {
-    const hashedPassword = await PasswordUtils.hashPassword(
-      data?.password ?? ""
-    );
+
+    if (!data.password) {
+      throw new Error("Password is required to create a user");
+    }
+
+    const hashedPassword = await PasswordUtils.hashPassword(data.password);
 
     const user = await this.unitOfWork.transaction(
       async (transactionClient) => {
@@ -53,4 +57,13 @@ export default class UserService implements IUserService {
 
     return user;
   }
+
+  async login(email: string, password: string): Promise<{ token: string user: Partial<CreateUserModel>}> {
+    const user = await this.unitOfWork.User.findByEmail(email);
+
+    if (!user) return null;
+
+    const isUserMatch = bcrypt.compare(password, user.password);
+  }
+  o;
 }

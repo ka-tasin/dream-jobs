@@ -33,4 +33,11 @@ export default class AccountController {
       data: newUser,
     });
   }
+
+  async login(
+    req: Request,
+    res: Response
+  ): Promise<Response<CustomResponse<UserDto | null>>> {
+    const { email, password } = req.body;
+  }
 }

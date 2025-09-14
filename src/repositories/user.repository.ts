@@ -10,14 +10,10 @@ export default class UserRepository implements IUserRepository {
     });
   }
 
-  async findByEmail(email: string): Promise<UserDto | null> {
-    return prisma.user.findFirst({
-      where: {
-        email: {
-          equals: email,
-          mode: "insensitive",
-        },
-      },
+  async findByEmail(email: string): Promise<CreateUserModel | null> {
+    return prisma.user.findUnique({
+      where: { email },
+      select: { id: true, email: true, name: true, password: true },
     });
   }
 }
