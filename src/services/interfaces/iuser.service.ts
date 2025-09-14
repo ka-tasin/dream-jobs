@@ -11,4 +11,6 @@ export interface IUserService {
     email: string,
     password: string
   ): Promise<{ token: string; user: Partial<CreateUserModel> } | null>;
+
+  verifyToken(token: string): { id: string; email: string } | null;
 }
