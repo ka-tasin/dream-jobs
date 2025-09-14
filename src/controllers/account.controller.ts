@@ -39,5 +39,21 @@ export default class AccountController {
     res: Response
   ): Promise<Response<CustomResponse<UserDto | null>>> {
     const { email, password } = req.body;
+    const user = await this.unitOfService.User.login(email, password);
+
+    if (!user)
+      return res.status(401).json({ message: "Invalid email or password!" });
+
+    const response = {
+      success: true,
+      message: "Login successfull!",
+      data: user,
+    };
+
+    return res.status(200).json({
+      success: true,
+      message: "Login successful!",
+      data: user,
+    });
   }
 }

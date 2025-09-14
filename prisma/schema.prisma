@@ -20,8 +20,8 @@ model User {
   name        String 
   email       String        @unique
   role        Role                      @default(USER)
-  provider    String
-  providerId  AuthProvider              @default(CREDENTIALS)
+  provider    AuthProvider?             @default(CREDENTIALS)
+  providerId  String?                   @default("")
   password    String?   
   createdAt   DateTime                  @default(now())
    

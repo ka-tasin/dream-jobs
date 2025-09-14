@@ -6,6 +6,6 @@ export interface CreateUserModel {
   email: string;
   role?: Role;
   password?: string | null;
-  provider: string;
-  providerId: AuthProvider;
+  provider: AuthProvider;
+  providerId?: string | null;
 }
