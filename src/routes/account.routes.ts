@@ -13,5 +13,10 @@ accountRouter.post(
   "/register",
   accountController.register.bind(accountController)
 );
+accountRouter.post("/login", accountController.login.bind(accountController));
+accountRouter.post(
+  "/verifyToken",
+  accountController.verifyToken.bind(accountController)
+);
 
 export default accountRouter;

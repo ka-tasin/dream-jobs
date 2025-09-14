@@ -125,7 +125,10 @@ exports.Prisma.UserScalarFieldEnum = {
   name: 'name',
   email: 'email',
   role: 'role',
-  password: 'password'
+  provider: 'provider',
+  providerId: 'providerId',
+  password: 'password',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.JobScalarFieldEnum = {
@@ -151,6 +154,12 @@ exports.Role = exports.$Enums.Role = {
   USER: 'USER',
   ADMIN: 'ADMIN',
   EMPLOYER: 'EMPLOYER'
+};
+
+exports.AuthProvider = exports.$Enums.AuthProvider = {
+  CREDENTIALS: 'CREDENTIALS',
+  GOOGLE: 'GOOGLE',
+  FACEBOOK: 'FACEBOOK'
 };
 
 exports.Prisma.ModelName = {
