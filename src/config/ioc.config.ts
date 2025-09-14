@@ -9,6 +9,7 @@ import IUnitOfWork from "../repositories/interfaces/iunitofwork.repository";
 import UnitOfWork from "../repositories/unitOfWork.repository";
 import { IUserRepository } from "../repositories/interfaces/iuser.repository";
 import UserRepository from "../repositories/user.repository";
+import AuthMiddleware from "../middlewares/authenticate.middleware";
 
 const container = new Container();
 
@@ -19,5 +20,6 @@ container
 container.bind<IUserService>(TYPES.IUserService).to(UserService);
 container.bind<IUnitOfWork>(TYPES.IUnitOfWork).to(UnitOfWork);
 container.bind<IUserRepository>(TYPES.IUserRepository).to(UserRepository);
+container.bind<AuthMiddleware>(TYPES.AuthMiddleware).to(AuthMiddleware);
 
 export default container;

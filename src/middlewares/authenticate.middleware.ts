@@ -9,8 +9,8 @@ export default class AuthMiddleware {
     @inject(TYPES.IUnitOfService) private unitOfService: IUnitOfService
   ) {}
 
-  handle = (req: Request, res: Response, next: NextFunction): void => {
-    const token = req.headers.authorization?.split(" ")[1]; // Bearer <token>
+  authenticate(req: Request, res: Response, next: NextFunction): void {
+    const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
       res.status(401).json({ message: "Token missing" });
       return;
@@ -24,5 +24,5 @@ export default class AuthMiddleware {
 
     (req as any).user = payload;
     next();
-  };
+  }
 }

@@ -4,6 +4,7 @@ export const TYPES = {
   IUserService: Symbol.for("IUserService"),
 
   AccountController: Symbol.for("AccountController"),
+  AuthMiddleware: Symbol.for("AuthMiddleware"),
 
   IUnitOfService: Symbol.for("IUnitOfService"),
 
