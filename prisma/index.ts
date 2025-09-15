@@ -1,6 +1,5 @@
 import { Prisma, PrismaClient } from "./generated/prisma";
 
-// Create a singleton instance of PrismaClient
 const prisma = new PrismaClient({
   datasources: {
     db: {
@@ -13,12 +12,11 @@ const prisma = new PrismaClient({
       : ["error"],
   transactionOptions: {
     isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
-    maxWait: 5000, // default: 2000
-    timeout: 10000, // default: 5000
+    maxWait: 5000,
+    timeout: 10000,
   },
 });
 
-// Handle potential errors when connecting to the database
 prisma
   .$connect()
   .then(() => {
@@ -29,7 +27,6 @@ prisma
     process.exit(1);
   });
 
-// Add cleanup on process termination
 process.on("SIGINT", async () => {
   await prisma.$disconnect();
   process.exit(0);

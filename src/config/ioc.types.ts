@@ -3,6 +3,10 @@ export const TYPES = {
   IUserRepository: Symbol.for("IUserRepository"),
   IUserService: Symbol.for("IUserService"),
 
+  IJobRepository: Symbol.for("IJobRepository"),
+  IJobService: Symbol.for("IJobService"),
+  JobController: Symbol.for("JobController"),
+
   AccountController: Symbol.for("AccountController"),
   AuthMiddleware: Symbol.for("AuthMiddleware"),
 

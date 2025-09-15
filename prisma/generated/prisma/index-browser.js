@@ -133,7 +133,33 @@ exports.Prisma.UserScalarFieldEnum = {
 
 exports.Prisma.JobScalarFieldEnum = {
   id: 'id',
-  title: 'title'
+  title: 'title',
+  description: 'description',
+  role: 'role',
+  company: 'company',
+  location: 'location',
+  type: 'type',
+  officeTime: 'officeTime',
+  salary: 'salary',
+  postedAt: 'postedAt',
+  deadline: 'deadline',
+  createdBy: 'createdBy'
+};
+
+exports.Prisma.ApplicationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  jobId: 'jobId',
+  resumeUrl: 'resumeUrl',
+  coverLetter: 'coverLetter',
+  status: 'status',
+  appliedAt: 'appliedAt'
+};
+
+exports.Prisma.SavedJobScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  jobId: 'jobId'
 };
 
 exports.Prisma.SortOrder = {
@@ -162,9 +188,26 @@ exports.AuthProvider = exports.$Enums.AuthProvider = {
   FACEBOOK: 'FACEBOOK'
 };
 
+exports.JobType = exports.$Enums.JobType = {
+  FULL_TIME: 'FULL_TIME',
+  PART_TIME: 'PART_TIME',
+  REMOTE: 'REMOTE',
+  CONTRACT: 'CONTRACT',
+  INTERNSHIP: 'INTERNSHIP'
+};
+
+exports.AppStatus = exports.$Enums.AppStatus = {
+  PENDING: 'PENDING',
+  REVIEWED: 'REVIEWED',
+  ACCEPTED: 'ACCEPTED',
+  REJECTED: 'REJECTED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
-  Job: 'Job'
+  Job: 'Job',
+  Application: 'Application',
+  SavedJob: 'SavedJob'
 };
 
 /**

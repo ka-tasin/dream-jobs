@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "./generated/prisma"
@@ -24,15 +18,68 @@ model User {
   password   String?
   createdAt  DateTime      @default(now())
 
+  jobs         Job[]         @relation("UserJobs")
+  applications Application[]
+  savedJobs    SavedJob[]
+
   @@map("users")
 }
 
 model Job {
-  id    String @id @default(cuid())
-  title String
+  id          String    @id @default(cuid())
+  title       String
+  description String
+  role        String
+  company     String
+  location    String
+  type        JobType
+  officeTime  String
+  salary      Float?
+  postedAt    DateTime  @default(now())
+  deadline    DateTime?
+  createdBy   String
+
+  creator      User          @relation("UserJobs", fields: [createdBy], references: [id])
+  applications Application[]
+  savedBy      SavedJob[]
 
   @@index([title])
   @@map("jobs")
+}
+
+model Application {
+  id          String    @id @default(cuid())
+  userId      String
+  jobId       String
+  resumeUrl   String?
+  coverLetter String?
+  status      AppStatus @default(PENDING)
+  appliedAt   DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+  job  Job  @relation(fields: [jobId], references: [id])
+
+  @@map("applications")
+}
+
+model SavedJob {
+  id     String @id @default(cuid())
+  userId String
+  jobId  String
+
+  user User @relation(fields: [userId], references: [id])
+  job  Job  @relation(fields: [jobId], references: [id])
+
+  @@unique([userId, jobId])
+  @@map("saved_jobs")
+}
+
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  REMOTE
+  CONTRACT
+  INTERNSHIP
 }
 
 enum Role {
@@ -45,4 +92,11 @@ enum AuthProvider {
   CREDENTIALS
   GOOGLE
   FACEBOOK
+}
+
+enum AppStatus {
+  PENDING
+  REVIEWED
+  ACCEPTED
+  REJECTED
 }
