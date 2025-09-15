@@ -10,6 +10,8 @@ export const TYPES = {
   AccountController: Symbol.for("AccountController"),
   AuthMiddleware: Symbol.for("AuthMiddleware"),
 
+  RoleMiddleware: Symbol.for("RoleMiddleware"),
+
   IUnitOfService: Symbol.for("IUnitOfService"),
 
   IUnitOfWork: Symbol.for("IUnitOfWork"),

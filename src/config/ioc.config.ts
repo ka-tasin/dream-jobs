@@ -15,6 +15,7 @@ import JobRepository from "../repositories/job.repository";
 import { IJobService } from "../services/interfaces/ijob.service";
 import JobService from "../services/job.service";
 import JobController from "../controllers/job.controller";
+import RoleMiddleware from "../middlewares/role.middleware";
 
 const container = new Container();
 
@@ -30,5 +31,6 @@ container.bind<AuthMiddleware>(TYPES.AuthMiddleware).to(AuthMiddleware);
 container.bind<IJobRepository>(TYPES.IJobRepository).to(JobRepository);
 container.bind<IJobService>(TYPES.IJobService).to(JobService);
 container.bind<JobController>(TYPES.JobController).to(JobController);
+container.bind<RoleMiddleware>(TYPES.RoleMiddleware).to(RoleMiddleware);
 
 export default container;
