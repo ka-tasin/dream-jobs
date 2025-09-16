@@ -76,7 +76,7 @@ export default class UserService implements IUserService {
     if (!isUserMatch) return null;
 
     const token = jwt.sign(
-      { id: user.id, email: user.email },
+      { id: user.id, email: user.email, role: user.role },
       process.env.JWT_SECRET as string,
       { expiresIn: "1d" }
     );
@@ -85,14 +85,32 @@ export default class UserService implements IUserService {
     return { token, user: userWithoutPassword };
   }
 
-  verifyToken(token: string): { id: string; email: string } | null {
+  verifyToken(token: string): { id: string; email: string; role: Role } | null {
     try {
       return jwt.verify(token, process.env.JWT_SECRET as string) as {
         id: string;
         email: string;
+        role: Role;
       };
     } catch (err) {
       return null;
     }
+  }
+
+  async updateUserRole(
+    id: string
+  ): Promise<{ id: string; email: string; role: Role } | null> {
+    const user = await this.unitOfWork.User.findById(id);
+    if (!user) return null;
+
+    const updatedUser = await this.unitOfWork.User.updateRole(id);
+
+    if (!updatedUser) return null;
+
+    return {
+      id: updatedUser.id,
+      email: updatedUser.email,
+      role: updatedUser.role as Role,
+    };
   }
 }

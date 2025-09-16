@@ -1,3 +1,4 @@
+import { Role } from "../../../prisma/generated/prisma";
 import { CustomResponse } from "../../dtos/custom-response";
 import { UserDto } from "../../dtos/user.dto";
 import { CreateUserModel } from "../../models/user.model";
@@ -12,5 +13,9 @@ export interface IUserService {
     password: string
   ): Promise<{ token: string; user: Partial<CreateUserModel> } | null>;
 
-  verifyToken(token: string): { id: string; email: string } | null;
+  verifyToken(token: string): { id: string; email: string; role: Role } | null;
+
+  updateUserRole(
+    id: string
+  ): Promise<{ id: string; email: string; role: Role } | null>;
 }
