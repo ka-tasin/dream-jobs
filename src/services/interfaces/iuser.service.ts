@@ -14,4 +14,8 @@ export interface IUserService {
   ): Promise<{ token: string; user: Partial<CreateUserModel> } | null>;
 
   verifyToken(token: string): { id: string; email: string; role: Role } | null;
+
+  updateUserRole(
+    id: string
+  ): Promise<{ id: string; email: string; role: Role } | null>;
 }

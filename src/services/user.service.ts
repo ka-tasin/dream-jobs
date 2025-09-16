@@ -96,4 +96,21 @@ export default class UserService implements IUserService {
       return null;
     }
   }
+
+  async updateUserRole(
+    id: string
+  ): Promise<{ id: string; email: string; role: Role } | null> {
+    const user = await this.unitOfWork.User.findById(id);
+    if (!user) return null;
+
+    const updatedUser = await this.unitOfWork.User.updateRole(id);
+
+    if (!updatedUser) return null;
+
+    return {
+      id: updatedUser.id,
+      email: updatedUser.email,
+      role: updatedUser.role as Role,
+    };
+  }
 }

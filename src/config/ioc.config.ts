@@ -16,6 +16,7 @@ import { IJobService } from "../services/interfaces/ijob.service";
 import JobService from "../services/job.service";
 import JobController from "../controllers/job.controller";
 import RoleMiddleware from "../middlewares/role.middleware";
+import UserController from "../controllers/user.controller";
 
 const container = new Container();
 
@@ -26,6 +27,8 @@ container
 container.bind<IUserService>(TYPES.IUserService).to(UserService);
 container.bind<IUnitOfWork>(TYPES.IUnitOfWork).to(UnitOfWork);
 container.bind<IUserRepository>(TYPES.IUserRepository).to(UserRepository);
+container.bind<UserController>(TYPES.UserController).to(UserController);
+
 container.bind<AuthMiddleware>(TYPES.AuthMiddleware).to(AuthMiddleware);
 
 container.bind<IJobRepository>(TYPES.IJobRepository).to(JobRepository);
