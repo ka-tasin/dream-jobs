@@ -17,6 +17,11 @@ import JobService from "../services/job.service";
 import JobController from "../controllers/job.controller";
 import RoleMiddleware from "../middlewares/role.middleware";
 import UserController from "../controllers/user.controller";
+import { IApplicationRepository } from "../repositories/interfaces/iapplication.repository";
+import ApplicationRepository from "../repositories/application.repository";
+import { IApplicatoinService } from "../services/interfaces/iapplication.service";
+import ApplicationService from "../services/application.service";
+import ApplicationController from "../controllers/application.controller";
 
 const container = new Container();
 
@@ -28,6 +33,16 @@ container.bind<IUserService>(TYPES.IUserService).to(UserService);
 container.bind<IUnitOfWork>(TYPES.IUnitOfWork).to(UnitOfWork);
 container.bind<IUserRepository>(TYPES.IUserRepository).to(UserRepository);
 container.bind<UserController>(TYPES.UserController).to(UserController);
+
+container
+  .bind<IApplicationRepository>(TYPES.IApplicationRepository)
+  .to(ApplicationRepository);
+container
+  .bind<IApplicatoinService>(TYPES.IApplicationService)
+  .to(ApplicationService);
+container
+  .bind<ApplicationController>(TYPES.AccountController)
+  .to(ApplicationController);
 
 container.bind<AuthMiddleware>(TYPES.AuthMiddleware).to(AuthMiddleware);
 

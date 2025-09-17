@@ -7,6 +7,10 @@ export const TYPES = {
   IJobService: Symbol.for("IJobService"),
   JobController: Symbol.for("JobController"),
 
+  IApplicationRepository: Symbol.for("IApplicationRepository"),
+  IApplicationService: Symbol.for("IApplicationService"),
+  ApplicationController: Symbol.for("ApplicationController"),
+
   AccountController: Symbol.for("AccountController"),
   AuthMiddleware: Symbol.for("AuthMiddleware"),
 
