@@ -1,32 +1,30 @@
 import { inject, injectable } from "inversify";
 import { TYPES } from "../config/ioc.types";
 import { Job } from "../../prisma/generated/prisma";
-import { IJobRepository } from "../repositories/interfaces/ijob.repository";
 import { IJobService } from "./interfaces/ijob.service";
+import IUnitOfWork from "../repositories/interfaces/iunitofwork.repository";
 
 @injectable()
 export default class JobService implements IJobService {
-  constructor(
-    @inject(TYPES.IJobRepository) private jobRepository: IJobRepository
-  ) {}
+  constructor(@inject(TYPES.IUnitOfWork) private unitOfWork: IUnitOfWork) {}
 
   async createJob(data: Omit<Job, "id" | "postedAt">): Promise<Job> {
-    return this.jobRepository.create(data);
+    return this.unitOfWork.Job.create(data);
   }
 
   async getJobById(id: string): Promise<Job | null> {
-    return this.jobRepository.findById(id);
+    return this.unitOfWork.Job.findById(id);
   }
 
   async listJobs(): Promise<Job[]> {
-    return this.jobRepository.findAll();
+    return this.unitOfWork.Job.findAll();
   }
 
   async listJobsByCreator(userId: string): Promise<Job[]> {
-    return this.jobRepository.findByCreator(userId);
+    return this.unitOfWork.Job.findByCreator(userId);
   }
 
   async deleteJob(id: string): Promise<Job> {
-    return this.jobRepository.delete(id);
+    return this.unitOfWork.Job.delete(id);
   }
 }

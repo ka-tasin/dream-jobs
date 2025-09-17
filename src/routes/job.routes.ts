@@ -26,6 +26,7 @@ jobRouter.delete(
 );
 
 jobRouter.get("/", jobController.getAll.bind(jobController));
+
 jobRouter.get(
   "/:id",
   authMiddleware.authenticate.bind(authMiddleware),
