@@ -1,4 +1,3 @@
-// controllers/job.controller.ts
 import { Request, Response } from "express";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../config/ioc.types";
@@ -12,14 +11,14 @@ export default class JobController {
   ) {}
 
   async create(req: Request, res: Response): Promise<Response> {
-    const user = (req as any).user; // payload from JWT
+    const user = (req as any).user;
     if (![Role.EMPLOYER, Role.ADMIN].includes(user.role)) {
       return res
         .status(403)
         .json({ message: "Forbidden: only employer or admin can create jobs" });
     }
 
-    const data = { ...req.body, createdBy: user.id }; // auto-assign creator
+    const data = { ...req.body, createdBy: user.id };
     const job = await this.unitOfService.Job.createJob(data);
     return res.status(201).json({ success: true, data: job });
   }

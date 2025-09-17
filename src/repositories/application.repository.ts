@@ -27,4 +27,43 @@ export default class ApplicationRepository implements IApplicationRepository {
       orderBy: { appliedAt: "desc" },
     });
   }
+
+  async getApplicationsByUser(userId: string): Promise<Application[]> {
+    return prisma.application.findMany({
+      where: { userId },
+      include: {
+        job: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            postedAt: true,
+          },
+        },
+      },
+      orderBy: { appliedAt: "desc" },
+    });
+  }
+
+  async create(
+    userId: string,
+    jobId: string,
+    resumeUrl?: string,
+    coverLetter?: string
+  ): Promise<Application> {
+    return prisma.application.create({
+      data: {
+        userId,
+        jobId,
+        resumeUrl,
+        coverLetter,
+      },
+    });
+  }
+
+  async findDuplicate(userId: string, jobId: string) {
+    return prisma.application.findFirst({
+      where: { userId, jobId },
+    });
+  }
 }

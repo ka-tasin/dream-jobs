@@ -42,4 +42,43 @@ export default class ApplicationController {
       return res.status(500).json({ message: "Internal Server Error" });
     }
   }
+
+  getUserApplications = async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const applications =
+        await this.unitOfService.Application.getUserApplications(id);
+
+      res.status(200).json({
+        success: true,
+        data: applications,
+      });
+    } catch (error: any) {
+      res.status(500).json({
+        success: false,
+        message: "Failed to fetch user applications",
+        error: error.message,
+      });
+    }
+  };
+
+  applyForJob = async (req: Request, res: Response) => {
+    try {
+      const user = (req as any).user;
+      if (!user) return res.status(401).json({ message: "Unauthorized" });
+
+      const { jobId, resumeUrl, coverLetter } = req.body;
+
+      const application = await this.unitOfService.Application.applyForJob(
+        user.id,
+        jobId,
+        resumeUrl,
+        coverLetter
+      );
+
+      res.status(201).json({ success: true, data: application });
+    } catch (error: any) {
+      res.status(400).json({ success: false, message: error.message });
+    }
+  };
 }
