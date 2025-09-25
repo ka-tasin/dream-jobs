@@ -1,4 +1,4 @@
-import { Role } from "../../prisma";
+import { Role } from "../../prisma/generated/prisma";
 
 export interface UserDto {
   id: string;

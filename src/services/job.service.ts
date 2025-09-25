@@ -1,6 +1,6 @@
 import { inject, injectable } from "inversify";
 import { TYPES } from "../config/ioc.types";
-import { Job } from "../../prisma";
+import { Job } from "../../prisma/generated/prisma";
 import { IJobService } from "./interfaces/ijob.service";
 import IUnitOfWork from "../repositories/interfaces/iunitofwork.repository";
 

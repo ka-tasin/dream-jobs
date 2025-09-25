@@ -3,7 +3,7 @@ import container from "../config/ioc.config";
 import JobController from "../controllers/job.controller";
 import { TYPES } from "../config/ioc.types";
 import RoleMiddleware from "../middlewares/role.middleware";
-import { Role } from "../../prisma";
+import { Role } from "../../prisma/generated/prisma";
 import AuthMiddleware from "../middlewares/authenticate.middleware";
 
 const jobRouter = Router();

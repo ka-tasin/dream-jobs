@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import { TYPES } from "../config/ioc.types";
 import { IUnitOfService } from "../services/interfaces/iunitOf.service";
-import { Role } from "../../prisma";
+import { Role } from "../../prisma/generated/prisma";
 import { NextFunction, Request, Response } from "express";
 
 @injectable()

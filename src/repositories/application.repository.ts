@@ -1,6 +1,6 @@
 import { injectable } from "inversify";
 import prisma from "../../prisma";
-import { Application } from "../../prisma";
+import { Application } from "../../prisma/generated/prisma";
 import { IApplicationRepository } from "./interfaces/iapplication.repository";
 
 @injectable()

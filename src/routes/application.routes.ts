@@ -3,7 +3,7 @@ import container from "../config/ioc.config";
 import { TYPES } from "../config/ioc.types";
 import ApplicationController from "../controllers/application.controller";
 import RoleMiddleware from "../middlewares/role.middleware";
-import { Role } from "../../prisma";
+import { Role } from "../../prisma/generated/prisma";
 
 const router = Router();
 const appController = container.get<ApplicationController>(

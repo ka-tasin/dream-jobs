@@ -1,5 +1,5 @@
 import { inject } from "inversify";
-import { Prisma } from "../../prisma";
+import { Prisma } from "../../prisma/generated/prisma";
 import prisma from "../../prisma";
 import { TYPES } from "../config/ioc.types";
 import IUnitOfWork from "./interfaces/iunitofwork.repository";

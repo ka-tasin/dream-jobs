@@ -1,4 +1,4 @@
-import { Job } from "../../../prisma";
+import { Job } from "../../../prisma/generated/prisma";
 
 export interface IJobRepository {
   create(data: Omit<Job, "id" | "postedAt">): Promise<Job>;
