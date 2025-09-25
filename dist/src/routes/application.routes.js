@@ -1,0 +1,15 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const ioc_config_1 = __importDefault(require("../config/ioc.config"));
+const ioc_types_1 = require("../config/ioc.types");
+const prisma_1 = require("../../prisma/generated/prisma");
+const router = (0, express_1.Router)();
+const appController = ioc_config_1.default.get(ioc_types_1.TYPES.ApplicationController);
+const roleMiddleware = ioc_config_1.default.get(ioc_types_1.TYPES.RoleMiddleware);
+router.get("/", roleMiddleware.authorize([prisma_1.Role.EMPLOYER, prisma_1.Role.ADMIN]), appController.getApplications.bind(appController));
+router.get("/job/:jobId", roleMiddleware.authorize([prisma_1.Role.EMPLOYER, prisma_1.Role.ADMIN]), appController.getApplicationsByJob.bind(appController));
+exports.default = router;
