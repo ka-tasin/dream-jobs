@@ -1,4 +1,4 @@
-import { Prisma } from "../../../prisma/generated/prisma";
+import { Prisma } from "../../../prisma";
 import { IApplicationRepository } from "./iapplication.repository";
 import { IJobRepository } from "./ijob.repository";
 import { IUserRepository } from "./iuser.repository";

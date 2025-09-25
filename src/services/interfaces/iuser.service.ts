@@ -1,4 +1,4 @@
-import { Role } from "../../../prisma/generated/prisma";
+import { Role } from "../../../prisma";
 import { CustomResponse } from "../../dtos/custom-response";
 import { UserDto } from "../../dtos/user.dto";
 import { CreateUserModel } from "../../models/user.model";
