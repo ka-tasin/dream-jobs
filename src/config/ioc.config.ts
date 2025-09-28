@@ -41,7 +41,7 @@ container
   .bind<IApplicatoinService>(TYPES.IApplicationService)
   .to(ApplicationService);
 container
-  .bind<ApplicationController>(TYPES.AccountController)
+  .bind<ApplicationController>(TYPES.ApplicationController)
   .to(ApplicationController);
 
 container.bind<AuthMiddleware>(TYPES.AuthMiddleware).to(AuthMiddleware);
