@@ -35,7 +35,7 @@ container
     .bind(ioc_types_1.TYPES.IApplicationService)
     .to(application_service_1.default);
 container
-    .bind(ioc_types_1.TYPES.AccountController)
+    .bind(ioc_types_1.TYPES.ApplicationController)
     .to(application_controller_1.default);
 container.bind(ioc_types_1.TYPES.AuthMiddleware).to(authenticate_middleware_1.default);
 container.bind(ioc_types_1.TYPES.IJobRepository).to(job_repository_1.default);

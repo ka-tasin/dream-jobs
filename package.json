@@ -4,8 +4,9 @@
   "type": "commonjs",
   "scripts": {
     "server": "ts-node src/server.ts",
-    "build": "tsc",
-    "start": "node dist/src/server.js"
+    "build": "prisma generate && prisma db push && tsc",
+    "start": "node dist/src/server.js",
+    "postinstall": "prisma generate"
   },
   "keywords": [],
   "author": "",
