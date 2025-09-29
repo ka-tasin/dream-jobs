@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/prisma"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String        @id         @default(cuid())
+  name        String
+  email       String        @unique
+  role        Role          @default(USER)
+  provider    AuthProvider? @default(CREDENTIALS)
+  providerId  String?       @default("")
+  password    String?
+  createdAt   DateTime      @default(now())
+
+  jobs        Job[]         @relation("UserJobs")        
+  applications Application[]                           
+  savedJobs   SavedJob[]                               
+
+  @@map("users")
+}
+
+model Job {
+  id          String        @id @default(cuid())
+  title       String
+  description String
+  role        String
+  company     String
+  location    String
+  type        JobType
+  officeTime  String
+  salary      Float?
+  postedAt    DateTime      @default(now())
+  deadline    DateTime?
+  createdBy   String
+
+  creator     User          @relation("UserJobs", fields: [createdBy], references: [id])
+  applications Application[]
+  savedBy     SavedJob[]
+
+  @@index([title])
+  @@map("jobs")
+}
+
+model Application {
+  id          String   @id @default(cuid())
+  userId      String
+  jobId       String
+  resumeUrl   String?       
+  coverLetter String?
+  status      AppStatus @default(PENDING)
+  appliedAt   DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+  job  Job  @relation(fields: [jobId], references: [id])
+
+  @@map("applications")
+}
+
+model SavedJob {
+  id     String @id @default(cuid())
+  userId String
+  jobId  String
+
+  user User @relation(fields: [userId], references: [id])
+  job  Job  @relation(fields: [jobId], references: [id])
+
+  @@unique([userId, jobId]) 
+  @@map("saved_jobs")
+}
+
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  REMOTE
+  CONTRACT
+  INTERNSHIP
+}
+
+enum Role {
+  USER
+  ADMIN
+  EMPLOYER
+}
+
+enum AuthProvider {
+  CREDENTIALS
+  GOOGLE
+  FACEBOOK
+}
+
+enum AppStatus {
+  PENDING
+  REVIEWED
+  ACCEPTED
+  REJECTED
+}
