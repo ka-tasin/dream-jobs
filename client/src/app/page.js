@@ -1,4 +1,3 @@
-// import ParallaxBanner from "./components/Home/Banner/Banner";
 import InteractiveBanner from "@/custom-components/Home/Banner/Banner";
 import { TopJobsSection } from "@/custom-components/Home/TopJobs/TopJobsSection";
 import { StatsSection } from "@/custom-components/Home/Counts/Counts";
