@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export function JobCard({ title, company, location, salary, type }) {
+export function JobCard({ title, company, location, salary, type, id }) {
   return (
     <div className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
       <h3 className="text-lg font-semibold text-black">{title}</h3>
@@ -15,7 +15,7 @@ export function JobCard({ title, company, location, salary, type }) {
           {salary}
           <span className="text-sm font-extrabold">৳</span>
         </span>
-        <Link href="/jobs">
+        <Link href={`/jobs/${id}`}>
           <button className="text-sm font-medium px-4 py-2 pb-3 hover:bg-amber-500 bg-amber-600 text-white rounded-md">
             details
           </button>

@@ -184,6 +184,7 @@ export default function AllJobsPage() {
                   location={job.location}
                   salary={job.salary}
                   type={job.type}
+                  id={job.id}
                 />
               </motion.div>
             ))}
