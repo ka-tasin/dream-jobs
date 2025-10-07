@@ -1,26 +1,33 @@
+// client/src/lib/utils/fetchClient.ts
 const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-const fetchClient = async (
-  endpoint,
-  { method = "GET", body, headers = {} } = {}
-) => {
+export interface FetchClientOptions extends Omit<RequestInit, "body"> {
+  body?: any;
+}
+
+export interface FetchClientError {
+  message: string;
+  status: number;
+  data: any;
+}
+
+const fetchClient = async <T = any>(
+  endpoint: string,
+  { method = "GET", headers = {}, body, ...rest }: FetchClientOptions = {}
+): Promise<T> => {
   try {
-    const config = {
+    const config: RequestInit = {
       method,
       headers: {
         "Content-Type": "application/json",
         ...headers,
       },
+      ...rest,
     };
 
-    // Attach body only if present and not GET
     if (body && method !== "GET") {
       config.body = JSON.stringify(body);
     }
-
-    // Future token logic can be added here:
-    // const token = getAuthToken();
-    // if (token) config.headers.Authorization = `Bearer ${token}`;
 
     const res = await fetch(`${BASE_URL}${endpoint}`, config);
 
@@ -31,17 +38,16 @@ const fetchClient = async (
         message: data?.message || "An error occurred",
         status: res.status,
         data,
-      };
+      } as FetchClientError;
     }
 
-    return data;
-  } catch (error) {
-    // Format error consistently
+    return data as T;
+  } catch (error: any) {
     throw {
       message: error.message || "Network error",
       status: error.status || 500,
       data: error.data || null,
-    };
+    } as FetchClientError;
   }
 };
 

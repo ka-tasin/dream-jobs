@@ -1,28 +1,21 @@
 "use client";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import AuthContext from "@/contexts/AuthContext";
 import { toast } from "react-toastify";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { FiEye, FiEyeOff } from "react-icons/fi";
+import apiClient from "@/lib/utils/axiosFetcher";
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [photoURL, setPhotoURL] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [passwordError, setPasswordError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const {
-    createUser,
-    googleLogin,
-    githubLogin,
-    loading: authLoading,
-  } = useContext(AuthContext);
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,11 +45,17 @@ export default function RegisterPage() {
     }
 
     try {
-      await createUser(email, password, name, photoURL, e.target);
+      const data = await apiClient("/api/v1/auth/register", {
+        method: "POST",
+        body: { name, email, password },
+      });
+
+      localStorage.setItem("token", data.token);
+
       toast.success("Registered successfully!");
-      router.push("/dashboard");
+      router.push("/");
     } catch (error: any) {
-      toast.error(error.message || "Registration failed. Please try again.");
+      toast.error(error.message || "Registration failed.");
     } finally {
       setIsLoading(false);
     }
@@ -64,9 +63,8 @@ export default function RegisterPage() {
 
   const handleGoogleLogin = async () => {
     try {
-      await googleLogin();
-      toast.success("Registered with Google successfully!");
-      router.push("/dashboard");
+      const data = await apiClient("/api/v1/auth/google");
+      window.location.href = data.url;
     } catch (error: any) {
       toast.error(error.message || "Google registration failed.");
     }
@@ -74,9 +72,8 @@ export default function RegisterPage() {
 
   const handleGithubLogin = async () => {
     try {
-      await githubLogin();
-      toast.success("Registered with GitHub successfully!");
-      router.push("/dashboard");
+      const data = await apiClient("/api/v1/auth/github");
+      window.location.href = data.url;
     } catch (error: any) {
       toast.error(error.message || "GitHub registration failed.");
     }
@@ -98,12 +95,11 @@ export default function RegisterPage() {
               </label>
               <input
                 id="name"
-                name="name"
                 type="text"
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[#C10007] focus:ring-2 focus:ring-[#c1000720] outline-none transition duration-200"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[#38A169] focus:ring-2 focus:ring-[#38A169]/30 outline-none transition duration-200"
                 placeholder="John Doe"
                 autoFocus
               />
@@ -118,32 +114,12 @@ export default function RegisterPage() {
               </label>
               <input
                 id="email"
-                name="email"
                 type="email"
-                autoComplete="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[#C10007] focus:ring-2 focus:ring-[#c1000720] outline-none transition duration-200"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[#38A169] focus:ring-2 focus:ring-[#38A169]/30 outline-none transition duration-200"
                 placeholder="your@email.com"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="photo"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Photo URL
-              </label>
-              <input
-                id="photo"
-                name="photo"
-                type="url"
-                value={photoURL}
-                onChange={(e) => setPhotoURL(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[#C10007] focus:ring-2 focus:ring-[#c1000720] outline-none transition duration-200"
-                placeholder="https://example.com/photo.jpg"
               />
             </div>
 
@@ -157,12 +133,11 @@ export default function RegisterPage() {
               <div className="relative">
                 <input
                   id="password"
-                  name="password"
                   type={showPassword ? "text" : "password"}
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[#C10007] focus:ring-2 focus:ring-[#c1000720] outline-none transition duration-200 pr-10"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[#38A169] focus:ring-2 focus:ring-[#38A169]/30 outline-none transition duration-200 pr-10"
                   placeholder="••••••••"
                 />
                 <button
@@ -181,36 +156,10 @@ export default function RegisterPage() {
             <div className="pt-2">
               <button
                 type="submit"
-                disabled={isLoading || authLoading}
-                className="w-full flex justify-center items-center py-3 px-4 bg-[#C10007] hover:bg-[#c10027ca] focus:ring-[#C10007] focus:ring-offset-2 text-white font-medium rounded-lg shadow-sm focus:outline-none focus:ring-2 transition duration-200 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
+                disabled={isLoading}
+                className="w-full flex justify-center items-center py-3 px-4 bg-[#38A169] hover:bg-[#2F855A] focus:ring-[#38A169] focus:ring-offset-2 text-white font-medium rounded-lg shadow-sm focus:outline-none focus:ring-2 transition duration-200 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
               >
-                {isLoading ? (
-                  <>
-                    <svg
-                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    Registering...
-                  </>
-                ) : (
-                  "Register"
-                )}
+                {isLoading ? "Registering..." : "Register"}
               </button>
             </div>
           </form>
@@ -230,8 +179,8 @@ export default function RegisterPage() {
             <div className="mt-6 grid grid-cols-2 gap-3">
               <button
                 onClick={handleGoogleLogin}
-                disabled={authLoading}
-                className="w-full inline-flex justify-center items-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#C10007] transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isLoading}
+                className="w-full inline-flex justify-center items-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#38A169] transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <FcGoogle />
                 <span className="ml-2">Google</span>
@@ -239,8 +188,8 @@ export default function RegisterPage() {
 
               <button
                 onClick={handleGithubLogin}
-                disabled={authLoading}
-                className="w-full inline-flex justify-center items-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#C10007] transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isLoading}
+                className="w-full inline-flex justify-center items-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#38A169] transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <FaGithub />
                 <span className="ml-2">GitHub</span>
@@ -253,7 +202,7 @@ export default function RegisterPage() {
               Already have an account?{" "}
               <Link
                 href="/login"
-                className="font-medium text-[#C10007] hover:text-[#d1686c]"
+                className="font-medium text-blue-600 hover:text-blue-800"
               >
                 Sign in
               </Link>

@@ -1,46 +1,42 @@
 "use client";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import AuthContext from "@/contexts/AuthContext";
 import { toast } from "react-toastify";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
+import apiClient from "@/lib/utils/axiosFetcher";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const {
-    signIn,
-    googleLogin,
-    githubLogin,
-    loading: authLoading,
-  } = useContext(AuthContext);
-  const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      await signIn(email, password);
+      const res = await apiClient("/api/v1/auth/login", {
+        method: "POST",
+        body: { email, password },
+      });
+
+      const rawToken = res.data?.token?.replace(/^Bearer\s+/i, "");
+      localStorage.setItem("token", rawToken);
+
       toast.success("Logged in successfully!");
       router.back();
     } catch (error: any) {
-      console.log(error);
-      toast.error("Login failed. Please try again.");
-    } finally {
-      setIsLoading(false);
+      toast.error(error.message || "Login failed. Please try again.");
     }
   };
 
   const handleGoogleLogin = async () => {
     try {
-      await googleLogin();
-      toast.success("Logged in with Google successfully!");
-      //   router.push("/dashboard");
-      router.back();
+      const data = await apiClient("/api/v1/auth/google");
+      window.location.href = data.url;
     } catch (error: any) {
       toast.error(error.message || "Google login failed.");
     }
@@ -48,10 +44,8 @@ export default function LoginPage() {
 
   const handleGithubLogin = async () => {
     try {
-      await githubLogin();
-      toast.success("Logged in with GitHub successfully!");
-      //   router.push("/dashboard");
-      router.back();
+      const data = await apiClient("/api/v1/auth/github");
+      window.location.href = data.url;
     } catch (error: any) {
       toast.error(error.message || "GitHub login failed.");
     }
@@ -75,13 +69,12 @@ export default function LoginPage() {
               </label>
               <input
                 id="email"
-                name="email"
                 type="email"
                 autoComplete="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[#C10007] focus:ring-2 focus:ring-[#c1000720] outline-none transition duration-200 pr-10"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[#38A169] focus:ring-2 focus:ring-[#38A169]/30 outline-none transition duration-200 pr-10"
                 placeholder="your@email.com"
               />
             </div>
@@ -95,13 +88,12 @@ export default function LoginPage() {
               </label>
               <input
                 id="password"
-                name="password"
                 type="password"
                 autoComplete="current-password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[#C10007] focus:ring-2 focus:ring-[#c1000720] outline-none transition duration-200 pr-10"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[#38A169] focus:ring-2 focus:ring-[#38A169]/30 outline-none transition duration-200 pr-10"
                 placeholder="••••••••"
               />
             </div>
@@ -110,7 +102,6 @@ export default function LoginPage() {
               <div className="flex items-center">
                 <input
                   id="remember-me"
-                  name="remember-me"
                   type="checkbox"
                   className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
                 />
@@ -121,50 +112,15 @@ export default function LoginPage() {
                   Remember me
                 </label>
               </div>
-
-              {/* <div className="text-sm">
-                <Link
-                  href="/forgot-password"
-                  className="font-medium text-indigo-600 hover:text-indigo-500"
-                >
-                  Forgot password?
-                </Link>
-              </div> */}
             </div>
 
             <div>
               <button
                 type="submit"
-                disabled={isLoading || authLoading}
-                className="w-full flex justify-center items-center py-3 px-4 bg-[#C10007] hover:bg-[#c10027ca] focus:ring-[#C10007] focus:ring-offset-2 text-white font-medium rounded-lg shadow-sm focus:outline-none focus:ring-2 transition duration-200 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
+                disabled={isLoading}
+                className="w-full flex justify-center items-center py-3 px-4 bg-[#38A169] hover:bg-[#2F855A] focus:ring-[#38A169] focus:ring-offset-2 text-white font-medium rounded-lg shadow-sm focus:outline-none focus:ring-2 transition duration-200 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
               >
-                {isLoading ? (
-                  <>
-                    <svg
-                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    Signing in...
-                  </>
-                ) : (
-                  "Sign in"
-                )}
+                {isLoading ? "Signing in..." : "Sign in"}
               </button>
             </div>
           </form>
@@ -184,8 +140,8 @@ export default function LoginPage() {
             <div className="mt-6 grid grid-cols-2 gap-3">
               <button
                 onClick={handleGoogleLogin}
-                disabled={authLoading}
-                className="w-full inline-flex justify-center items-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#C10007] transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isLoading}
+                className="w-full inline-flex justify-center items-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#38A169] transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <FcGoogle />
                 <span className="ml-2">Google</span>
@@ -193,8 +149,8 @@ export default function LoginPage() {
 
               <button
                 onClick={handleGithubLogin}
-                disabled={authLoading}
-                className="w-full inline-flex justify-center items-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#C10007] transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isLoading}
+                className="w-full inline-flex justify-center items-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#38A169] transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <FaGithub />
                 <span className="ml-2">GitHub</span>
@@ -207,7 +163,7 @@ export default function LoginPage() {
               Don&apos;t have an account?{" "}
               <Link
                 href="/register"
-                className="font-medium text-[#C10007] hover:text-[#d1686c]"
+                className="font-medium text-blue-600 hover:text-blue-800"
               >
                 Sign up
               </Link>

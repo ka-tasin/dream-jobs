@@ -18,9 +18,9 @@
         "name": "next"
       }
     ],
-    "baseUrl": ".",
+    "baseUrl": "src",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["*"]
     }
   },
   "include": [
@@ -28,7 +28,8 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx",
-    "src/app/page.js"
+    "src/app/page.js",
+    "src/lib/utils/axiosFetcher.ts"
   ],
   "exclude": ["node_modules"]
 }
