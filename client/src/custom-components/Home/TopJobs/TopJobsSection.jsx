@@ -150,6 +150,7 @@ export function TopJobsSection() {
                       location={job.location}
                       salary={job.salary}
                       type={job.type}
+                      id={job.id}
                     />
                   ))}
                 </div>
@@ -167,6 +168,7 @@ export function TopJobsSection() {
                         location={job.location}
                         salary={job.salary}
                         type={job.type}
+                        id={job.id}
                       />
                     ))
                   ) : (
@@ -189,6 +191,7 @@ export function TopJobsSection() {
                         location={job.location}
                         salary={job.salary}
                         type={job.type}
+                        id={job.id}
                       />
                     ))
                   ) : (
@@ -210,6 +213,7 @@ export function TopJobsSection() {
                         company={job.company}
                         location={job.location}
                         salary={job.salary}
+                        id={job.id}
                         type={job.type}
                       />
                     ))

@@ -26,15 +26,34 @@ export default function JobDetailsPage() {
   const [job, setJob] = useState<Job | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
+    setToken(localStorage.getItem("token"));
+  }, []);
+
+  useEffect(() => {
+    if (!token) return;
     const fetchJob = async () => {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        setError("No token found, please login");
+        setLoading(false);
+        return;
+      }
+
       try {
-        const response = await apiClient(`/api/v1/jobs/${id}`);
-        if (!response.data?.data) {
+        const response = await apiClient(`/api/v1/jobs/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response?.data) {
           setError("Job not found");
         } else {
-          setJob(response.data);
+          setJob(response?.data);
         }
       } catch (err: any) {
         setError(err.message || "Failed to fetch job");
@@ -44,11 +63,17 @@ export default function JobDetailsPage() {
     };
 
     fetchJob();
-  }, [id]);
+  }, [token, id]);
+
+  console.log(job);
 
   if (loading) return <DreamJobsLoader title="Loading Job Details..." />;
   if (error)
-    return <div className="text-center text-red-500 mt-12">{error}</div>;
+    return (
+      <div className="text-center h-screen items-center flex text-red-500 mt-12">
+        {error}
+      </div>
+    );
   if (!job) return null;
 
   return (

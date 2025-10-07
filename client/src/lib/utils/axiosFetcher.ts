@@ -1,4 +1,3 @@
-// client/src/lib/utils/fetchClient.ts
 const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export interface FetchClientOptions extends Omit<RequestInit, "body"> {
@@ -16,10 +15,14 @@ const fetchClient = async <T = any>(
   { method = "GET", headers = {}, body, ...rest }: FetchClientOptions = {}
 ): Promise<T> => {
   try {
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
     const config: RequestInit = {
       method,
       headers: {
         "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...headers,
       },
       ...rest,
@@ -30,7 +33,6 @@ const fetchClient = async <T = any>(
     }
 
     const res = await fetch(`${BASE_URL}${endpoint}`, config);
-
     const data = await res.json();
 
     if (!res.ok) {
