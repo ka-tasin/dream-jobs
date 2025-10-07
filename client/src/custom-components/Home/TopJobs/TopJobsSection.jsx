@@ -6,7 +6,7 @@ import { useInView } from "react-intersection-observer";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import apiClient from "@/lib/utils/axiosFetcher";
-import { DreamJobsLoader } from "../../common/DataLoading/DataLoading";
+import { DreamJobsLoader } from "@/custom-components/common/DataLoading/DataLoading";
 import Link from "next/link";
 
 export function TopJobsSection() {

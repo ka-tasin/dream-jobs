@@ -63,6 +63,9 @@ model Application {
   @@map("applications")
 }
 
+
+
+
 model SavedJob {
   id     String @id @default(cuid())
   userId String

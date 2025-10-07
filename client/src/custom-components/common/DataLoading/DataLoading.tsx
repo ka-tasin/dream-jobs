@@ -1,7 +1,12 @@
 "use client";
+
 import { motion } from "framer-motion";
 
-export const DreamJobsLoader = ({ title }) => {
+interface DreamJobsLoaderProps {
+  title: string;
+}
+
+export const DreamJobsLoader: React.FC<DreamJobsLoaderProps> = ({ title }) => {
   return (
     <div className="flex my-20 flex-col items-center justify-center gap-6 min-h-[200px]">
       {/* Animated Title */}
@@ -12,14 +17,8 @@ export const DreamJobsLoader = ({ title }) => {
         className="flex items-center gap-2"
       >
         <motion.span
-          animate={{
-            scale: [1, 1.1, 1],
-          }}
-          transition={{
-            duration: 1.5,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
+          animate={{ scale: [1, 1.1, 1] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
           className="text-4xl font-semibold text-black"
         >
           {title}
@@ -54,27 +53,16 @@ export const DreamJobsLoader = ({ title }) => {
           <motion.div
             key={item}
             animate={{ opacity: [0.6, 1, 0.6] }}
-            transition={{
-              duration: 1.5,
-              repeat: Infinity,
-              delay: item * 0.2,
-            }}
+            transition={{ duration: 1.5, repeat: Infinity, delay: item * 0.2 }}
             className="border border-gray-200 rounded-lg p-6"
           >
-            {/* Title */}
             <div className="h-6 w-3/4 bg-gray-200 rounded mb-4"></div>
-
-            {/* Company */}
             <div className="h-4 w-1/2 bg-gray-200 rounded"></div>
-
-            {/* Location & Type */}
             <div className="flex mt-4 gap-2">
               <div className="h-3 w-1/3 bg-gray-200 rounded"></div>
               <div className="h-3 w-3 bg-gray-200 rounded-full"></div>
               <div className="h-3 w-1/4 bg-gray-200 rounded"></div>
             </div>
-
-            {/* Salary & Apply Button */}
             <div className="flex justify-between items-center mt-6">
               <div className="h-4 w-1/2 bg-gray-200 rounded"></div>
               <div className="h-8 w-20 bg-gray-300 rounded-md"></div>

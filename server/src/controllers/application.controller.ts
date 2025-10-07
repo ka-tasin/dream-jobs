@@ -11,7 +11,7 @@ export default class ApplicationController {
 
   async getApplications(req: Request, res: Response) {
     try {
-      const user = (req as any).user; // from JWT
+      const user = (req as any).user;
       if (!user) return res.status(401).json({ message: "Unauthorized" });
 
       const applications =
@@ -41,5 +41,37 @@ export default class ApplicationController {
       console.error(err);
       return res.status(500).json({ message: "Internal Server Error" });
     }
+  }
+
+  async apply(req: Request, res: Response): Promise<Response> {
+    try {
+      const user = (req as any).user; // JWT payload
+      const { jobId, resumeUrl, coverLetter } = req.body;
+
+      const application = await this.unitOfService.Application.applyToJob(
+        user.id,
+        jobId,
+        resumeUrl,
+        coverLetter
+      );
+
+      return res.status(201).json({ success: true, data: application });
+    } catch (err: any) {
+      return res.status(400).json({ success: false, message: err.message });
+    }
+  }
+
+  async getUserApplications(req: Request, res: Response): Promise<Response> {
+    const user = (req as any).user;
+    const apps = await this.unitOfService.Application.getUserApplications(
+      user.id
+    );
+    return res.status(200).json({ success: true, data: apps });
+  }
+
+  async getJobApplications(req: Request, res: Response): Promise<Response> {
+    const { jobId } = req.params;
+    const apps = await this.unitOfService.Application.getJobApplications(jobId);
+    return res.status(200).json({ success: true, data: apps });
   }
 }

@@ -3,8 +3,8 @@
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import apiClient from "@/lib/utils/axiosFetcher";
-import { DreamJobsLoader } from "@/custom-components/common/DataLoading/DataLoading";
 import { Button } from "@/components/ui/button";
+import { DetailsLoading } from "@/custom-components/common/DataLoading/DetailsLoading";
 
 interface Job {
   id: string;
@@ -65,9 +65,12 @@ export default function JobDetailsPage() {
     fetchJob();
   }, [token, id]);
 
-  console.log(job);
-
-  if (loading) return <DreamJobsLoader title="Loading Job Details..." />;
+  if (loading)
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <DetailsLoading />
+      </div>
+    );
   if (error)
     return (
       <div className="text-center h-screen items-center flex text-red-500 mt-12">
