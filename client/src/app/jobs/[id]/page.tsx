@@ -5,6 +5,18 @@ import { useEffect, useState } from "react";
 import apiClient from "@/lib/utils/axiosFetcher";
 import { Button } from "@/components/ui/button";
 import { DetailsLoading } from "@/custom-components/common/DataLoading/DetailsLoading";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "react-toastify";
+import fetchClient from "@/lib/utils/axiosFetcher";
 
 interface Job {
   id: string;
@@ -28,12 +40,18 @@ export default function JobDetailsPage() {
   const [error, setError] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [resumeUrl, setResumeUrl] = useState("");
+  const [coverLetter, setCoverLetter] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
   useEffect(() => {
     setToken(localStorage.getItem("token"));
   }, []);
 
   useEffect(() => {
     if (!token) return;
+
     const fetchJob = async () => {
       const token = localStorage.getItem("token");
 
@@ -53,7 +71,7 @@ export default function JobDetailsPage() {
         if (!response?.data) {
           setError("Job not found");
         } else {
-          setJob(response?.data);
+          setJob(response.data);
         }
       } catch (err: any) {
         setError(err.message || "Failed to fetch job");
@@ -64,6 +82,35 @@ export default function JobDetailsPage() {
 
     fetchJob();
   }, [token, id]);
+
+  console.log(job, id);
+
+  const handleApply = async () => {
+    if (!token) {
+      toast.error("Please login first");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await fetchClient("/api/v1/applications/apply", {
+        method: "POST",
+        body: {
+          jobId: job?.id,
+          resumeUrl,
+          coverLetter,
+        },
+      });
+
+      toast.success("Application submitted successfully");
+      setIsModalOpen(false);
+      setResumeUrl("");
+      setCoverLetter("");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to apply");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   if (loading)
     return (
@@ -114,11 +161,56 @@ export default function JobDetailsPage() {
           variant="default"
           size="lg"
           className="bg-amber-600 hover:bg-amber-700 text-white px-6 py-3"
-          onClick={() => alert("Apply functionality to be implemented")}
+          onClick={() => setIsModalOpen(true)}
         >
           Apply Now
         </Button>
       </div>
+
+      {/* Application Modal */}
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="">
+          <DialogHeader className="">
+            {/* Wrap text inside <span> to satisfy forwardRef typing */}
+            <DialogTitle className="">
+              <span>Apply to {job.title}</span>
+            </DialogTitle>
+            <DialogDescription className="">
+              <span>Submit your resume link and a short cover letter.</span>
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 mt-4">
+            <Input
+              className=""
+              type="url"
+              placeholder="Resume URL (Google Drive, Dropbox, etc.)"
+              value={resumeUrl}
+              onChange={(e) => setResumeUrl(e.target.value)}
+              required
+            />
+            <Textarea
+              className=""
+              placeholder="Cover Letter"
+              value={coverLetter}
+              onChange={(e) => setCoverLetter(e.target.value)}
+              rows={4}
+            />
+          </div>
+
+          <DialogFooter className="">
+            <Button
+              className="w-full"
+              variant="default"
+              size="md"
+              onClick={handleApply}
+              disabled={submitting}
+            >
+              {submitting ? "Applying..." : "Apply Now"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }

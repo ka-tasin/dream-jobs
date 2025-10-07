@@ -193,7 +193,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "D:\\Projects\\dream-jobs\\prisma\\generated\\prisma",
+      "value": "D:\\Projects\\2025\\dream-jobs\\server\\prisma\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -204,10 +204,14 @@ const config = {
         "fromEnvVar": null,
         "value": "windows",
         "native": true
+      },
+      {
+        "fromEnvVar": null,
+        "value": "debian-openssl-3.0.x"
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "D:\\Projects\\dream-jobs\\prisma\\schema.prisma",
+    "sourceFilePath": "D:\\Projects\\2025\\dream-jobs\\server\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -221,6 +225,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -229,8 +234,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"./generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id         String        @id @default(cuid())\n  name       String\n  email      String        @unique\n  role       Role          @default(USER)\n  provider   AuthProvider? @default(CREDENTIALS)\n  providerId String?       @default(\"\")\n  password   String?\n  createdAt  DateTime      @default(now())\n\n  jobs         Job[]         @relation(\"UserJobs\")\n  applications Application[]\n  savedJobs    SavedJob[]\n\n  @@map(\"users\")\n}\n\nmodel Job {\n  id          String    @id @default(cuid())\n  title       String\n  description String\n  role        String\n  company     String\n  location    String\n  type        JobType\n  officeTime  String\n  salary      Float?\n  postedAt    DateTime  @default(now())\n  deadline    DateTime?\n  createdBy   String\n\n  creator      User          @relation(\"UserJobs\", fields: [createdBy], references: [id])\n  applications Application[]\n  savedBy      SavedJob[]\n\n  @@index([title])\n  @@map(\"jobs\")\n}\n\nmodel Application {\n  id          String    @id @default(cuid())\n  userId      String\n  jobId       String\n  resumeUrl   String?\n  coverLetter String?\n  status      AppStatus @default(PENDING)\n  appliedAt   DateTime  @default(now())\n\n  user User @relation(fields: [userId], references: [id])\n  job  Job  @relation(fields: [jobId], references: [id])\n\n  @@map(\"applications\")\n}\n\nmodel SavedJob {\n  id     String @id @default(cuid())\n  userId String\n  jobId  String\n\n  user User @relation(fields: [userId], references: [id])\n  job  Job  @relation(fields: [jobId], references: [id])\n\n  @@unique([userId, jobId])\n  @@map(\"saved_jobs\")\n}\n\nenum JobType {\n  FULL_TIME\n  PART_TIME\n  REMOTE\n  CONTRACT\n  INTERNSHIP\n}\n\nenum Role {\n  USER\n  ADMIN\n  EMPLOYER\n}\n\nenum AuthProvider {\n  CREDENTIALS\n  GOOGLE\n  FACEBOOK\n}\n\nenum AppStatus {\n  PENDING\n  REVIEWED\n  ACCEPTED\n  REJECTED\n}\n",
-  "inlineSchemaHash": "414677a25b94957fd96da95260b0c96d3a79f928c0d8332bc2de05ef65ef73cd",
+  "inlineSchema": "generator client {\n  provider      = \"prisma-client-js\"\n  output        = \"./generated/prisma\"\n  binaryTargets = [\"native\", \"debian-openssl-3.0.x\"]\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id         String        @id @default(cuid())\n  name       String\n  email      String        @unique\n  role       Role          @default(USER)\n  provider   AuthProvider? @default(CREDENTIALS)\n  providerId String?       @default(\"\")\n  password   String?\n  createdAt  DateTime      @default(now())\n\n  jobs         Job[]         @relation(\"UserJobs\")\n  applications Application[]\n  savedJobs    SavedJob[]\n\n  @@map(\"users\")\n}\n\nmodel Job {\n  id          String    @id @default(cuid())\n  title       String\n  description String\n  role        String\n  company     String\n  location    String\n  type        JobType\n  officeTime  String\n  salary      Float?\n  postedAt    DateTime  @default(now())\n  deadline    DateTime?\n  createdBy   String\n\n  creator      User          @relation(\"UserJobs\", fields: [createdBy], references: [id])\n  applications Application[]\n  savedBy      SavedJob[]\n\n  @@index([title])\n  @@map(\"jobs\")\n}\n\nmodel Application {\n  id          String    @id @default(cuid())\n  userId      String\n  jobId       String\n  resumeUrl   String?\n  coverLetter String?\n  status      AppStatus @default(PENDING)\n  appliedAt   DateTime  @default(now())\n\n  user User @relation(fields: [userId], references: [id])\n  job  Job  @relation(fields: [jobId], references: [id])\n\n  @@map(\"applications\")\n}\n\nmodel SavedJob {\n  id     String @id @default(cuid())\n  userId String\n  jobId  String\n\n  user User @relation(fields: [userId], references: [id])\n  job  Job  @relation(fields: [jobId], references: [id])\n\n  @@unique([userId, jobId])\n  @@map(\"saved_jobs\")\n}\n\nenum JobType {\n  FULL_TIME\n  PART_TIME\n  REMOTE\n  CONTRACT\n  INTERNSHIP\n}\n\nenum Role {\n  USER\n  ADMIN\n  EMPLOYER\n}\n\nenum AuthProvider {\n  CREDENTIALS\n  GOOGLE\n  FACEBOOK\n}\n\nenum AppStatus {\n  PENDING\n  REVIEWED\n  ACCEPTED\n  REJECTED\n}\n",
+  "inlineSchemaHash": "b532b87d4c24d7206409fb27557adccaaf12b71f94149627ef4bb16c20ba513d",
   "copyEngine": true
 }
 
@@ -271,6 +276,10 @@ Object.assign(exports, Prisma)
 // file annotations for bundling tools to include these files
 path.join(__dirname, "query_engine-windows.dll.node");
 path.join(process.cwd(), "prisma/generated/prisma/query_engine-windows.dll.node")
+
+// file annotations for bundling tools to include these files
+path.join(__dirname, "libquery_engine-debian-openssl-3.0.x.so.node");
+path.join(process.cwd(), "prisma/generated/prisma/libquery_engine-debian-openssl-3.0.x.so.node")
 // file annotations for bundling tools to include these files
 path.join(__dirname, "schema.prisma");
 path.join(process.cwd(), "prisma/generated/prisma/schema.prisma")
