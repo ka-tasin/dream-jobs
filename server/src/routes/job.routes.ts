@@ -21,7 +21,7 @@ jobRouter.post(
 jobRouter.delete(
   "/:id",
   authMiddleware.authenticate.bind(authMiddleware),
-  roleMiddleware.authorize([Role.EMPLOYER, Role.ADMIN]),
+  roleMiddleware.authorize([Role.USER, Role.EMPLOYER, Role.ADMIN]),
   jobController.delete.bind(jobController)
 );
 
@@ -32,6 +32,7 @@ jobRouter.get(
   authMiddleware.authenticate.bind(authMiddleware),
   jobController.getById.bind(jobController)
 );
+
 jobRouter.get(
   "/employer/:userId",
   jobController.getByCreator.bind(jobController)

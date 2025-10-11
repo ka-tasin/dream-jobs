@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { FaBullseye, FaHandshake, FaRocket, FaUsers } from "react-icons/fa";
 import { TeamMemberCard } from "@/custom-components/About-us/TeamMembers/TeamMembers";
+import Image from "next/image";
 
 export default function AboutUsPage() {
   const [ref, inView] = useInView({
@@ -18,22 +19,22 @@ export default function AboutUsPage() {
       image: "/images/kat.jpg",
     },
     {
-      name: "Sarah Johnson",
+      name: "David Johnson",
       role: "Head of Product",
       bio: "Product specialist focused on user experience",
-      image: "/team/sarah.jpg",
+      image: "/images/team/david.png",
     },
     {
       name: "Michael Chen",
       role: "Lead Developer",
       bio: "Full-stack developer building the platform",
-      image: "/team/michael.jpg",
+      image: "/images/team/michel.png",
     },
     {
-      name: "Aisha Rahman",
+      name: "Abid Rahman",
       role: "Community Manager",
       bio: "Connects job seekers with opportunities",
-      image: "/team/aisha.jpg",
+      image: "/images/team/abid.png",
     },
   ];
 
@@ -132,10 +133,12 @@ export default function AboutUsPage() {
                 visible: { x: 0, opacity: 1, transition: { delay: 0.5 } },
               }}
             >
-              <img
+              <Image
                 src="/images/team.png"
                 alt="DreamJobs team working"
-                className="rounded-lg shadow-xl"
+                width={800} // set a proper width
+                height={600} // set a proper height
+                className="rounded-lg shadow-xl object-cover"
               />
             </motion.div>
             <motion.div
