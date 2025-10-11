@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import apiClient from "@/lib/utils/axiosFetcher";
 import { JobCard } from "@/custom-components/Home/TopJobs/JobCard";
 import { DreamJobsLoader } from "@/custom-components/common/DataLoading/DataLoading";
+import Link from "next/link";
 
 interface Job {
   id: string;
@@ -143,25 +144,41 @@ export default function AllJobsPage() {
         {/* Job Type Quick Filters */}
         <motion.div
           variants={itemVariants}
-          className="flex gap-2 mb-8 flex-wrap"
+          className="flex  gap-2 mb-8 flex-wrap"
         >
-          {["all", "PART_TIME", "FULL_TIME", "REMOTE", "INTERNSHIP"].map(
-            (type) => (
-              <Button
-                key={type}
-                size="sm"
-                variant={jobTypeFilter === type ? "default" : "outline"}
-                className={`px-6 py-3 rounded-full ${
-                  jobTypeFilter === type
-                    ? "bg-gray-800 text-white"
-                    : "border-gray-300"
-                }`}
-                onClick={() => setJobTypeFilter(type)}
+          <div className="flex w-full justify-between items-center">
+            <div>
+              {["all", "PART_TIME", "FULL_TIME", "REMOTE", "INTERNSHIP"].map(
+                (type) => (
+                  <Button
+                    key={type}
+                    size="sm"
+                    variant={jobTypeFilter === type ? "default" : "outline"}
+                    className={`px-6 py-3 rounded-full ${
+                      jobTypeFilter === type
+                        ? "bg-gray-800 text-white"
+                        : "border-gray-300"
+                    }`}
+                    onClick={() => setJobTypeFilter(type)}
+                  >
+                    {type.replace("_", " ").toUpperCase()}
+                  </Button>
+                )
+              )}
+            </div>
+            <div>
+              <motion.div
+                variants={itemVariants}
+                className="flex justify-end mb-6"
               >
-                {type.replace("_", " ").toUpperCase()}
-              </Button>
-            )
-          )}
+                <Link href="/add-jobs">
+                  <Button className="bg-gray-800 hover:bg-gray-700 text-white px-6 py-2">
+                    + Add Job
+                  </Button>
+                </Link>
+              </motion.div>
+            </div>
+          </div>
         </motion.div>
 
         {/* Job Count */}

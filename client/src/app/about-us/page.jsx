@@ -4,6 +4,7 @@ import { useInView } from "react-intersection-observer";
 import { FaBullseye, FaHandshake, FaRocket, FaUsers } from "react-icons/fa";
 import { TeamMemberCard } from "@/custom-components/About-us/TeamMembers/TeamMembers";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function AboutUsPage() {
   const [ref, inView] = useInView({
@@ -136,8 +137,8 @@ export default function AboutUsPage() {
               <Image
                 src="/images/team.png"
                 alt="DreamJobs team working"
-                width={800} // set a proper width
-                height={600} // set a proper height
+                width={800}
+                height={600}
                 className="rounded-lg shadow-xl object-cover"
               />
             </motion.div>
@@ -331,12 +332,18 @@ export default function AboutUsPage() {
             talent, we&apos;re here to help you succeed.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <button className="px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white font-medium rounded-lg">
-              Post a Job
-            </button>
-            <button className="px-8 py-3 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-lg">
-              Browse Jobs
-            </button>
+            <Link href="/add-jobs">
+              {" "}
+              <button className="px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white font-medium rounded-lg">
+                Post a Job
+              </button>
+            </Link>
+            <Link href="/jobs">
+              {" "}
+              <button className="px-8 py-3 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-lg">
+                Browse Jobs
+              </button>
+            </Link>
           </div>
         </div>
       </motion.section>
