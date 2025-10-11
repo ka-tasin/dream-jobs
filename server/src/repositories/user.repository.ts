@@ -14,7 +14,7 @@ export default class UserRepository implements IUserRepository {
   async findByEmail(email: string): Promise<Partial<CreateUserModel> | null> {
     return prisma.user.findUnique({
       where: { email },
-      select: { id: true, email: true, name: true, password: true },
+      select: { id: true, email: true, name: true, password: true, role: true },
     });
   }
 
