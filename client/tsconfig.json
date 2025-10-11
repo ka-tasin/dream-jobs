@@ -29,7 +29,10 @@
     "**/*.ts",
     "**/*.tsx",
     "src/app/page.js",
-    "src/lib/utils/axiosFetcher.ts"
+    "src/lib/utils/axiosFetcher.ts",
+    "src/components/ui/select.jsx",
+    "src/components/ui/textarea.tsx",
+    "src/components/ui/input.jsx"
   ],
   "exclude": ["node_modules"]
 }

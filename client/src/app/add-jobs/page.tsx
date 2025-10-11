@@ -164,6 +164,8 @@ export default function AddJobPage() {
                 value={job.title}
                 onChange={handleChange}
                 required
+                className={""}
+                type={"text"}
               />
               <Input
                 name="role"
@@ -171,6 +173,8 @@ export default function AddJobPage() {
                 value={job.role}
                 onChange={handleChange}
                 required
+                className={""}
+                type={"text"}
               />
               <Input
                 name="company"
@@ -178,6 +182,8 @@ export default function AddJobPage() {
                 value={job.company}
                 onChange={handleChange}
                 required
+                className={""}
+                type={"text"}
               />
               <Input
                 name="location"
@@ -185,6 +191,8 @@ export default function AddJobPage() {
                 value={job.location}
                 onChange={handleChange}
                 required
+                className={""}
+                type={"text"}
               />
               <Button
                 type="button"
@@ -210,17 +218,31 @@ export default function AddJobPage() {
               className="space-y-6"
             >
               <Select value={job.type} onValueChange={handleSelect}>
-                <SelectTrigger>
+                <SelectTrigger className={""}>
                   <SelectValue placeholder="Select job type" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ONSITE">On-site</SelectItem>
-                  <SelectItem value="REMOTE">Remote</SelectItem>
-                  <SelectItem value="HYBRID">Hybrid</SelectItem>
-                  <SelectItem value="PART_TIME">Part-time</SelectItem>
-                  <SelectItem value="FULL">Full-time</SelectItem>
-                  <SelectItem value="INTERNSHIP">Internship</SelectItem>
-                  <SelectItem value="CONTRACT">Contract</SelectItem>
+                <SelectContent className={""}>
+                  <SelectItem className={""} value="ONSITE">
+                    On-site
+                  </SelectItem>
+                  <SelectItem className={""} value="REMOTE">
+                    Remote
+                  </SelectItem>
+                  <SelectItem className={""} value="HYBRID">
+                    Hybrid
+                  </SelectItem>
+                  <SelectItem className={""} value="PART_TIME">
+                    Part-time
+                  </SelectItem>
+                  <SelectItem className={""} value="FULL">
+                    Full-time
+                  </SelectItem>
+                  <SelectItem className={""} value="INTERNSHIP">
+                    Internship
+                  </SelectItem>
+                  <SelectItem className={""} value="CONTRACT">
+                    Contract
+                  </SelectItem>
                 </SelectContent>
               </Select>
               <Input
@@ -229,6 +251,8 @@ export default function AddJobPage() {
                 value={job.officeTime}
                 onChange={handleChange}
                 required
+                className={""}
+                type={""}
               />
               <Input
                 name="salary"
@@ -237,6 +261,7 @@ export default function AddJobPage() {
                 value={job.salary}
                 onChange={handleChange}
                 required
+                className={""}
               />
               <Input
                 name="deadline"
@@ -244,6 +269,7 @@ export default function AddJobPage() {
                 value={job.deadline}
                 onChange={handleChange}
                 required
+                className={""}
               />
               <div className="flex justify-between">
                 <Button type="button" onClick={prevStep}>
