@@ -16,7 +16,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import axios from "axios";
+import fetchClient from "@/lib/utils/axiosFetcher";
 
 export default function AddJobPage() {
   const router = useRouter();
@@ -78,25 +78,26 @@ export default function AddJobPage() {
     setPosting(true);
 
     try {
-      // await fetchClient("/api/v1/jobs", {
-      //   method: "POST",
-      //   body: {
-      //     ...job,
-      //     salary: parseFloat(job.salary),
-      //   },
-      await axios.post(
-        "http://localhost:3000/api/v1/jobs",
-        {
+      await fetchClient("/api/v1/jobs", {
+        method: "POST",
+        body: {
           ...job,
           salary: parseFloat(job.salary),
         },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      });
+      // await axios.post(
+      //   "http://localhost:3000/api/v1/jobs",
+      //   {
+      //     ...job,
+      //     salary: parseFloat(job.salary),
+      //   },
+      //   {
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //       Authorization: `Bearer ${localStorage.getItem("token")}`,
+      //     },
+      //   }
+      // );
 
       toast.success("Job posted successfully!");
       router.push("/jobs");
@@ -217,7 +218,9 @@ export default function AddJobPage() {
                   <SelectItem value="REMOTE">Remote</SelectItem>
                   <SelectItem value="HYBRID">Hybrid</SelectItem>
                   <SelectItem value="PART_TIME">Part-time</SelectItem>
+                  <SelectItem value="FULL">Full-time</SelectItem>
                   <SelectItem value="INTERNSHIP">Internship</SelectItem>
+                  <SelectItem value="CONTRACT">Contract</SelectItem>
                 </SelectContent>
               </Select>
               <Input
