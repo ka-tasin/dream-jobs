@@ -13,7 +13,7 @@ const testimonials = [
     role: "UX Designer at TechCorp",
     quote:
       "Landing my dream job was effortless with this platform. The personalized recommendations matched me with perfect opportunities.",
-    avatar: "/avatars/sarah.jpg",
+    avatar: "/avatars/sarah.png",
   },
   {
     id: 2,
@@ -21,7 +21,7 @@ const testimonials = [
     role: "Senior Developer at NexTech",
     quote:
       "The interview preparation resources helped me stand out from other candidates. I received three offers within two weeks!",
-    avatar: "/avatars/michael.jpg",
+    avatar: "/avatars/michael.png",
   },
   {
     id: 3,
@@ -29,7 +29,7 @@ const testimonials = [
     role: "Product Manager at InnoSoft",
     quote:
       "After months of unsuccessful searching elsewhere, I found my ideal position here within days. The salary insights were invaluable.",
-    avatar: "/avatars/emma.jpg",
+    avatar: "/avatars/emma.png",
   },
   {
     id: 4,
@@ -37,23 +37,23 @@ const testimonials = [
     role: "DevOps Engineer at CloudNine",
     quote:
       "The skill assessment tests gave me the confidence to apply for more senior roles than I would have considered otherwise.",
-    avatar: "/avatars/david.jpg",
+    avatar: "/avatars/david.png",
   },
   {
     id: 5,
-    name: "David Kim",
-    role: "DevOps Engineer at CloudNine",
+    name: "Olivia Martinez",
+    role: "Front-end Developer at PixelWave",
     quote:
-      "The skill assessment tests gave me the confidence to apply for more senior roles than I would have considered otherwise.",
-    avatar: "/avatars/david.jpg",
+      "The coding challenges and mock interviews helped me land a position faster than I expected. Truly a game-changer.",
+    avatar: "/avatars/olivia.png",
   },
   {
     id: 6,
-    name: "David Kim",
-    role: "DevOps Engineer at CloudNine",
+    name: "Liam Thompson",
+    role: "Data Analyst at Insightful",
     quote:
-      "The skill assessment tests gave me the confidence to apply for more senior roles than I would have considered otherwise.",
-    avatar: "/avatars/david.jpg",
+      "I loved the platform’s career insights. It guided me to companies that matched my skills perfectly, making job hunting stress-free.",
+    avatar: "/avatars/liam.png",
   },
 ];
 
@@ -118,7 +118,7 @@ export function TestimonialSlider() {
   useEffect(() => {
     const interval = setInterval(nextTestimonial, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [nextTestimonial]);
 
   return (
     <section ref={ref} className="py-20 bg-gray-50">
@@ -203,7 +203,8 @@ export function TestimonialSlider() {
                         </div>
                         <div className="text-center">
                           <p className="text-lg italic mb-4">
-                            "{testimonialPairs[currentPairIndex][0].quote}"
+                            &quot;{testimonialPairs[currentPairIndex][0].quote}
+                            &quot;
                           </p>
                           <div>
                             <p className="font-semibold text-gray-900">
@@ -244,7 +245,7 @@ export function TestimonialSlider() {
                             </div>
                             <div className="text-center">
                               <p className="text-lg italic mb-4">
-                                "{testimonial.quote}"
+                                &quot;{testimonial.quote}&quot;
                               </p>
                               <div>
                                 <p className="font-semibold text-gray-900">

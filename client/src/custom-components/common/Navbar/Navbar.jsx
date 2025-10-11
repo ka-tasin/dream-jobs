@@ -1,14 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import Navdrawer from "../../NavDrawer/Navdrawer";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [mounted, setMounted] = useState(false); // ✅ Track client mount
 
   useEffect(() => {
+    setMounted(true); // Only true after client mounts
+
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
@@ -17,9 +20,21 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (!mounted) return; // Only run on client
+    setLoggedIn(!!localStorage.getItem("token"));
+  }, [mounted]);
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    setLoggedIn(false);
+  };
+
+  if (!mounted) return null; // Prevent SSR flash
+
   return (
-    <>
-      {/* Top Story - Only visible at top of page */}
+    <div className="z-[1000]">
+      {/* Top Story */}
       <motion.header
         initial={{ y: -100, opacity: 0 }}
         animate={{
@@ -33,26 +48,28 @@ const Navbar = () => {
       >
         <div className="max-w-6xl mx-auto px-4 h-12 p3-2 flex items-center justify-between">
           <div className="text-sm text-gray-600">
-            Welcome message or top navigation
+            Welcome to DreamJobs! Find your dream career today.
           </div>
-          <div className="flex items-center space-x-4">
-            <Link
-              href="#"
-              className="text-gray-600 hover:text-blue-600 text-sm"
-            >
-              Support
-            </Link>
-            <Link
-              href="#"
-              className="text-gray-600 hover:text-blue-600 text-sm"
-            >
-              FAQ
-            </Link>
-          </div>
+          {!loggedIn && (
+            <div className="flex items-center space-x-4">
+              <Link
+                href="/login"
+                className="text-gray-600 hover:text-red-600 text-sm"
+              >
+                Sign In
+              </Link>
+              <Link
+                href="/register"
+                className="text-gray-600 hover:text-red-600 text-sm"
+              >
+                Register
+              </Link>
+            </div>
+          )}
         </div>
       </motion.header>
 
-      {/* Main Navbar - Always visible at top */}
+      {/* Main Navbar */}
       <motion.nav
         initial={{ y: -100, opacity: 0 }}
         animate={{
@@ -67,14 +84,12 @@ const Navbar = () => {
       >
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex justify-between items-center h-16">
-            {/* Logo */}
             <div className="flex-shrink-0 flex items-center">
               <Link href="/" className="text-xl font-bold text-gray-800">
                 <span className="text-red-700">Dream</span>Jobs
               </Link>
             </div>
 
-            {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-4">
               <Link
                 href="/"
@@ -102,33 +117,23 @@ const Navbar = () => {
               </Link>
             </div>
 
-            {/* Right Side (Profile) */}
-            <div className="flex items-center">
-              <div className="hidden md:block">
-                <button className="flex items-center text-gray-800 hover:text-blue-600">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
+            {loggedIn && (
+              <div className="flex items-center">
+                <div className="hidden md:block">
+                  <button
+                    onClick={logout}
+                    className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition font-medium"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                </button>
+                    Logout
+                  </button>
+                </div>
               </div>
-              <Navdrawer />
-            </div>
+            )}
           </div>
         </div>
       </motion.nav>
 
-      {/* Bottom Navbar - Always visible */}
+      {/* Bottom Navbar */}
       <motion.nav
         initial={{ y: 100, opacity: 0 }}
         animate={{
@@ -223,10 +228,7 @@ const Navbar = () => {
           </div>
         </div>
       </motion.nav>
-
-      {/* Spacer to prevent content from being hidden behind fixed navbars */}
-      {/* <div className="pt-24 pb-16"></div> */}
-    </>
+    </div>
   );
 };
 

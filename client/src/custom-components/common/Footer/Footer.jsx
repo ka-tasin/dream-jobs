@@ -8,8 +8,8 @@ export function Footer() {
     {
       title: "Company",
       links: [
-        { name: "About Us", href: "#" },
-        { name: "Careers", href: "#" },
+        { name: "About Us", href: "/about-us" },
+        { name: "Careers", href: "/jobs" },
         { name: "Blog", href: "#" },
         { name: "Press", href: "#" },
       ],
@@ -17,7 +17,7 @@ export function Footer() {
     {
       title: "Resources",
       links: [
-        { name: "Job Search", href: "#" },
+        { name: "Job Search", href: "/jobs" },
         { name: "Resume Builder", href: "#" },
         { name: "Interview Prep", href: "#" },
         { name: "Salary Calculator", href: "#" },

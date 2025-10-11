@@ -183,7 +183,7 @@ const InteractiveBanner = () => {
           {backgroundTexts.map((item) => (
             <motion.div
               key={item.id}
-              className={`absolute font-semibold select-none ${item.size}`}
+              className={`absolute font-semibold select-none ${item.size} z-10`}
               style={{
                 left: item.x,
                 top: item.y,
@@ -192,7 +192,6 @@ const InteractiveBanner = () => {
                 translateX: "-50%",
                 translateY: "-50%",
                 color: "#2E2E2E",
-                zIndex: 50,
               }}
               initial={{ opacity: 0.4 }}
               whileHover={{
