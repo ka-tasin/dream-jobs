@@ -6,7 +6,12 @@ import { IJobRepository } from "./interfaces/ijob.repository";
 @injectable()
 export default class JobRepository implements IJobRepository {
   async create(data: Omit<Job, "id" | "postedAt">): Promise<Job> {
-    return prisma.job.create({ data });
+    return prisma.job.create({
+      data: {
+        ...data,
+        deadline: data.deadline ? new Date(data.deadline) : null,
+      },
+    });
   }
 
   async findById(id: string): Promise<Job | null> {

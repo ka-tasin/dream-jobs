@@ -1,12 +1,11 @@
 "use client";
-
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
-import apiClient from "@/lib/utils/axiosFetcher";
-import { Loader2 } from "lucide-react"; // for spinner icon
+import fetchClient from "@/lib/utils/axiosFetcher";
+import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +17,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import axios from "axios";
 
 export default function AddJobPage() {
   const router = useRouter();
@@ -25,7 +25,7 @@ export default function AddJobPage() {
 
   const [user, setUser] = useState<{ id: string; email: string } | null>(null);
   const [loading, setLoading] = useState(true);
-  const [posting, setPosting] = useState(false); // 👈 posting indicator
+  const [posting, setPosting] = useState(false);
   const [step, setStep] = useState(1);
 
   const [job, setJob] = useState({
@@ -76,30 +76,30 @@ export default function AddJobPage() {
       return;
     }
 
-    setPosting(true); // 👈 Start loading
+    setPosting(true);
 
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        toast.error("No token found. Please log in again.");
-        router.push("/login");
-        return;
-      }
-
-      await apiClient("/api/v1/jobs", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
+      await axios.post(
+        "http://localhost:3000/api/v1/jobs",
+        {
+          ...job,
+          salary: parseFloat(job.salary),
         },
-        body: { ...job, salary: parseFloat(job.salary), createdBy: user.id },
-      });
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
       toast.success("Job posted successfully!");
       router.push("/");
     } catch (err: any) {
-      toast.error(err.message || "Something went wrong");
+      const message = err?.message || "Something went wrong";
+      toast.error(message);
     } finally {
-      setPosting(false); // 👈 End loading
+      setPosting(false);
     }
   };
 
@@ -208,11 +208,11 @@ export default function AddJobPage() {
                   <SelectValue placeholder="Select job type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="On-site">On-site</SelectItem>
-                  <SelectItem value="Remote">Remote</SelectItem>
-                  <SelectItem value="Hybrid">Hybrid</SelectItem>
-                  <SelectItem value="Part-time">Part-time</SelectItem>
-                  <SelectItem value="Internship">Internship</SelectItem>
+                  <SelectItem value="ONSITE">On-site</SelectItem>
+                  <SelectItem value="REMOTE">Remote</SelectItem>
+                  <SelectItem value="HYBRID">Hybrid</SelectItem>
+                  <SelectItem value="PART_TIME">Part-time</SelectItem>
+                  <SelectItem value="INTERNSHIP">Internship</SelectItem>
                 </SelectContent>
               </Select>
               <Input
