@@ -202,7 +202,7 @@ export default function JobDetailsPage() {
             <Button
               className="w-full"
               variant="default"
-              size="md"
+              size="default"
               onClick={handleApply}
               disabled={submitting}
             >
