@@ -79,6 +79,7 @@ enum JobType {
   FULL_TIME
   PART_TIME
   REMOTE
+  HYBRID
   CONTRACT
   INTERNSHIP
 }

@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
-import fetchClient from "@/lib/utils/axiosFetcher";
 import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -79,6 +78,12 @@ export default function AddJobPage() {
     setPosting(true);
 
     try {
+      // await fetchClient("/api/v1/jobs", {
+      //   method: "POST",
+      //   body: {
+      //     ...job,
+      //     salary: parseFloat(job.salary),
+      //   },
       await axios.post(
         "http://localhost:3000/api/v1/jobs",
         {
@@ -94,7 +99,7 @@ export default function AddJobPage() {
       );
 
       toast.success("Job posted successfully!");
-      router.push("/");
+      router.push("/jobs");
     } catch (err: any) {
       const message = err?.message || "Something went wrong";
       toast.error(message);

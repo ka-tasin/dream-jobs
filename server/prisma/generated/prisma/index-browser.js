@@ -192,6 +192,7 @@ exports.JobType = exports.$Enums.JobType = {
   FULL_TIME: 'FULL_TIME',
   PART_TIME: 'PART_TIME',
   REMOTE: 'REMOTE',
+  HYBRID: 'HYBRID',
   CONTRACT: 'CONTRACT',
   INTERNSHIP: 'INTERNSHIP'
 };
