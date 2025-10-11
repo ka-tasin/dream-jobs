@@ -14,14 +14,14 @@ const authMiddleware = container.get<AuthMiddleware>(TYPES.AuthMiddleware);
 jobRouter.post(
   "/",
   authMiddleware.authenticate.bind(authMiddleware),
-  roleMiddleware.authorize([Role.EMPLOYER, Role.ADMIN]),
+  roleMiddleware.authorize([Role.USER, Role.EMPLOYER, Role.ADMIN]),
   jobController.create.bind(jobController)
 );
 
 jobRouter.delete(
   "/:id",
   authMiddleware.authenticate.bind(authMiddleware),
-  roleMiddleware.authorize([Role.USER, Role.EMPLOYER, Role.ADMIN]),
+  roleMiddleware.authorize([Role.EMPLOYER, Role.ADMIN]),
   jobController.delete.bind(jobController)
 );
 
