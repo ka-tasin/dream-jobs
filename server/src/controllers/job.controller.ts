@@ -1,4 +1,4 @@
-// controllers/job.controller.ts
+
 import { Request, Response } from "express";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../config/ioc.types";
