@@ -12,6 +12,8 @@ This ensures a **Scalable**, **testable**, **maintainable**, and **loosely coupl
 
 ---
 
+### Live link: https://dream-jobs-kat.vercel.app/
+
 ## Features
 
 ### Backend Highlights
@@ -141,7 +143,7 @@ Frontend runs at: http://localhost:5173 (Vite default)
 
 Backend runs at: http://localhost:3000
 
-📦 API Endpoints
+### API Endpoints
 Endpoint	Method	Description
 ```
 /api/jobs	GET	Fetch all jobs
