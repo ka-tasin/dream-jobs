@@ -98,7 +98,7 @@ class JobService {
     return this.jobRepository.findAll();
   }
 }
-
+```
 🧪 Testing
 Unit testing is implemented using Jest.
 Each service and repository is tested in isolation to verify functionality.
