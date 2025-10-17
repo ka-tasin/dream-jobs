@@ -94,51 +94,59 @@ npm test
 cd server
 npm install
 ```
-Setup Environment Variables
-Create a .env file in the server/ folder:
+- Setup Environment Variables
+- Create a .env file in the server/ folder:
 
-env
+.env
+```.env
 DATABASE_URL=your_database_url
 PORT=3000
-Setup Prisma
+JWT_SECRET=your_secret
+```
+- Setup Prisma
 
-bash
+```bash
 npx prisma generate
-(Optional) Run database migrations:
+```
 
-bash
+```bash
 npx prisma migrate dev
-Run the Server
-Development:
+```
 
-bash
+- Run the Server
+  
+```bash
 npm run dev
-Production Build:
+```
 
-bash
-npm run build
-npm start
-Frontend Setup
-Navigate to client directory
 
-bash
+
+**Frontend Setup**
+- Navigate to client directory
+
+```bash
 cd client
-Install dependencies
+```
 
-bash
+```bash
 npm install
-Start development server
+```
+- Start development server
 
-bash
+```bash
 npm run dev
+```
+
 Frontend runs at: http://localhost:5173 (Vite default)
 Backend runs at: http://localhost:3000
 
 📦 API Endpoints
 Endpoint	Method	Description
+```
 /api/jobs	GET	Fetch all jobs
 /api/jobs/:id	GET	Get job by ID
 /api/jobs	POST	Create a new job
 /api/jobs/:id	PUT	Update existing job
 /api/jobs/:id	DELETE	Delete a job
+```
 
