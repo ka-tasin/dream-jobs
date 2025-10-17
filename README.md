@@ -82,17 +82,18 @@ describe('JobService', () => {
 
 ### Run Tests
 ```bash
-
 npm test
 ```
 
 
- Setup and Run
-Backend Setup
-Install Dependencies
+### Setup and Run
+***Backend Setup***
+- Install Dependencies
 
-bash
+```bash
+cd server
 npm install
+```
 Setup Environment Variables
 Create a .env file in the server/ folder:
 
