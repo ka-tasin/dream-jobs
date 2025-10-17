@@ -1,7 +1,7 @@
 # Dream Jobs
 
 **Dream Jobs** is a full-stack job platform that connects **employers** and **job seekers**.  
-This repository includes both the frontend (`client/`) and backend (`server/`) — with the backend being the core logic layer, designed for scalability, modularity, and clean architecture.
+This repository includes both the frontend (`client/`) and backend (`server/`) — with the backend being the core logic layer, designed for scalability, and clean architecture.
 
 ---
 
