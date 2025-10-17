@@ -138,6 +138,7 @@ npm run dev
 ```
 
 Frontend runs at: http://localhost:5173 (Vite default)
+
 Backend runs at: http://localhost:3000
 
 📦 API Endpoints
