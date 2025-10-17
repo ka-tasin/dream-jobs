@@ -12,7 +12,7 @@ This ensures a **Scalable**, **testable**, **maintainable**, and **loosely coupl
 
 ---
 
-## 🚀 Features
+## Features
 
 ### Backend Highlights
 -  **Clean Architecture** (Controller → Service → Repository)
@@ -81,8 +81,7 @@ describe('JobService', () => {
 ```
 
 ### Run Tests
-```
-bash
+```bash
 
 npm test
 ```
