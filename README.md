@@ -65,28 +65,30 @@ class JobService {
   }
 }
 ```
-🧪 Testing
+## #Testing
 Unit testing is implemented using Jest.
 Each service and repository is tested in isolation to verify functionality.
 
 Example test (job.service.test.ts):
 
-ts
+```ts
 describe('JobService', () => {
   it('should create a job via repository', async () => {
     const job = await jobService.createJob(mockJobData);
     expect(job.title).toBe(mockJobData.title);
   });
 });
-Run Tests
-bash
-npm test
-Generate Coverage Report
-bash
-npm test -- --coverage
-A /coverage folder will be created automatically (can be safely ignored).
+```
 
-⚙️ Setup and Run
+### Run Tests
+```
+bash
+
+npm test
+```
+
+
+ Setup and Run
 Backend Setup
 Install Dependencies
 
@@ -139,98 +141,4 @@ Endpoint	Method	Description
 /api/jobs	POST	Create a new job
 /api/jobs/:id	PUT	Update existing job
 /api/jobs/:id	DELETE	Delete a job
-🧠 Technologies Used
-Backend
-Category	Technology
-Language	TypeScript
-Runtime	Node.js
-Framework	Express.js
-ORM	Prisma
-Architecture	Controller–Service–Repository
-Dependency Injection	InversifyJS
-Testing	Jest
-Env Config	dotenv
-Frontend
-Category	Technology
-Framework	React + TypeScript
-Styling	Tailwind CSS
-Build Tool	Vite
-HTTP Client	Axios/Fetch
-📁 Project Context
-This repository contains both client and server code:
 
-text
-dream-jobs/
-├── client/   # Frontend (React + TypeScript + Tailwind)
-└── server/   # Backend (Node.js, TypeScript, Clean Architecture)
-The backend (server/) is responsible for:
-
-Database communication
-
-Business logic
-
-API layer
-
-Testing and dependency management
-
-The frontend (client/) provides:
-
-Modern, responsive user interface
-
-API consumption and data presentation
-
-Interactive job browsing experience
-
-💡 Key Advantages of This Architecture
-Separation of Concerns — Each layer focuses on a single responsibility.
-
-Dependency Injection — Easier to mock and test.
-
-Scalability — Layers can grow independently.
-
-Type Safety — Full TypeScript coverage across frontend and backend.
-
-Clean Code — Readable, maintainable, and structured.
-
-Full-Stack Consistency — TypeScript used throughout the stack.
-
-🔮 Future Improvements
-Add authentication (JWT + Passport.js)
-
-Add validation middleware
-
-Expand to user management (Admin/Recruiter/Applicant)
-
-Implement CI/CD pipeline
-
-Add integration tests
-
-Real-time features with WebSockets
-
-Advanced search and filtering
-
-File upload for resumes/company logos
-
-✍️ Author
-👨‍💻 Kausar Ahmad
-📧 kausar.ahmad.tasin01@gmail.com
-💼 Full Stack Developer (MERN / TypeScript / Node.js)
-
-🧾 License
-This project is open source and available under the MIT License.
-
-Built with clean architecture, strong typing, and a passion for full-stack engineering.
-
-text
-
----
-
-**Key improvements in this version:**
-- ✅ Added concise **client section** in features
-- ✅ Included **client folder structure** 
-- ✅ Added **frontend setup instructions**
-- ✅ Added **frontend technologies table**
-- ✅ Maintained **backend focus** while giving full context
-- ✅ Kept the professional, portfolio-ready tone
-
-This README now gives a **complete picture** of your full-stack project while still emphasizing the sophisticated backend architecture that you want to showcase! 🚀
