@@ -1,71 +1,37 @@
-# 💼 Dream Jobs
+# Dream Jobs
 
 **Dream Jobs** is a full-stack job platform that connects **employers** and **job seekers**.  
 This repository includes both the frontend (`client/`) and backend (`server/`) — with the backend being the core logic layer, designed for scalability, modularity, and clean architecture.
 
 ---
 
-## 🧠 Overview
+## Overview
 
-The backend of Dream Jobs is built with **Node.js**, **TypeScript**, **Express**, and **Prisma ORM**, following the **Controller–Service–Repository** architecture pattern with **IoC/DI (InversifyJS)** for dependency management.  
-This ensures a **testable**, **maintainable**, and **loosely coupled** codebase.
+The backend of Dream Jobs is built with **Node.js**, **TypeScript**, **Express**, and **Prisma ORM**, **PostgreSQL** following the **Controller–Service–Repository** architecture pattern with **inversion of control/DI** for dependency management.  
+This ensures a **Scalable**, **testable**, **maintainable**, and **loosely coupled** codebase.
 
 ---
 
 ## 🚀 Features
 
 ### Backend Highlights
-- ✅ **Clean Architecture** (Controller → Service → Repository)
-- 🧩 **InversifyJS IoC / Dependency Injection**
-- 🧠 **Prisma ORM** (type-safe DB access)
-- 🧪 **Unit Testing** with Jest
-- ⚙️ **TypeScript** for static typing and scalability
-- 🌐 **Express.js** API design with modular routes
-- 🔒 **Environment-based configuration** via dotenv
+-  **Clean Architecture** (Controller → Service → Repository)
+-  **Inversion of control / Dependency Injection** (InversifyJS) 
+-  **Prisma ORM** (type-safe DB access)
+-  **Unit Testing** with Jest
+-  **TypeScript** for static typing and scalability
+-  **Express.js** API design with modular routes
+-  **Environment-based configuration** via dotenv
 
 ### Frontend (Client)
-- ⚛️ **React** with TypeScript for type-safe components
-- 🎨 **Tailwind CSS** for responsive, modern UI
-- 🔄 **State management** via React hooks
-- 📡 **API integration** with backend endpoints
-- 🚀 **Dynamic job listings** and detail views
+-  **Next.js** with TypeScript for type-safe components
+-  **Tailwind CSS** for responsive, modern UI
+-  **API integration** with backend endpoints
+-  **Dynamic job listings** and detail views
 
 ---
 
-## 🏗️ Folder Structure
-dream-jobs/
-
-├── client/ # React frontend (TypeScript + Tailwind)
-│ ├── src/
-│ │ ├── components/ # Reusable UI components
-│ │ ├── pages/ # Page-level components
-│ │ ├── hooks/ # Custom React hooks
-│ │ ├── types/ # TypeScript type definitions
-│ │ └── utils/ # Frontend utilities
-│ ├── package.json
-│ └── tailwind.config.js
-│
-└── server/ # Backend (main focus)
-├── prisma/ # Prisma schema & generated client
-│ └── schema.prisma
-│
-├── src/
-│ ├── config/ # IOC bindings, environment setup
-│ ├── controllers/ # Handle HTTP requests
-│ ├── repositories/ # Database layer (Prisma)
-│ ├── services/ # Business logic layer
-│ ├── routes/ # API route definitions
-│ ├── middleware/ # Auth, error handling
-│ ├── utils/ # Helper functions
-│ └── server.ts # Application entry point
-│
-├── tests/ # Unit tests
-├── .env # Environment variables
-├── package.json
-└── tsconfig.json
----
-
-## 🧩 Architecture Explanation
+##  Architecture Explanation
 
 The backend is structured using a **3-layered clean architecture**:
 
