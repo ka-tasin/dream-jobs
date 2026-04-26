@@ -82,6 +82,7 @@ enum JobType {
   HYBRID
   CONTRACT
   INTERNSHIP
+  ONSITE
 }
 
 enum Role {
