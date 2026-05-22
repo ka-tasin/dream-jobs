@@ -1,5 +1,4 @@
-// src/__tests__/controllers/job.controller.test.ts
-import JobController from "../../controllers/job.controller";
+import JobController from "../../modules/job/job.controller";
 import { Role } from "../../../prisma/generated/prisma";
 
 describe("JobController", () => {
