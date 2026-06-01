@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "commonjs",
   "scripts": {
-    "server": "ts-node src/server.ts",
+    "dev": "nodemon --exec ts-node src/server.ts --watch src --watch package.json --watch tsconfig.json --ext ts,js,json",
     "build": "prisma generate && tsc && npm run copy-prisma",
     "copy-prisma": "cp -r prisma/generated dist/prisma/",
     "start": "node dist/src/server.js",

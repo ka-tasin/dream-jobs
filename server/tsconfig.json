@@ -3,7 +3,7 @@
     "target": "ESNext",
     "module": "node16",
     // "module": "commonjs",
-    "moduleResolution": "node16",           // ← Fixed
+    "moduleResolution": "node16",          
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
@@ -11,7 +11,7 @@
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
     "rootDir": "./",
-    // "baseUrl": ".",                      // ← Removed (deprecated)
+    // "baseUrl": ".",                     
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
