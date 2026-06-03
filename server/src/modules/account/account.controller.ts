@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import { inject, injectable } from "inversify";
-import { TYPES } from "../config/ioc.types";
-import { IUnitOfService } from "../services/interfaces/iunitOf.service";
-import { CustomResponse } from "../dtos/custom-response";
-import { UserDto } from "../dtos/user.dto";
-import { CreateUserModel } from "../models/user.model";
-import { Role } from "../../prisma/generated/prisma";
+import { TYPES } from "../../config/ioc.types";
+import { IUnitOfService } from "../../services/interfaces/iunitOf.service";
+import { CustomResponse } from "../../dtos/custom-response";
+import { UserDto } from "../../dtos/user.dto";
+import { CreateUserModel } from "../../models/user.model";
+import { Role } from "../../../prisma/generated/prisma/client";
 
 @injectable()
 export default class AccountController {

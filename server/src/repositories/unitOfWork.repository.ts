@@ -3,9 +3,9 @@ import { Prisma } from "../../prisma/generated/prisma";
 import prisma from "../../prisma";
 import { TYPES } from "../config/ioc.types";
 import IUnitOfWork from "./interfaces/iunitofwork.repository";
-import { IUserRepository } from "./interfaces/iuser.repository";
-import { IJobRepository } from "./interfaces/ijob.repository";
-import { IApplicationRepository } from "./interfaces/iapplication.repository";
+import { IUserRepository } from "../modules/user/interfaces/iuser.repository";
+import { IJobRepository } from "../modules/job/interfaces/ijob.repository";
+import { IApplicationRepository } from "../modules/application/interfaces/iapplication.repository";
 
 export default class UnitOfWork implements IUnitOfWork {
   constructor(

@@ -1,6 +1,6 @@
 import { injectable } from "inversify";
-import prisma from "../../prisma";
-import { Job } from "../../prisma/generated/prisma";
+import prisma from "../../../prisma";
+import { Job } from "../../../prisma/generated/prisma";
 import { IJobRepository } from "./interfaces/ijob.repository";
 
 @injectable()

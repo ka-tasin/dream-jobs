@@ -1,10 +1,10 @@
 import { Router } from "express";
-import container from "../config/ioc.config";
-import JobController from "../controllers/job.controller";
-import { TYPES } from "../config/ioc.types";
-import RoleMiddleware from "../middlewares/role.middleware";
-import { Role } from "../../prisma/generated/prisma";
-import AuthMiddleware from "../middlewares/authenticate.middleware";
+import container from "../../config/ioc.config";
+import JobController from "./job.controller";
+import { TYPES } from "../../config/ioc.types";
+import RoleMiddleware from "../../middlewares/role.middleware";
+import { Role } from "../../../prisma/generated/prisma";
+import AuthMiddleware from "../../middlewares/authenticate.middleware";
 
 const jobRouter = Router();
 const jobController = container.get<JobController>(TYPES.JobController);

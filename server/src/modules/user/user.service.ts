@@ -1,11 +1,11 @@
 import { inject, injectable } from "inversify";
-import IUnitOfWork from "../repositories/interfaces/iunitofwork.repository";
-import { TYPES } from "../config/ioc.types";
-import { CreateUserModel } from "../models/user.model";
-import { CustomResponse } from "../dtos/custom-response";
-import { AuthProvider, Role } from "../../prisma/generated/prisma";
-import PasswordUtils from "../utils/password.utils";
-import { UserDto } from "../dtos/user.dto";
+import IUnitOfWork from "../../repositories/unitOfWork.repository";
+import { TYPES } from "../../config/ioc.types";
+import { CreateUserModel } from "../../models/user.model";
+import { CustomResponse } from "../../dtos/custom-response";
+import { AuthProvider, Role } from "../../../prisma/generated/prisma";
+import PasswordUtils from "../../utils/password.utils";
+import { UserDto } from "../../dtos/user.dto";
 import { IUserService } from "./interfaces/iuser.service";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
