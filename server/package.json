@@ -1,9 +1,9 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
-    "dev": "nodemon --exec ts-node src/server.ts --watch src --watch package.json --watch tsconfig.json --ext ts,js,json",
+    "dev": "nodemon --exec tsx src/server.ts --watch src --watch package.json --watch tsconfig.json",
     "build": "prisma generate && tsc && npm run copy-prisma",
     "copy-prisma": "cp -r prisma/generated dist/prisma/",
     "start": "node dist/src/server.js",
@@ -44,6 +44,7 @@
     "prisma": "^7.8.0",
     "ts-jest": "^29.4.5",
     "ts-node": "^10.9.2",
+    "tsx": "^4.22.4",
     "typescript": "^5.9.2"
   }
 }
