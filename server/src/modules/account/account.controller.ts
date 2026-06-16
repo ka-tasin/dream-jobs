@@ -6,37 +6,60 @@ import { CustomResponse } from "../../dtos/custom-response.js";
 import { UserDto } from "../../dtos/user.dto.js";
 import { CreateUserModel } from "../user/user.model.js";
 import { Role } from "../../../prisma/generated/prisma/index.js";
+import { createUserSchema } from "../user/user.validation.js";
+import { z } from "zod";
 
 @injectable()
 export default class AccountController {
   constructor(
-    @inject(TYPES.IUnitOfService) private unitOfService: IUnitOfService
+    @inject(TYPES.IUnitOfService) private unitOfService: IUnitOfService,
   ) {}
 
   async register(
     req: Request,
-    res: Response
+    res: Response,
   ): Promise<Response<CustomResponse<UserDto>>> {
-    const data = req.body as CreateUserModel;
-    const user = await this.unitOfService.User.getUserByEmail(data.email);
+    try {
+      const validatedData = createUserSchema.parse(req.body) as CreateUserModel;
 
-    if (user) return res.status(409).json({ message: "User Already exists!" });
+      const user = await this.unitOfService.User.getUserByEmail(
+        validatedData.email,
+      );
 
-    const newUser = await this.unitOfService.User.create(data, Role.USER);
+      if (user)
+        return res.status(409).json({ message: "User Already exists!" });
 
-    if (!newUser)
-      return res.status(400).json({ message: "Failed to create user!" });
+      const newUser = await this.unitOfService.User.create(
+        validatedData,
+        Role.USER,
+      );
 
-    return res.status(200).json({
-      success: true,
-      message: "User created!",
-      data: newUser,
-    });
+      if (!newUser)
+        return res.status(400).json({ message: "Failed to create user!" });
+
+      return res.status(200).json({
+        success: true,
+        message: "User created!",
+        data: newUser,
+      });
+    } catch (error: unknown) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({
+          success: false,
+          message: "Validation failed",
+          errors: error.issues.map((e) => ({
+            field: e.path.join("."),
+            message: e.message,
+          })),
+        });
+      }
+      throw error;
+    }
   }
 
   async login(
     req: Request,
-    res: Response
+    res: Response,
   ): Promise<Response<CustomResponse<UserDto | null>>> {
     const { email, password } = req.body;
     const user = await this.unitOfService.User.login(email, password);
@@ -59,7 +82,7 @@ export default class AccountController {
 
   async verifyToken(
     req: Request,
-    res: Response
+    res: Response,
   ): Promise<Response<CustomResponse<UserDto | null>>> {
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) return res.status(401).json({ message: "Token missing!" });
