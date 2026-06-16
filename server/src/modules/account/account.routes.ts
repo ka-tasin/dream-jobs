@@ -1,7 +1,7 @@
 import { Router } from "express";
-import container from "../../config/ioc.config";
-import AccountController from "./account.controller";
-import { TYPES } from "../../config/ioc.types";
+import container from "../../config/ioc.config.js";
+import AccountController from "./account.controller.js";
+import { TYPES } from "../../config/ioc.types.js";
 
 const accountRouter = Router();
 

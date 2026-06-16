@@ -1,8 +1,8 @@
-import { UserDto } from "../dtos/user.dto";
-import prisma from "../../prisma";
-import { IUserRepository } from "./interfaces/iuser.repository";
-import { CreateUserModel } from "../models/user.model";
-import { Role } from "../../prisma/generated/prisma";
+import { UserDto } from "../../dtos/user.dto.js";
+import prisma from "../../../prisma/index.js";
+import { IUserRepository } from "./interfaces/iuser.repository.js";
+import { CreateUserModel } from "./user.model.js";
+import { Role } from "../../../prisma/generated/prisma/index.js";
 
 export default class UserRepository implements IUserRepository {
   async create(data: CreateUserModel): Promise<UserDto | null> {

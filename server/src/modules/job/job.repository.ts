@@ -1,7 +1,7 @@
 import { injectable } from "inversify";
-import prisma from "../../../prisma";
-import { Job } from "../../../prisma/generated/prisma";
-import { IJobRepository } from "./interfaces/ijob.repository";
+import prisma from "../../../prisma/index.js";
+import { Job } from "../../../prisma/generated/prisma/index.js";
+import { IJobRepository } from "./interfaces/ijob.repository.js";
 
 @injectable()
 export default class JobRepository implements IJobRepository {

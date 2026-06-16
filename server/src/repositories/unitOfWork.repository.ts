@@ -1,11 +1,11 @@
 import { inject } from "inversify";
-import { Prisma } from "../../prisma/generated/prisma";
-import prisma from "../../prisma";
-import { TYPES } from "../config/ioc.types";
-import IUnitOfWork from "./interfaces/iunitofwork.repository";
-import { IUserRepository } from "../modules/user/interfaces/iuser.repository";
-import { IJobRepository } from "../modules/job/interfaces/ijob.repository";
-import { IApplicationRepository } from "../modules/application/interfaces/iapplication.repository";
+import { Prisma } from "../../prisma/generated/prisma/index.js";
+import prisma from "../../prisma/index.js";
+import { TYPES } from "../config/ioc.types.js";
+import IUnitOfWork from "./interfaces/iunitofwork.repository.js";
+import { IUserRepository } from "../modules/user/interfaces/iuser.repository.js";
+import { IJobRepository } from "../modules/job/interfaces/ijob.repository.js";
+import { IApplicationRepository } from "../modules/application/interfaces/iapplication.repository.js";
 
 export default class UnitOfWork implements IUnitOfWork {
   constructor(

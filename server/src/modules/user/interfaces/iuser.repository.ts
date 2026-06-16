@@ -1,5 +1,5 @@
-import { UserDto } from "../../dtos/user.dto";
-import { CreateUserModel } from "../../models/user.model";
+import { UserDto } from "../../../dtos/user.dto.js";
+import { CreateUserModel } from "../user.model.js";
 
 export interface IUserRepository {
   create(data: UserDto): Promise<UserDto | null>;

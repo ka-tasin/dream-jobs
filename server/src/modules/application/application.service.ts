@@ -1,8 +1,8 @@
 import { inject, injectable } from "inversify";
-import { TYPES } from "../config/ioc.types";
-import IUnitOfWork from "../repositories/interfaces/iunitofwork.repository";
-import { IApplicatoinService } from "./interfaces/iapplication.service";
-import { Application } from "prisma/generated/prisma";
+import { TYPES } from "../../config/ioc.types.js";
+import IUnitOfWork from "../../repositories/interfaces/iunitofwork.repository.js";
+import { IApplicatoinService } from "./interfaces/iapplication.service.js";
+import { Application } from "../../../prisma/generated/prisma/index.js";
 
 @injectable()
 export default class ApplicationService implements IApplicatoinService {

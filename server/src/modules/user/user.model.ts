@@ -1,4 +1,4 @@
-import { AuthProvider, Role } from "../../prisma/generated/prisma";
+import { AuthProvider, Role } from "../../../prisma/generated/prisma/client.js";
 
 export interface CreateUserModel {
   id: string;

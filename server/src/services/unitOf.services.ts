@@ -1,9 +1,9 @@
 import { inject, injectable } from "inversify";
-import { TYPES } from "../config/ioc.types";
-import { IUserService } from "../modules/user/interfaces/iuser.service";
-import { IUnitOfService } from "./interfaces/iunitOf.service";
-import { IApplicatoinService } from "../modules/application/interfaces/iapplication.service";
-import { IJobService } from "../modules/job/interfaces/ijob.service";
+import { TYPES } from "../config/ioc.types.js";
+import { IUserService } from "../modules/user/interfaces/iuser.service.js";
+import { IUnitOfService } from "./interfaces/iunitOf.service.js";
+import { IApplicatoinService } from "../modules/application/interfaces/iapplication.service.js";
+import { IJobService } from "../modules/job/interfaces/ijob.service.js";
 
 @injectable()
 export default class UnitOfService implements IUnitOfService {

@@ -1,8 +1,8 @@
 import { Router } from "express";
-import accountRouter from "../modules/account/account.routes";
-import jobRouter from "../modules/job/job.routes";
-import userRouter from "../modules/user/user.routes";
-import applicationRouter from "../modules/application/application.routes";
+import accountRouter from "../modules/account/account.routes.js";
+import jobRouter from "../modules/job/job.routes.js";
+import userRouter from "../modules/user/user.routes.js";
+import applicationRouter from "../modules/application/application.routes.js";
 
 const routes = Router();
 

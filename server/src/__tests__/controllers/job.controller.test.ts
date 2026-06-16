@@ -1,5 +1,5 @@
-import JobController from "../../modules/job/job.controller";
-import { Role } from "../../../prisma/generated/prisma";
+import JobController from "../../modules/job/job.controller.js";
+import { Role } from "../../../prisma/generated/prisma/index.js";
 
 describe("JobController", () => {
   const mockJobService = {

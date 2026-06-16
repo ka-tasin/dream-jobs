@@ -1,9 +1,9 @@
 
 import { Request, Response } from "express";
 import { inject, injectable } from "inversify";
-import { TYPES } from "../config/ioc.types";
-import { Role } from "../../prisma/generated/prisma";
-import { IUnitOfService } from "../services/interfaces/iunitOf.service";
+import { TYPES } from "../../config/ioc.types.js";
+import { Role } from "../../../prisma/generated/prisma/index.js";
+import { IUnitOfService } from "../../services/interfaces/iunitOf.service.js";
 
 @injectable()
 export default class JobController {

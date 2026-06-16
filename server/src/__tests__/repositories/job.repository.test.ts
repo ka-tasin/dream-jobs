@@ -1,7 +1,7 @@
-import prisma from "../../../prisma";
-import JobRepository from "../../repositories/job.repository";
+import prisma from "../../../prisma/index.js";
+import JobRepository from "../../modules/job/job.repository.js";
 
-jest.mock("../../../prisma", () => ({
+jest.mock("../../../prisma/index.js", () => ({
   job: {
     create: jest.fn(),
     findUnique: jest.fn(),

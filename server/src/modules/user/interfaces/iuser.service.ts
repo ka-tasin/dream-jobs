@@ -1,7 +1,7 @@
-import { Role } from "../../../prisma/generated/prisma";
-import { CustomResponse } from "../../dtos/custom-response";
-import { UserDto } from "../../dtos/user.dto";
-import { CreateUserModel } from "../../models/user.model";
+import { Role } from "../../../../prisma/generated/prisma/index.js";
+import { CustomResponse } from "../../../dtos/custom-response.js";
+import { UserDto } from "../../../dtos/user.dto.js";
+import { CreateUserModel } from "../user.model.js";
 
 export interface IUserService {
   create(data: CreateUserModel, role: string): Promise<CustomResponse<UserDto>>;

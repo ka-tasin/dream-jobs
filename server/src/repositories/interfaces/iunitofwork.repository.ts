@@ -1,7 +1,7 @@
-import { Prisma } from "../../../prisma/generated/prisma";
-import { IApplicationRepository } from "./iapplication.repository";
-import { IJobRepository } from "./ijob.repository";
-import { IUserRepository } from "./iuser.repository";
+import { Prisma } from "../../../prisma/generated/prisma/index.js";
+import { IApplicationRepository } from "../../modules/application/interfaces/iapplication.repository.js";
+import { IJobRepository } from "../../modules/job/interfaces/ijob.repository.js";
+import { IUserRepository } from "../../modules/user/interfaces/iuser.repository.js";
 
 export default interface IUnitOfWork {
   User: IUserRepository;

@@ -1,5 +1,5 @@
-import JobService from "../../services/job.service";
-import IUnitOfWork from "../../repositories/interfaces/iunitofwork.repository";
+import JobService from "../../modules/job/job.service.js";
+import IUnitOfWork from "../../repositories/interfaces/iunitofwork.repository.js";
 
 describe("JobService", () => {
   const mockJobRepo = {

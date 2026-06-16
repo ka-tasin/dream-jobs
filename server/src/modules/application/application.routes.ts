@@ -1,10 +1,10 @@
 import { Router } from "express";
-import container from "../config/ioc.config";
-import { TYPES } from "../config/ioc.types";
-import ApplicationController from "../controllers/application.controller";
-import RoleMiddleware from "../middlewares/role.middleware";
-import { Role } from "../../prisma/generated/prisma";
-import AuthMiddleware from "src/middlewares/authenticate.middleware";
+import container from "../../config/ioc.config.js";
+import { TYPES } from "../../config/ioc.types.js";
+import ApplicationController from "./application.controller.js";
+import RoleMiddleware from "../../middlewares/role.middleware.js";
+import { Role } from "../../../prisma/generated/prisma/index.js";
+import AuthMiddleware from "../../middlewares/authenticate.middleware.js";
 
 const applicationRouter = Router();
 

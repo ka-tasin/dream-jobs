@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
-import { UserDto } from "../dtos/user.dto";
-import { IUnitOfService } from "../services/interfaces/iunitOf.service";
-import { IUserController } from "./interfaces/iuser.controller";
-import { CustomResponse } from "../dtos/custom-response";
-import { TYPES } from "../config/ioc.types";
+import { UserDto } from "../../dtos/user.dto.js";
+import { IUnitOfService } from "../../services/interfaces/iunitOf.service.js";
+import { IUserController } from "./interfaces/iuser.controller.js";
+import { CustomResponse } from "../../dtos/custom-response.js";
+import { TYPES } from "../../config/ioc.types.js";
 import { inject, injectable } from "inversify";
 
 @injectable()

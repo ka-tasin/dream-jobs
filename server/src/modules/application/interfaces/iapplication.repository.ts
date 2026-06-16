@@ -1,4 +1,4 @@
-import { Application, Prisma } from "../../../prisma/generated/prisma";
+import { Application, Prisma } from "../../../../prisma/generated/prisma/index.js";
 
 export interface IApplicationRepository {
   getByJobId(jobId: string): Promise<Application[]>;

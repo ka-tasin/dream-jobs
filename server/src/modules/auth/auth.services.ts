@@ -1,6 +1,6 @@
 import { inject, injectable } from "inversify";
-import { TYPES } from "../config/ioc.types";
-import { IUnitOfService } from "./interfaces/iunitOf.service";
+import { TYPES } from "../../config/ioc.types.js";
+import { IUnitOfService } from "../../services/interfaces/iunitOf.service.js";
 
 @injectable()
 export default class AuthServices {

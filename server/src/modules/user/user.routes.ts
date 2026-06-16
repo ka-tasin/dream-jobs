@@ -1,8 +1,8 @@
 import { Router } from "express";
-import container from "../config/ioc.config";
-import UserController from "../controllers/user.controller";
-import { TYPES } from "../config/ioc.types";
-import AuthMiddleware from "../middlewares/authenticate.middleware";
+import container from "../../config/ioc.config.js";
+import UserController from "./user.controller.js";
+import { TYPES } from "../../config/ioc.types.js";
+import AuthMiddleware from "../../middlewares/authenticate.middleware.js";
 
 const userRouter = Router();
 
