@@ -9,6 +9,9 @@ import { UserDto } from "../../dtos/user.dto.js";
 import { IUserService } from "./interfaces/iuser.service.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 @injectable()
 export default class UserService implements IUserService {
