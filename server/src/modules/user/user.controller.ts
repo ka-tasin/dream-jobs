@@ -1,53 +1,33 @@
-import { Request, Response } from "express";
-import { UserDto } from "../../dtos/user.dto.js";
-import { IUnitOfService } from "../../services/interfaces/iunitOf.service.js";
-import { IUserController } from "./interfaces/iuser.controller.js";
-import { CustomResponse } from "../../dtos/custom-response.js";
-import { TYPES } from "../../config/ioc.types.js";
-import { inject, injectable } from "inversify";
+import { Request, Response, NextFunction } from "express";
+import { userService } from "./user.service.js";
 
-@injectable()
-export default class UserController implements IUserController {
-  constructor(
-    @inject(TYPES.IUnitOfService) private unitOfService: IUnitOfService // private unitOfService = container.get<IUnitOfService>(TYPES.IUserService)
-  ) {}
-
+export class UserController {
   async updateUserRole(
     req: Request,
-    res: Response
-  ): Promise<Response<CustomResponse<UserDto | null>>> {
-    const { id } = req.params;
-    const result = await this.unitOfService.User.updateUserRole(id);
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { id } = req.params;
+      const result = await userService.updateUserRole(id);
 
-    if (!result)
-      return res.status(400).json({
+      if (!result) {
+        res.status(400).json({
+          success: false,
+          data: null,
+          message: "Upgrade to employer failed!",
+        });
+        return;
+      }
+
+      res.status(200).json({
         success: true,
-        data: null,
-        message: "Upgrade to employer failed!",
+        data: result,
       });
-
-    return res.status(200).json({
-      success: true,
-      data: result,
-    });
+    } catch (error) {
+      next(error);
+    }
   }
-  //   async getUserById(
-  //     req: Request,
-  //     res: Response
-  //   ): Promise<Response<CustomResponse<UserDto>>> {
-  //     const id = req?.params?.id;
-
-  //     if (id) {
-  //       return res.status(400).json({ message: "User ID is required!" });
-  //     }
-
-  //     const user = await this.unitOfService.User.findById(id);
-
-  //     if (!user) return res.status(400).json({ message: "User not found!" });
-
-  //     const response: CustomResponse<UserDto> = {
-  //       success: true,
-  //       data: user,
-  //     };
-  //   }
 }
+
+export const userController = new UserController();

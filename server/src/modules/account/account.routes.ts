@@ -1,22 +1,25 @@
 import { Router } from "express";
-import container from "../../config/ioc.config.js";
-import AccountController from "./account.controller.js";
-import { TYPES } from "../../config/ioc.types.js";
+import { accountController } from "./account.controller.js";
+import { validateBody } from "../../middlewares/validation.middleware.js";
+import { createUserSchema, loginSchema } from "../user/user.validation.js";
 
 const accountRouter = Router();
 
-const accountController = container.get<AccountController>(
-  TYPES.AccountController
+accountRouter.post(
+  "/register",
+  validateBody(createUserSchema),
+  (req, res, next) => accountController.register(req, res, next)
 );
 
 accountRouter.post(
-  "/register",
-  accountController.register.bind(accountController)
+  "/login",
+  validateBody(loginSchema),
+  (req, res, next) => accountController.login(req, res, next)
 );
-accountRouter.post("/login", accountController.login.bind(accountController));
+
 accountRouter.post(
   "/verifyToken",
-  accountController.verifyToken.bind(accountController)
+  (req, res, next) => accountController.verifyToken(req, res, next)
 );
 
 export default accountRouter;

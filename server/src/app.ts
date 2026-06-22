@@ -1,6 +1,7 @@
 import express, { Express, Request, Response } from "express";
 import routes from "./routes/index.js";
 import cors from "cors";
+import { errorHandler } from "./middlewares/error.middleware.js";
 
 const app: Express = express();
 
@@ -11,5 +12,7 @@ app.use("/api/v1", routes);
 app.get("/", (req: Request, res: Response) => {
   res.json({ message: "Welcome to Dream Jobs" });
 });
+
+app.use(errorHandler);
 
 export default app;

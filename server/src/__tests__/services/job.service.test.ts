@@ -1,62 +1,66 @@
-import JobService from "../../modules/job/job.service.js";
-import IUnitOfWork from "../../repositories/interfaces/iunitofwork.repository.js";
+import { jobService } from "../../modules/job/job.service.js";
+import prisma from "../../../prisma/index.js";
+
+jest.mock("../../../prisma/index.js", () => ({
+  __esModule: true,
+  default: {
+    job: {
+      create: jest.fn(),
+      findUnique: jest.fn(),
+      findMany: jest.fn(),
+      delete: jest.fn(),
+    },
+  },
+}));
 
 describe("JobService", () => {
-  const mockJobRepo = {
-    create: jest.fn(),
-    findById: jest.fn(),
-    findAll: jest.fn(),
-    findByCreator: jest.fn(),
-    delete: jest.fn(),
-  };
-
-  const mockUoW = { Job: mockJobRepo } as unknown as IUnitOfWork;
-  const service = new JobService(mockUoW);
-
   afterEach(() => jest.clearAllMocks());
 
-  it("should create job via repository", async () => {
-    const job = { id: "1", title: "Fullstack Dev" } as any;
-    mockJobRepo.create.mockResolvedValue(job);
+  it("should create job via Prisma", async () => {
+    const data = { title: "Fullstack Dev", createdBy: "user1", deadline: "2025-10-20" } as any;
+    const job = { id: "1", ...data };
+    (prisma.job.create as jest.Mock).mockResolvedValue(job);
 
-    const result = await service.createJob(job);
-    expect(mockJobRepo.create).toHaveBeenCalledWith(job);
+    const result = await jobService.createJob(data);
+    expect(prisma.job.create).toHaveBeenCalledWith({
+      data: { ...data, deadline: new Date(data.deadline) },
+    });
     expect(result).toEqual(job);
   });
 
-  it("should get job by id", async () => {
+  it("should get job by id via Prisma", async () => {
     const job = { id: "1" } as any;
-    mockJobRepo.findById.mockResolvedValue(job);
+    (prisma.job.findUnique as jest.Mock).mockResolvedValue(job);
 
-    const result = await service.getJobById("1");
-    expect(mockJobRepo.findById).toHaveBeenCalledWith("1");
+    const result = await jobService.getJobById("1");
+    expect(prisma.job.findUnique).toHaveBeenCalledWith({ where: { id: "1" } });
     expect(result).toEqual(job);
   });
 
-  it("should list jobs", async () => {
+  it("should list jobs via Prisma", async () => {
     const jobs = [{ id: "1" }];
-    mockJobRepo.findAll.mockResolvedValue(jobs);
+    (prisma.job.findMany as jest.Mock).mockResolvedValue(jobs);
 
-    const result = await service.listJobs();
-    expect(mockJobRepo.findAll).toHaveBeenCalled();
+    const result = await jobService.listJobs();
+    expect(prisma.job.findMany).toHaveBeenCalledWith({ orderBy: { postedAt: "desc" } });
     expect(result).toEqual(jobs);
   });
 
-  it("should list jobs by creator", async () => {
+  it("should list jobs by creator via Prisma", async () => {
     const jobs = [{ id: "1", createdBy: "user1" }];
-    mockJobRepo.findByCreator.mockResolvedValue(jobs);
+    (prisma.job.findMany as jest.Mock).mockResolvedValue(jobs);
 
-    const result = await service.listJobsByCreator("user1");
-    expect(mockJobRepo.findByCreator).toHaveBeenCalledWith("user1");
+    const result = await jobService.listJobsByCreator("user1");
+    expect(prisma.job.findMany).toHaveBeenCalledWith({ where: { createdBy: "user1" } });
     expect(result).toEqual(jobs);
   });
 
-  it("should delete job", async () => {
+  it("should delete job via Prisma", async () => {
     const job = { id: "1" };
-    mockJobRepo.delete.mockResolvedValue(job);
+    (prisma.job.delete as jest.Mock).mockResolvedValue(job);
 
-    const result = await service.deleteJob("1");
-    expect(mockJobRepo.delete).toHaveBeenCalledWith("1");
+    const result = await jobService.deleteJob("1");
+    expect(prisma.job.delete).toHaveBeenCalledWith({ where: { id: "1" } });
     expect(result).toEqual(job);
   });
 });

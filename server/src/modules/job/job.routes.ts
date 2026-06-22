@@ -1,41 +1,36 @@
 import { Router } from "express";
-import container from "../../config/ioc.config.js";
-import JobController from "./job.controller.js";
-import { TYPES } from "../../config/ioc.types.js";
-import RoleMiddleware from "../../middlewares/role.middleware.js";
+import { jobController } from "./job.controller.js";
+import { authorize } from "../../middlewares/role.middleware.js";
 import { Role } from "../../../prisma/generated/prisma/index.js";
-import AuthMiddleware from "../../middlewares/authenticate.middleware.js";
+import { authenticate } from "../../middlewares/authenticate.middleware.js";
 
 const jobRouter = Router();
-const jobController = container.get<JobController>(TYPES.JobController);
-const roleMiddleware = container.get<RoleMiddleware>(TYPES.RoleMiddleware);
-const authMiddleware = container.get<AuthMiddleware>(TYPES.AuthMiddleware);
 
 jobRouter.post(
   "/",
-  authMiddleware.authenticate.bind(authMiddleware),
-  roleMiddleware.authorize([Role.EMPLOYER, Role.ADMIN]),
-  jobController.create.bind(jobController)
+  authenticate,
+  authorize([Role.EMPLOYER, Role.ADMIN]),
+  (req, res, next) => jobController.create(req, res, next)
 );
 
 jobRouter.delete(
   "/:id",
-  authMiddleware.authenticate.bind(authMiddleware),
-  roleMiddleware.authorize([Role.EMPLOYER, Role.ADMIN]),
-  jobController.delete.bind(jobController)
+  authenticate,
+  authorize([Role.EMPLOYER, Role.ADMIN]),
+  (req, res, next) => jobController.delete(req, res, next)
 );
 
-jobRouter.get("/", jobController.getAll.bind(jobController));
+jobRouter.get("/", (req, res, next) => jobController.getAll(req, res, next));
 
 jobRouter.get(
   "/:id",
-  authMiddleware.authenticate.bind(authMiddleware),
-  jobController.getById.bind(jobController)
+  authenticate,
+  (req, res, next) => jobController.getById(req, res, next)
 );
 
 jobRouter.get(
   "/employer/:userId",
-  jobController.getByCreator.bind(jobController)
+  (req, res, next) => jobController.getByCreator(req, res, next)
 );
 
 export default jobRouter;

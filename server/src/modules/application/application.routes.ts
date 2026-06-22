@@ -1,41 +1,35 @@
 import { Router } from "express";
-import container from "../../config/ioc.config.js";
-import { TYPES } from "../../config/ioc.types.js";
-import ApplicationController from "./application.controller.js";
-import RoleMiddleware from "../../middlewares/role.middleware.js";
+import { applicationController } from "./application.controller.js";
+import { authorize } from "../../middlewares/role.middleware.js";
 import { Role } from "../../../prisma/generated/prisma/index.js";
-import AuthMiddleware from "../../middlewares/authenticate.middleware.js";
+import { authenticate } from "../../middlewares/authenticate.middleware.js";
 
 const applicationRouter = Router();
 
-const roleMiddleware = container.get<RoleMiddleware>(TYPES.RoleMiddleware);
-const authMiddleware = container.get<AuthMiddleware>(TYPES.AuthMiddleware);
-const applicationController = container.get<ApplicationController>(
-  TYPES.ApplicationController
-);
-
 applicationRouter.post(
   "/apply",
-  authMiddleware.authenticate.bind(authMiddleware),
-  applicationController.apply.bind(applicationController)
+  authenticate,
+  (req, res, next) => applicationController.apply(req, res, next)
 );
 
 applicationRouter.get(
   "/my",
-  authMiddleware.authenticate.bind(authMiddleware),
-  applicationController.getUserApplications.bind(applicationController)
+  authenticate,
+  (req, res, next) => applicationController.getUserApplications(req, res, next)
 );
 
 applicationRouter.get(
   "/",
-  roleMiddleware.authorize([Role.EMPLOYER, Role.ADMIN]),
-  applicationController.getApplications.bind(applicationController)
+  authenticate,
+  authorize([Role.EMPLOYER, Role.ADMIN]),
+  (req, res, next) => applicationController.getApplications(req, res, next)
 );
 
 applicationRouter.get(
   "/job/:jobId",
-  roleMiddleware.authorize([Role.EMPLOYER, Role.ADMIN]),
-  applicationController.getApplicationsByJob.bind(applicationController)
+  authenticate,
+  authorize([Role.EMPLOYER, Role.ADMIN]),
+  (req, res, next) => applicationController.getApplicationsByJob(req, res, next)
 );
 
 export default applicationRouter;

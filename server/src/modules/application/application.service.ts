@@ -1,19 +1,28 @@
-import { inject, injectable } from "inversify";
-import { TYPES } from "../../config/ioc.types.js";
-import IUnitOfWork from "../../repositories/interfaces/iunitofwork.repository.js";
-import { IApplicatoinService } from "./interfaces/iapplication.service.js";
+import prisma from "../../../prisma/index.js";
 import { Application } from "../../../prisma/generated/prisma/index.js";
 
-@injectable()
-export default class ApplicationService implements IApplicatoinService {
-  constructor(@inject(TYPES.IUnitOfWork) private unitOfWork: IUnitOfWork) {}
-
-  async getApplicationsForEmployer(employerId: string) {
-    return this.unitOfWork.Application.getByEmployerId(employerId);
+export class ApplicationService {
+  async getApplicationsForEmployer(employerId: string): Promise<Application[]> {
+    return prisma.application.findMany({
+      where: {
+        job: {
+          createdBy: employerId,
+        },
+      },
+      include: {
+        user: true,
+        job: true,
+      },
+      orderBy: { appliedAt: "desc" },
+    });
   }
 
-  async getApplicationsForJob(jobId: string) {
-    return this.unitOfWork.Application.getByJobId(jobId);
+  async getApplicationsForJob(jobId: string): Promise<Application[]> {
+    return prisma.application.findMany({
+      where: { jobId },
+      include: { user: true },
+      orderBy: { appliedAt: "desc" },
+    });
   }
 
   async applyToJob(
@@ -22,27 +31,37 @@ export default class ApplicationService implements IApplicatoinService {
     resumeUrl?: string,
     coverLetter?: string
   ): Promise<Application> {
-    const existing = await this.unitOfWork.Application.findByUserAndJob(
-      userId,
-      jobId
-    );
+    const existing = await prisma.application.findFirst({
+      where: { userId, jobId },
+    });
+
     if (existing) {
       throw new Error("You have already applied to this job.");
     }
 
-    return this.unitOfWork.Application.create({
-      userId,
-      jobId,
-      resumeUrl,
-      coverLetter,
+    return prisma.application.create({
+      data: {
+        userId,
+        jobId,
+        resumeUrl,
+        coverLetter,
+      },
     });
   }
 
   async getUserApplications(userId: string): Promise<Application[]> {
-    return this.unitOfWork.Application.findByUser(userId);
+    return prisma.application.findMany({
+      where: { userId },
+      orderBy: { appliedAt: "desc" },
+    });
   }
 
   async getJobApplications(jobId: string): Promise<Application[]> {
-    return this.unitOfWork.Application.findByJob(jobId);
+    return prisma.application.findMany({
+      where: { jobId },
+      orderBy: { appliedAt: "desc" },
+    });
   }
 }
+
+export const applicationService = new ApplicationService();

@@ -1,53 +1,42 @@
-import { inject, injectable } from "inversify";
-import IUnitOfWork from "../../repositories/interfaces/iunitofwork.repository.js";
-import { TYPES } from "../../config/ioc.types.js";
-import { CreateUserModel } from "./user.model.js";
-import { CustomResponse } from "../../dtos/custom-response.js";
+import prisma from "../../../prisma/index.js";
 import { AuthProvider, Role } from "../../../prisma/generated/prisma/index.js";
 import PasswordUtils from "../../utils/password.utils.js";
-import { UserDto } from "../../dtos/user.dto.js";
-import { IUserService } from "./interfaces/iuser.service.js";
+import { CreateUserModel, UserDto } from "./user.validation.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-@injectable()
-export default class UserService implements IUserService {
-  constructor(@inject(TYPES.IUnitOfWork) private unitOfWork: IUnitOfWork) {}
-
+export class UserService {
   async create(
     data: CreateUserModel,
     role: Role
-  ): Promise<CustomResponse<UserDto>> {
+  ): Promise<{ success: boolean; message?: string; data?: UserDto }> {
     if (!data.password) {
       throw new Error("Password is required to create a user");
     }
 
     const hashedPassword = await PasswordUtils.hashPassword(data.password);
 
-    const user = await this.unitOfWork.transaction(
-      async (transactionClient) => {
-        return transactionClient.user.create({
-          data: {
-            name: data.name,
-            email: data.email,
-            password: hashedPassword,
-            role: role,
-            provider: data.provider ?? AuthProvider.CREDENTIALS,
-            providerId: data.providerId ?? null,
-          },
-          select: { id: true, name: true, email: true, role: true },
-        });
-      }
-    );
+    const user = await prisma.user.create({
+      data: {
+        name: data.name,
+        email: data.email,
+        password: hashedPassword, 
+        role: role,
+        provider: data.provider ?? AuthProvider.CREDENTIALS,
+        providerId: data.providerId ?? null,
+      },
+      select: { id: true, name: true, email: true, role: true },
+    });
 
-    if (!user)
+    if (!user) {
       return {
         success: false,
         message: "No user added!",
       };
+    }
 
     return {
       success: true,
@@ -55,27 +44,25 @@ export default class UserService implements IUserService {
     };
   }
 
-  async getUserByEmail(
-    email: string
-  ): Promise<Partial<CreateUserModel> | null> {
-    const user = await this.unitOfWork.User.findByEmail(email);
-
-    if (!user) return null;
-
-    return user;
+  async getUserByEmail(email: string) {
+    return prisma.user.findUnique({
+      where: { email },
+    });
   }
 
   async login(
     email: string,
     password: string
-  ): Promise<{ token: string; user: Partial<CreateUserModel> } | null> {
-    const user = await this.unitOfWork.User.findByEmail(email);
+  ): Promise<{ token: string; user: Omit<CreateUserModel, "password"> } | null> {
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
 
     if (!user || !user.password) {
       return null;
     }
 
-    const isUserMatch = bcrypt.compare(password, user.password);
+    const isUserMatch = await bcrypt.compare(password, user.password);
     if (!isUserMatch) return null;
 
     const token = jwt.sign(
@@ -85,7 +72,7 @@ export default class UserService implements IUserService {
     );
 
     const { password: _, ...userWithoutPassword } = user;
-    return { token, user: userWithoutPassword };
+    return { token, user: userWithoutPassword as any };
   }
 
   verifyToken(token: string): { id: string; email: string; role: Role } | null {
@@ -103,10 +90,16 @@ export default class UserService implements IUserService {
   async updateUserRole(
     id: string
   ): Promise<{ id: string; email: string; role: Role } | null> {
-    const user = await this.unitOfWork.User.findById(id);
+    const user = await prisma.user.findUnique({
+      where: { id },
+    });
     if (!user) return null;
 
-    const updatedUser = await this.unitOfWork.User.updateRole(id);
+    const updatedUser = await prisma.user.update({
+      where: { id },
+      data: { role: Role.EMPLOYER },
+      select: { id: true, email: true, role: true },
+    });
 
     if (!updatedUser) return null;
 
@@ -117,3 +110,5 @@ export default class UserService implements IUserService {
     };
   }
 }
+
+export const userService = new UserService();

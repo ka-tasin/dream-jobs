@@ -5,7 +5,14 @@ module.exports = {
   roots: ["<rootDir>/src/__tests__"],
   moduleFileExtensions: ["ts", "js"],
   transform: {
-    "^.+\\.tsx?$": "ts-jest",
+    "^.+\\.tsx?$": ["ts-jest", { 
+      tsconfig: {
+        module: "commonjs"
+      }
+    }],
+  },
+  moduleNameMapper: {
+    "^(\\.{1,2}/.*)\\.js$": "$1",
   },
   clearMocks: true,
   verbose: true,

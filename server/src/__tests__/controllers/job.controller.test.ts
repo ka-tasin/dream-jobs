@@ -1,17 +1,18 @@
-import JobController from "../../modules/job/job.controller.js";
+import { jobController } from "../../modules/job/job.controller.js";
+import { jobService } from "../../modules/job/job.service.js";
 import { Role } from "../../../prisma/generated/prisma/index.js";
 
-describe("JobController", () => {
-  const mockJobService = {
+jest.mock("../../modules/job/job.service.js", () => ({
+  jobService: {
     createJob: jest.fn(),
     listJobs: jest.fn(),
     getJobById: jest.fn(),
     listJobsByCreator: jest.fn(),
     deleteJob: jest.fn(),
-  };
-  const mockUnitOfService = { Job: mockJobService } as any;
-  const controller = new JobController(mockUnitOfService);
+  },
+}));
 
+describe("JobController", () => {
   const mockRes = () => {
     const res: any = {};
     res.status = jest.fn().mockReturnValue(res);
@@ -19,24 +20,20 @@ describe("JobController", () => {
     return res;
   };
 
-  afterEach(() => jest.clearAllMocks());
+  const mockNext = jest.fn();
 
-  it("should forbid non-employer/admin from creating jobs", async () => {
-    const req: any = { user: { role: Role.USER } };
-    const res = mockRes();
-
-    await controller.create(req, res);
-    expect(res.status).toHaveBeenCalledWith(403);
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it("should create a job for employer", async () => {
     const req: any = { user: { id: "u1", role: Role.EMPLOYER }, body: { title: "Dev" } };
     const res = mockRes();
     const job = { id: "1", title: "Dev" };
-    mockJobService.createJob.mockResolvedValue(job);
+    (jobService.createJob as jest.Mock).mockResolvedValue(job);
 
-    await controller.create(req, res);
-    expect(mockJobService.createJob).toHaveBeenCalledWith({ title: "Dev", createdBy: "u1" });
+    await jobController.create(req, res, mockNext);
+    expect(jobService.createJob).toHaveBeenCalledWith({ title: "Dev", createdBy: "u1" });
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith({ success: true, data: job });
   });
@@ -45,9 +42,9 @@ describe("JobController", () => {
     const req: any = {};
     const res = mockRes();
     const jobs = [{ id: "1" }];
-    mockJobService.listJobs.mockResolvedValue(jobs);
+    (jobService.listJobs as jest.Mock).mockResolvedValue(jobs);
 
-    await controller.getAll(req, res);
+    await jobController.getAll(req, res, mockNext);
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({ success: true, data: jobs });
   });
@@ -56,9 +53,9 @@ describe("JobController", () => {
     const req: any = { params: { id: "1" } };
     const res = mockRes();
     const job = { id: "1" };
-    mockJobService.getJobById.mockResolvedValue(job);
+    (jobService.getJobById as jest.Mock).mockResolvedValue(job);
 
-    await controller.getById(req, res);
+    await jobController.getById(req, res, mockNext);
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({ success: true, data: job });
   });
@@ -66,9 +63,9 @@ describe("JobController", () => {
   it("should handle not found job", async () => {
     const req: any = { params: { id: "999" } };
     const res = mockRes();
-    mockJobService.getJobById.mockResolvedValue(null);
+    (jobService.getJobById as jest.Mock).mockResolvedValue(null);
 
-    await controller.getById(req, res);
+    await jobController.getById(req, res, mockNext);
     expect(res.status).toHaveBeenCalledWith(404);
   });
 
@@ -76,10 +73,10 @@ describe("JobController", () => {
     const req: any = { params: { id: "1" }, user: { id: "u1", role: Role.EMPLOYER } };
     const res = mockRes();
     const job = { id: "1", createdBy: "u1" };
-    mockJobService.getJobById.mockResolvedValue(job);
-    mockJobService.deleteJob.mockResolvedValue(job);
+    (jobService.getJobById as jest.Mock).mockResolvedValue(job);
+    (jobService.deleteJob as jest.Mock).mockResolvedValue(job);
 
-    await controller.delete(req, res);
+    await jobController.delete(req, res, mockNext);
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({ success: true, message: "Job deleted" });
   });

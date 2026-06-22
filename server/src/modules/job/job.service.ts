@@ -1,30 +1,33 @@
-import { inject, injectable } from "inversify";
-import { TYPES } from "../../config/ioc.types.js";
+import prisma from "../../../prisma/index.js";
 import { Job } from "../../../prisma/generated/prisma/index.js";
-import { IJobService } from "./interfaces/ijob.service.js";
-import IUnitOfWork from "../../repositories/interfaces/iunitofwork.repository.js";
 
-@injectable()
-export default class JobService implements IJobService {
-  constructor(@inject(TYPES.IUnitOfWork) private unitOfWork: IUnitOfWork) {}
-
+export class JobService {
   async createJob(data: Omit<Job, "id" | "postedAt">): Promise<Job> {
-    return this.unitOfWork.Job.create(data);
+    return prisma.job.create({
+      data: {
+        ...data,
+        deadline: data.deadline ? new Date(data.deadline) : null,
+      },
+    });
   }
 
   async getJobById(id: string): Promise<Job | null> {
-    return this.unitOfWork.Job.findById(id);
+    return prisma.job.findUnique({ where: { id } });
   }
 
   async listJobs(): Promise<Job[]> {
-    return this.unitOfWork.Job.findAll();
+    return prisma.job.findMany({
+      orderBy: { postedAt: "desc" },
+    });
   }
 
   async listJobsByCreator(userId: string): Promise<Job[]> {
-    return this.unitOfWork.Job.findByCreator(userId);
+    return prisma.job.findMany({ where: { createdBy: userId } });
   }
 
   async deleteJob(id: string): Promise<Job> {
-    return this.unitOfWork.Job.delete(id);
+    return prisma.job.delete({ where: { id } });
   }
 }
+
+export const jobService = new JobService();
