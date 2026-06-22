@@ -17,7 +17,16 @@ model User {
   provider   AuthProvider? @default(CREDENTIALS)
   providerId String?       @default("")
   password   String?
-  createdAt  DateTime      @default(now())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  isEmailVerified     Boolean   @default(false)
+  emailVerifyToken    String?
+  resetPasswordToken  String?
+  resetPasswordExpiry DateTime?
+  isActive            Boolean   @default(true)
+  lastLoginAt         DateTime?
 
   jobs         Job[]         @relation("UserJobs")
   applications Application[]
@@ -27,24 +36,42 @@ model User {
 }
 
 model Job {
-  id          String    @id @default(cuid())
+  id          String  @id @default(cuid())
   title       String
   description String
   role        String
   company     String
   location    String
   type        JobType
-  officeTime  String
-  salary      Float?
-  postedAt    DateTime  @default(now())
-  deadline    DateTime?
-  createdBy   String
+  experience  String?
 
-  creator      User          @relation("UserJobs", fields: [createdBy], references: [id])
+  officeTime String
+
+  salary    Float?
+  salaryMax Float?
+  currency  String @default("USD")
+
+  postedAt  DateTime  @default(now())
+  deadline  DateTime?
+  createdBy String
+
+  isActive  Boolean  @default(true)
+  views     Int      @default(0)
+  updatedAt DateTime @default(now()) @updatedAt
+
+  creator      User          @relation("UserJobs", fields: [createdBy], references: [id], onDelete: Cascade)
   applications Application[]
   savedBy      SavedJob[]
+  skills       String[]
 
   @@index([title])
+  @@index([createdBy])
+  @@index([type])
+  @@index([location])
+  @@index([salary])
+  @@index([salaryMax])
+  @@index([postedAt])
+  @@index([deadline])
   @@map("jobs")
 }
 
@@ -56,10 +83,16 @@ model Application {
   coverLetter String?
   status      AppStatus @default(PENDING)
   appliedAt   DateTime  @default(now())
+  reviewedAt  DateTime?
+  reviewNote  String?
+  updatedAt   DateTime  @default(now()) @updatedAt
 
-  user User @relation(fields: [userId], references: [id])
-  job  Job  @relation(fields: [jobId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  job  Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
 
+  @@unique([userId, jobId])
+  @@index([jobId])
+  @@index([userId])
   @@map("applications")
 }
 
@@ -68,10 +101,14 @@ model SavedJob {
   userId String
   jobId  String
 
-  user User @relation(fields: [userId], references: [id])
-  job  Job  @relation(fields: [jobId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  savedAt   DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@unique([userId, jobId])
+  @@index([jobId])
+  @@index([userId])
   @@map("saved_jobs")
 }
 
