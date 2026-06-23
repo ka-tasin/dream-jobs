@@ -18,6 +18,7 @@ export class AccountController {
       }
 
       const newUser = await userService.create(validatedData, Role.USER);
+      
       if (!newUser || !newUser.success) {
         res.status(400).json({ message: newUser?.message || "Failed to create user!" });
         return;

@@ -1,15 +1,19 @@
-import { z } from 'zod';
-import { AuthProvider, Role } from '../../../prisma/generated/prisma/index.js';
+import { z } from "zod";
+import { AuthProvider, Role } from "../../../prisma/generated/prisma/index.js";
 
 export const createUserSchema = z.object({
-  name: z.string()
-    .min(2, 'Name must be at least 2 characters')
+  firstName: z
+    .string()
+    .min(2, "First name must be at least 2 characters")
     .trim(),
-  email: z.email({ message: 'Please provide a valid email address' })  
+  lastName: z.string().min(2, "Last name must be at least 2 characters").trim(),
+  email: z
+    .email({ message: "Please provide a valid email address" })
     .trim()
     .toLowerCase(),
-  password: z.string()
-    .min(8, 'Password must be at least 8 characters')
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
     .optional()
     .nullable(),
   provider: z.nativeEnum(AuthProvider).optional(),
@@ -17,16 +21,20 @@ export const createUserSchema = z.object({
 });
 
 export const loginSchema = z.object({
-  email: z.email({ message: 'Please provide a valid email address' })
+  email: z
+    .email({ message: "Please provide a valid email address" })
     .trim()
     .toLowerCase(),
-  password: z.string()
-    .min(1, 'Password is required')
+  password: z.string().min(1, "Password is required"),
 });
 
 export const userDtoSchema = z.object({
   id: z.string(),
-  name: z.string(),
+  firstName: z
+    .string()
+    .min(2, "First name must be at least 2 characters")
+    .trim(),
+  lastName: z.string().min(2, "Last name must be at least 2 characters").trim(),
   email: z.string(),
   role: z.nativeEnum(Role).optional(),
 });
