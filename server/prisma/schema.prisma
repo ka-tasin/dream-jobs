@@ -1,6 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "./generated/prisma"
+  provider      = "prisma-client-js"
+  output        = "./generated/prisma"
   binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
@@ -10,122 +10,162 @@ datasource db {
 }
 
 model User {
-  id          String        @id         @default(cuid())
+  id                      String    @id @default(cuid())
 
-  firstName   String 
-  lastName    String  
-  
-  email       String        @unique
-  role        Role          @default(USER)
-  provider    AuthProvider? @default(CREDENTIALS)
-  providerId  String?       @default("")
-  password    String?
+  firstName               String
+  lastName                String
 
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt   @default(now())
+  email                   String        @unique
+  role                    Role          @default(USER)
+  provider                AuthProvider? @default(CREDENTIALS)
+  providerId              String?       @default("")
+  password                String?
 
-  isEmailVerified Boolean     @default(false)
-  emailVerifyToken String?   
-  resetPasswordToken String? 
-  resetPasswordExpiry DateTime?    
-  isActive        Boolean     @default(true) 
-  lastLoginAt     DateTime? 
+  employer                Employer?
 
-  jobs        Job[]         @relation("UserJobs")        
-  applications Application[]                           
-  savedJobs   SavedJob[]                               
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @default(now()) @updatedAt
 
+  isEmailVerified         Boolean   @default(false)
+  emailVerifyToken        String?
+  resetPasswordToken      String?
+  resetPasswordExpiry     DateTime?
+  isActive                Boolean   @default(true)
+  lastLoginAt             DateTime?
+
+  applications            Application[]
+  savedJobs               SavedJob[]
+
+  @@index([isActive])
   @@map("users")
 }
 
 model Job {
-  id          String        @id @default(cuid())
-  title       String
-  description String
-  role        String
-  company     String
-  location    String
-  type        JobType
-  experience  String?
+  id              String        @id @default(cuid())
+  title           String
+  description     String
+  position        String
 
-  officeTime  String
-  
-  salary      Float?
-  salaryMax   Float?
-  currency    String    @default("USD")
-  
-  postedAt    DateTime      @default(now())
-  deadline    DateTime?
-  createdBy   String
+  employerId      String
+  employer        Employer      @relation(fields: [employerId], references: [id])
 
-  isActive    Boolean   @default(true)
-  views       Int       @default(0)
-  updatedAt   DateTime  @updatedAt   @default(now())
+  location        String
+  type            JobType
+  experience      ExperienceLevel?
+  workMode    WorkMode?
 
-  creator     User          @relation("UserJobs", fields: [createdBy], references: [id], onDelete: Cascade)
-  applications Application[]
-  savedBy     SavedJob[]
-  skills      String[]  
+
+  officeTime      String
+
+  salary          Float?
+  salaryMax       Float?
+  currency        String        @default("USD")
+
+  postedAt        DateTime      @default(now())
+  deadline        DateTime?
+
+  isActive        Boolean       @default(true)
+  views           Int           @default(0)
+  updatedAt       DateTime      @default(now()) @updatedAt
+
+  applications    Application[]
+  savedBy         SavedJob[]
+  skills          String[]
 
   @@index([title])
-  @@index([createdBy])
   @@index([type])
   @@index([location])
   @@index([salary])
   @@index([salaryMax])
   @@index([postedAt])
   @@index([deadline])
+  @@index([isActive])
+  @@index([employerId, isActive])
+
   @@map("jobs")
 }
 
 model Application {
-  id          String    @id @default(cuid())
-  userId      String
-  jobId       String
-  resumeUrl   String?
-  coverLetter String?
-  status      AppStatus @default(PENDING)
-  appliedAt   DateTime  @default(now())
-  reviewedAt  DateTime?
-  reviewNote  String?
-  updatedAt   DateTime  @updatedAt  @default(now())
+  id            String        @id @default(cuid())
+  userId        String
+  jobId         String
+  resumeUrl     String?
+  coverLetter   String?
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  job  Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  phoneNumber   String?
+  linkedinUrl   String?
+  portfolioUrl  String?
+  yearsOfExp    Int?
+
+  status        AppStatus   @default(PENDING)
+  appliedAt     DateTime    @default(now())
+  reviewedAt    DateTime?
+  reviewNote    String?
+  updatedAt     DateTime    @default(now()) @updatedAt
+
+  user          User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  job           Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, jobId])
+  @@index([jobId])
+  @@index([jobId, status])
+  @@index([userId])
+  @@map("applications")
+}
+
+model SavedJob {
+  id        String @id @default(cuid())
+  userId    String
+  jobId     String
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  savedAt   DateTime @default(now())
 
   @@unique([userId, jobId])
   @@index([jobId])
   @@index([userId])
-  @@map("applications")  
+  @@map("saved_jobs")
 }
 
+model Employer {
+  id            String        @id @default(cuid())
+  userId        String        @unique
+  companyName   String
+  companyLogo   String?
+  website       String?
+  industry      String?
+  size          String? // "1-10", "11-50", etc.
+  description   String?
+  location      String?
+  isVerified    Boolean @default(false)
 
+  user          User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobs          Job[]
 
-
-model SavedJob {
-  id     String @id @default(cuid())
-  userId String
-  jobId  String
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  job  Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  savedAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt   @default(now())
-
-  @@unique([userId, jobId]) 
-  @@index([jobId])
-  @@index([userId])   
-  @@map("saved_jobs")
+  @@map("employers")
 }
 
 enum JobType {
   FULL_TIME
   PART_TIME
-  REMOTE
-  HYBRID
   CONTRACT
   INTERNSHIP
+  FREELANCE
+}
+
+enum ExperienceLevel {
+  ENTRY // 0-1 years
+  JUNIOR // 1-3 years
+  MID // 3-5 years
+  SENIOR // 5-8 years
+  LEAD // 8+ years
+}
+
+enum WorkMode {
+  REMOTE
   ONSITE
+  HYBRID
 }
 
 enum Role {
