@@ -6,6 +6,7 @@ export const createUserSchema = z.object({
     .string()
     .min(2, "First name must be at least 2 characters")
     .trim(),
+    // make last name required
   lastName: z.string().min(2, "Last name must be at least 2 characters").trim(),
   email: z
     .email({ message: "Please provide a valid email address" })
@@ -18,6 +19,7 @@ export const createUserSchema = z.object({
     .nullable(),
   provider: z.nativeEnum(AuthProvider).optional(),
   providerId: z.string().optional().nullable(),
+  role: z.nativeEnum(Role).default(Role.USER),
 });
 
 export const loginSchema = z.object({

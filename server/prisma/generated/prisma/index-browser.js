@@ -143,18 +143,18 @@ exports.Prisma.JobScalarFieldEnum = {
   id: 'id',
   title: 'title',
   description: 'description',
-  role: 'role',
-  company: 'company',
+  position: 'position',
+  employerId: 'employerId',
   location: 'location',
   type: 'type',
   experience: 'experience',
+  workMode: 'workMode',
   officeTime: 'officeTime',
   salary: 'salary',
   salaryMax: 'salaryMax',
   currency: 'currency',
   postedAt: 'postedAt',
   deadline: 'deadline',
-  createdBy: 'createdBy',
   isActive: 'isActive',
   views: 'views',
   updatedAt: 'updatedAt',
@@ -167,6 +167,10 @@ exports.Prisma.ApplicationScalarFieldEnum = {
   jobId: 'jobId',
   resumeUrl: 'resumeUrl',
   coverLetter: 'coverLetter',
+  phoneNumber: 'phoneNumber',
+  linkedinUrl: 'linkedinUrl',
+  portfolioUrl: 'portfolioUrl',
+  yearsOfExp: 'yearsOfExp',
   status: 'status',
   appliedAt: 'appliedAt',
   reviewedAt: 'reviewedAt',
@@ -178,8 +182,20 @@ exports.Prisma.SavedJobScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   jobId: 'jobId',
-  savedAt: 'savedAt',
-  updatedAt: 'updatedAt'
+  savedAt: 'savedAt'
+};
+
+exports.Prisma.EmployerScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  companyName: 'companyName',
+  companyLogo: 'companyLogo',
+  website: 'website',
+  industry: 'industry',
+  size: 'size',
+  description: 'description',
+  location: 'location',
+  isVerified: 'isVerified'
 };
 
 exports.Prisma.SortOrder = {
@@ -211,11 +227,23 @@ exports.AuthProvider = exports.$Enums.AuthProvider = {
 exports.JobType = exports.$Enums.JobType = {
   FULL_TIME: 'FULL_TIME',
   PART_TIME: 'PART_TIME',
-  REMOTE: 'REMOTE',
-  HYBRID: 'HYBRID',
   CONTRACT: 'CONTRACT',
   INTERNSHIP: 'INTERNSHIP',
-  ONSITE: 'ONSITE'
+  FREELANCE: 'FREELANCE'
+};
+
+exports.ExperienceLevel = exports.$Enums.ExperienceLevel = {
+  ENTRY: 'ENTRY',
+  JUNIOR: 'JUNIOR',
+  MID: 'MID',
+  SENIOR: 'SENIOR',
+  LEAD: 'LEAD'
+};
+
+exports.WorkMode = exports.$Enums.WorkMode = {
+  REMOTE: 'REMOTE',
+  ONSITE: 'ONSITE',
+  HYBRID: 'HYBRID'
 };
 
 exports.AppStatus = exports.$Enums.AppStatus = {
@@ -229,7 +257,8 @@ exports.Prisma.ModelName = {
   User: 'User',
   Job: 'Job',
   Application: 'Application',
-  SavedJob: 'SavedJob'
+  SavedJob: 'SavedJob',
+  Employer: 'Employer'
 };
 
 /**

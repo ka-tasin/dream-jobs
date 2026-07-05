@@ -24,7 +24,7 @@ export class AccountController {
         return;
       }
 
-      res.status(200).json({
+      res.status(201).json({
         success: true,
         message: "User created!",
         data: newUser.data,
