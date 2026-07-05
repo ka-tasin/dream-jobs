@@ -1,12 +1,14 @@
 import { z } from "zod";
 import { AuthProvider, Role } from "../../../prisma/generated/prisma/index.js";
 
+const allowedRoles = ['USER', 'EMPLOYER'] as const;
+const CreateRoleEnum = z.enum(allowedRoles);
+
 export const createUserSchema = z.object({
   firstName: z
     .string()
     .min(2, "First name must be at least 2 characters")
     .trim(),
-    // make last name required
   lastName: z.string().min(2, "Last name must be at least 2 characters").trim(),
   email: z
     .email({ message: "Please provide a valid email address" })
@@ -19,7 +21,7 @@ export const createUserSchema = z.object({
     .nullable(),
   provider: z.nativeEnum(AuthProvider).optional(),
   providerId: z.string().optional().nullable(),
-  role: z.nativeEnum(Role).default(Role.USER),
+  role: CreateRoleEnum.default('USER'),
 });
 
 export const loginSchema = z.object({
