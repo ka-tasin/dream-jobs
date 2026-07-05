@@ -1,12 +1,32 @@
 import { Request, Response, NextFunction } from "express";
 import { Role } from "../../../prisma/generated/prisma/index.js";
 import { jobService } from "./job.service.js";
+import prisma from "../../../prisma/index.js"; 
 
 export class JobController {
   async create(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const user = (req as any).user;
-      const data = { ...req.body, createdBy: user.id };
+      
+      
+      const employer = await prisma.employer.findUnique({
+        where: { userId: user.id },
+      });
+
+      if (!employer) {
+        res.status(403).json({
+          success: false,
+          message: "User does not have an employer profile. Please complete your employer profile first.",
+        });
+        return;
+      }
+
+
+      const data = { 
+        ...req.body, 
+        employerId: employer.id
+      };
+      
       const job = await jobService.createJob(data);
       res.status(201).json({ success: true, data: job });
     } catch (error) {
@@ -27,10 +47,15 @@ export class JobController {
     try {
       const { id } = req.params;
       const job = await jobService.getJobById(id);
+      
       if (!job) {
-        res.status(404).json({ message: "Job not found" });
+        res.status(404).json({ 
+          success: false, 
+          message: "Job not found" 
+        });
         return;
       }
+      
       res.status(200).json({ success: true, data: job });
     } catch (error) {
       next(error);
@@ -40,7 +65,20 @@ export class JobController {
   async getByCreator(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { userId } = req.params;
-      const jobs = await jobService.listJobsByCreator(userId);
+      
+      const employer = await prisma.employer.findUnique({
+        where: { userId },
+      });
+
+      if (!employer) {
+        res.status(404).json({
+          success: false,
+          message: "Employer profile not found for this user",
+        });
+        return;
+      }
+
+      const jobs = await jobService.listJobsByEmployer(employer.id);
       res.status(200).json({ success: true, data: jobs });
     } catch (error) {
       next(error);
@@ -54,19 +92,30 @@ export class JobController {
 
       const job = await jobService.getJobById(id);
       if (!job) {
-        res.status(404).json({ message: "Job not found" });
+        res.status(404).json({ 
+          success: false, 
+          message: "Job not found" 
+        });
         return;
       }
 
-      if (user.role === Role.EMPLOYER && job.createdBy !== user.id) {
-        res
-          .status(403)
-          .json({ message: "Forbidden: cannot delete other employer's job" });
+      const employer = await prisma.employer.findUnique({
+        where: { userId: user.id },
+      });
+
+      if (!employer || (user.role === Role.EMPLOYER && job.employerId !== employer.id)) {
+        res.status(403).json({
+          success: false,
+          message: "Forbidden: cannot delete this job",
+        });
         return;
       }
 
       await jobService.deleteJob(id);
-      res.status(200).json({ success: true, message: "Job deleted" });
+      res.status(200).json({ 
+        success: true, 
+        message: "Job deleted successfully" 
+      });
     } catch (error) {
       next(error);
     }
