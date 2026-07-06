@@ -3,6 +3,8 @@ import { jobController } from "./job.controller.js";
 import { authorize } from "../../middlewares/role.middleware.js";
 import { Role } from "../../../prisma/generated/prisma/index.js";
 import { authenticate } from "../../middlewares/authenticate.middleware.js";
+import { validate } from "../../middlewares/validation.middleware.js";
+import { createJobSchema } from "./job.validation.js";
 
 const jobRouter = Router();
 
@@ -10,6 +12,7 @@ jobRouter.post(
   "/",
   authenticate,
   authorize([Role.EMPLOYER, Role.ADMIN]),
+  validate(createJobSchema),
   (req, res, next) => jobController.create(req, res, next)
 );
 

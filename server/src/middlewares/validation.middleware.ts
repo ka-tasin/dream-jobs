@@ -8,16 +8,15 @@ export const validate = (schema: ZodSchema) => {
       next();
     } catch (error) {
       if (error instanceof ZodError) {
-        const zodError = error as ZodError;
         res.status(400).json({
           success: false,
           message: "Validation failed",
-          errors: zodError.issues.map((issue) => ({
+          errors: error.issues.map((issue) => ({
             field: issue.path.join('.'),
             message: issue.message
           }))
         });
-        return;
+        return; 
       }
       next(error);
     }
@@ -31,16 +30,15 @@ export const validateParams = (schema: ZodSchema) => {
       next();
     } catch (error) {
       if (error instanceof ZodError) {
-        const zodError = error as ZodError;
         res.status(400).json({
           success: false,
           message: "Validation failed",
-          errors: zodError.issues.map((issue) => ({
+          errors: error.issues.map((issue) => ({
             field: issue.path.join('.'),
             message: issue.message
           }))
         });
-        return;
+        return; 
       }
       next(error);
     }
@@ -54,16 +52,15 @@ export const validateQuery = (schema: ZodSchema) => {
       next();
     } catch (error) {
       if (error instanceof ZodError) {
-        const zodError = error as ZodError;
         res.status(400).json({
           success: false,
           message: "Validation failed",
-          errors: zodError.issues.map((issue) => ({
+          errors: error.issues.map((issue) => ({
             field: issue.path.join('.'),
             message: issue.message
           }))
         });
-        return;
+        return; 
       }
       next(error);
     }
