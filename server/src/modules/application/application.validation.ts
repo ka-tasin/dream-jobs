@@ -1,0 +1,94 @@
+import { z } from "zod";
+import { AppStatus } from "../../../prisma/generated/prisma/index.js";
+
+// Validation schema for applying to a job
+export const applyJobSchema = z.object({
+  jobId: z.string()
+    .min(1, { message: "Job ID is required" })
+    .cuid({ message: "Invalid job ID format" }),
+  
+  resumeUrl: z.string()
+    .url({ message: "Invalid resume URL format" })
+    .min(1, { message: "Resume URL is required" })
+    .max(500, { message: "Resume URL must be less than 500 characters" }),
+  
+  coverLetter: z.string()
+    .max(5000, { message: "Cover letter must be less than 5000 characters" })
+    .optional()
+    .nullable()
+});
+
+// Schema for query parameters (filtering, pagination, sorting)
+export const applicationQuerySchema = z.object({
+  status: z.enum(Object.values(AppStatus) as [string, ...string[]])
+    .optional()
+    .nullable(),
+  
+  page: z.string()
+    .regex(/^\d+$/, { message: "Page must be a number" })
+    .transform(Number)
+    .pipe(z.number().int().min(1, { message: "Page must be at least 1" }))
+    .default(1)
+    .optional(),
+  
+  limit: z.string()
+    .regex(/^\d+$/, { message: "Limit must be a number" })
+    .transform(Number)
+    .pipe(z.number().int().min(1, { message: "Limit must be at least 1" }).max(100, { message: "Limit must be at most 100" }))
+    .default(10) 
+    .optional(),
+  
+  sortBy: z.enum(["appliedAt", "status", "updatedAt"] as [string, ...string[]])
+    .default("appliedAt")
+    .optional(),
+  
+  sortOrder: z.enum(["asc", "desc"] as [string, ...string[]])
+    .default("desc")
+    .optional()
+});
+
+// Schema for params validation
+export const applicationParamsSchema = z.object({
+  jobId: z.string()
+    .min(1, { message: "Job ID is required" })
+    .cuid({ message: "Invalid job ID format" })
+});
+
+// Alternative approach: Handle defaults at the end
+export const applicationQuerySchemaAlt = z.object({
+  status: z.enum(Object.values(AppStatus) as [string, ...string[]])
+    .optional()
+    .nullable(),
+  
+  page: z.coerce.number()
+    .int()
+    .min(1, { message: "Page must be at least 1" })
+    .default(1)
+    .optional(),
+  
+  limit: z.coerce.number()
+    .int()
+    .min(1, { message: "Limit must be at least 1" })
+    .max(100, { message: "Limit must be at most 100" })
+    .default(10)
+    .optional(),
+  
+  sortBy: z.enum(["appliedAt", "status", "updatedAt"] as [string, ...string[]])
+    .default("appliedAt")
+    .optional(),
+  
+  sortOrder: z.enum(["asc", "desc"] as [string, ...string[]])
+    .default("desc")
+    .optional()
+});
+
+// Type inferences for TypeScript
+export type ApplyJobInput = z.infer<typeof applyJobSchema>;
+export type ApplicationQueryInput = z.infer<typeof applicationQuerySchema>;
+export type ApplicationParamsInput = z.infer<typeof applicationParamsSchema>;
+
+export default {
+  applyJob: applyJobSchema,
+  query: applicationQuerySchema,
+  params: applicationParamsSchema
+};

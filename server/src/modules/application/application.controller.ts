@@ -40,14 +40,36 @@ export class ApplicationController {
 
   async apply(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const user = (req as any).user; // JWT payload
-      const { jobId, resumeUrl, coverLetter } = req.body;
+      const user = (req as any).user;
+      const { 
+        jobId, 
+        resumeUrl, 
+        coverLetter,
+        phoneNumber,
+        linkedinUrl,
+        portfolioUrl,
+        yearsOfExp
+      } = req.body;
+
+      console.log("Received data:", { 
+        jobId,
+        resumeUrl,
+        coverLetter,
+        phoneNumber,
+        linkedinUrl,
+        portfolioUrl,
+        yearsOfExp
+      });
 
       const application = await applicationService.applyToJob(
         user.id,
         jobId,
         resumeUrl,
-        coverLetter
+        coverLetter,
+        phoneNumber,
+        linkedinUrl,
+        portfolioUrl,
+        yearsOfExp
       );
 
       res.status(201).json({ success: true, data: application });
