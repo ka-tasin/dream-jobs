@@ -6,15 +6,6 @@ import { toast } from "react-toastify";
 import { Loader2, Plus, LogOut, Briefcase, Users, FileText, Globe, Building, ChevronRight, Eye, Trash2, Shield, User, Landmark, Settings } from "lucide-react";
 import Link from "next/link";
 import fetchClient from "@/lib/utils/axiosFetcher";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
 
 interface UserDecoded {
   id: string;
@@ -33,9 +24,9 @@ export default function Dashboard() {
 
   // User Dashboard State
   const [userApplications, setUserApplications] = useState<any[]>([]);
-  const [showEmployerModal, setShowEmployerModal] = useState(false);
   const [companyDetails, setCompanyDetails] = useState({
     companyName: "",
+    companyLogo: "",
     website: "",
     industry: "",
     size: "1-10",
@@ -190,15 +181,50 @@ export default function Dashboard() {
       toast.error("Company name is required");
       return;
     }
+
+    let websiteUrl = companyDetails.website.trim();
+    if (websiteUrl && !/^https?:\/\//i.test(websiteUrl)) {
+      websiteUrl = `https://${websiteUrl}`;
+    }
+
+    let logoUrl = companyDetails.companyLogo.trim();
+    if (logoUrl && !/^https?:\/\//i.test(logoUrl)) {
+      logoUrl = `https://${logoUrl}`;
+    }
+
+    const urlRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/;
+    if (websiteUrl && !urlRegex.test(websiteUrl)) {
+      toast.error("Please enter a valid website URL");
+      return;
+    }
+    if (logoUrl && !urlRegex.test(logoUrl)) {
+      toast.error("Please enter a valid logo URL");
+      return;
+    }
+
+    if (companyDetails.description.trim() && companyDetails.description.trim().length < 10) {
+      toast.error("Description must be at least 10 characters long");
+      return;
+    }
+
     setUpgrading(true);
     try {
+      const payload = {
+        companyName: companyDetails.companyName.trim(),
+        companyLogo: logoUrl || null,
+        website: websiteUrl || null,
+        industry: companyDetails.industry.trim() || null,
+        size: companyDetails.size || null,
+        description: companyDetails.description.trim() || null,
+        location: companyDetails.location.trim() || null,
+      };
+
       await fetchClient("/api/v1/employers/become-employer", {
         method: "POST",
-        body: companyDetails,
+        body: payload,
       });
 
       toast.success("Employer Profile Created successfully!");
-      setShowEmployerModal(false);
       
       // Force user to log in again to refresh role inside token
       localStorage.removeItem("token");
@@ -330,6 +356,16 @@ export default function Dashboard() {
                       }`}
                     >
                       <User className="w-4.5 h-4.5" /> Profile Page
+                    </button>
+                    <button
+                      onClick={() => setActiveTab("become-employer")}
+                      className={`flex items-center gap-3 px-4 py-3 rounded-lg text-left text-sm font-semibold transition duration-150 cursor-pointer ${
+                        activeTab === "become-employer"
+                          ? "bg-blue-50 text-blue-800"
+                          : "text-gray-600 hover:bg-slate-50 hover:text-slate-900"
+                      }`}
+                    >
+                      <Building className="w-4.5 h-4.5" /> Become an Employer
                     </button>
                   </>
                 )}
@@ -530,11 +566,124 @@ export default function Dashboard() {
                     <p className="text-emerald-800 text-sm mt-1">Upgrade your account to an Employer profile. List jobs, review applications, and hire the best team.</p>
                   </div>
                   <button 
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-lg cursor-pointer shrink-0 transition" 
-                    onClick={() => setShowEmployerModal(true)}
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-lg cursor-pointer shrink-0 transition border-0" 
+                    onClick={() => setActiveTab("become-employer")}
                   >
                     Become an Employer
                   </button>
+                </div>
+              </div>
+            )}
+
+            {/* ==================== USER: BECOME AN EMPLOYER PAGE ==================== */}
+            {user?.role === "USER" && activeTab === "become-employer" && (
+              <div className="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden">
+                <div className="px-6 py-5 border-b border-slate-100 bg-slate-50/50">
+                  <h2 className="text-lg font-bold text-slate-900">Become an Employer</h2>
+                  <p className="text-gray-500 text-xs mt-1">Submit your company credentials to register as an employer. You will be logged out to refresh authorization scopes.</p>
+                </div>
+
+                <div className="p-6">
+                  <form onSubmit={handleBecomeEmployer} className="space-y-6 max-w-2xl">
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Company Name *</label>
+                        <input
+                          type="text"
+                          className="w-full h-10 px-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-amber-500"
+                          placeholder="e.g. Acme Tech Solutions"
+                          value={companyDetails.companyName}
+                          onChange={(e) => setCompanyDetails({ ...companyDetails, companyName: e.target.value })}
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Industry</label>
+                        <input
+                          type="text"
+                          className="w-full h-10 px-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-amber-500"
+                          placeholder="e.g. Information Technology"
+                          value={companyDetails.industry}
+                          onChange={(e) => setCompanyDetails({ ...companyDetails, industry: e.target.value })}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Company Size</label>
+                        <select
+                          className="w-full h-10 px-3 bg-white rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-amber-500"
+                          value={companyDetails.size}
+                          onChange={(e) => setCompanyDetails({ ...companyDetails, size: e.target.value })}
+                        >
+                          <option value="1-10">1-10 Employees</option>
+                          <option value="11-50">11-50 Employees</option>
+                          <option value="51-200">51-200 Employees</option>
+                          <option value="201-500">201-500 Employees</option>
+                          <option value="501-1000">501-1000 Employees</option>
+                          <option value="1000+">1000+ Employees</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Location</label>
+                        <input
+                          type="text"
+                          className="w-full h-10 px-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-amber-500"
+                          placeholder="e.g. Dhaka, Bangladesh"
+                          value={companyDetails.location}
+                          onChange={(e) => setCompanyDetails({ ...companyDetails, location: e.target.value })}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Company Logo URL</label>
+                        <input
+                          type="url"
+                          className="w-full h-10 px-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-amber-500"
+                          placeholder="e.g. https://example.com/logo.png"
+                          value={companyDetails.companyLogo}
+                          onChange={(e) => setCompanyDetails({ ...companyDetails, companyLogo: e.target.value })}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Company Website</label>
+                        <input
+                          type="url"
+                          className="w-full h-10 px-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-amber-500"
+                          placeholder="https://example.com"
+                          value={companyDetails.website}
+                          onChange={(e) => setCompanyDetails({ ...companyDetails, website: e.target.value })}
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Company Description (Min 10 chars)</label>
+                      <textarea
+                        className="w-full p-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-amber-500"
+                        placeholder="Brief summary of company vision, products, or service offerings..."
+                        value={companyDetails.description}
+                        onChange={(e) => setCompanyDetails({ ...companyDetails, description: e.target.value })}
+                        rows={5}
+                      />
+                    </div>
+
+                    <div className="pt-2">
+                      <button
+                        type="submit"
+                        disabled={upgrading}
+                        className="h-11 px-6 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-sm transition cursor-pointer border-0 flex items-center justify-center gap-2"
+                      >
+                        {upgrading ? "Upgrading..." : "Register Company Profile"}
+                      </button>
+                    </div>
+                  </form>
                 </div>
               </div>
             )}
@@ -998,101 +1147,6 @@ export default function Dashboard() {
 
       </div>
 
-      {/* Become Employer Modal */}
-      <Dialog open={showEmployerModal} onOpenChange={setShowEmployerModal}>
-        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Become an Employer</DialogTitle>
-            <DialogDescription>
-              Submit your company credentials to register as an employer. You will be logged out to refresh authorization scopes.
-            </DialogDescription>
-          </DialogHeader>
-
-          <form onSubmit={handleBecomeEmployer} className="space-y-4 mt-2">
-            <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Company Name</label>
-              <input
-                type="text"
-                className="w-full h-10 px-3 rounded-md border border-gray-250 text-sm focus:outline-none focus:ring-1 focus:ring-slate-800"
-                placeholder="e.g. Acme Tech Solutions"
-                value={companyDetails.companyName}
-                onChange={(e) => setCompanyDetails({ ...companyDetails, companyName: e.target.value })}
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Industry</label>
-              <input
-                type="text"
-                className="w-full h-10 px-3 rounded-md border border-gray-250 text-sm focus:outline-none focus:ring-1 focus:ring-slate-800"
-                placeholder="e.g. Information Technology"
-                value={companyDetails.industry}
-                onChange={(e) => setCompanyDetails({ ...companyDetails, industry: e.target.value })}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Company Size</label>
-                <select
-                  className="w-full h-10 px-3 bg-white rounded-md border border-gray-250 text-sm focus:outline-none focus:ring-1 focus:ring-slate-800"
-                  value={companyDetails.size}
-                  onChange={(e) => setCompanyDetails({ ...companyDetails, size: e.target.value })}
-                >
-                  <option value="1-10">1-10 Employees</option>
-                  <option value="11-50">11-50 Employees</option>
-                  <option value="51-200">51-200 Employees</option>
-                  <option value="201-500">201-500 Employees</option>
-                  <option value="500+">500+ Employees</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Location</label>
-                <input
-                  type="text"
-                  className="w-full h-10 px-3 rounded-md border border-gray-250 text-sm focus:outline-none focus:ring-1 focus:ring-slate-800"
-                  placeholder="e.g. Dhaka, Bangladesh"
-                  value={companyDetails.location}
-                  onChange={(e) => setCompanyDetails({ ...companyDetails, location: e.target.value })}
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Company Website</label>
-              <input
-                type="url"
-                className="w-full h-10 px-3 rounded-md border border-gray-250 text-sm focus:outline-none focus:ring-1 focus:ring-slate-800"
-                placeholder="https://example.com"
-                value={companyDetails.website}
-                onChange={(e) => setCompanyDetails({ ...companyDetails, website: e.target.value })}
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Company Description</label>
-              <textarea
-                className="w-full p-3 rounded-md border border-gray-250 text-sm focus:outline-none focus:ring-1 focus:ring-slate-800"
-                placeholder="Brief summary of company vision, products, or service offerings..."
-                value={companyDetails.description}
-                onChange={(e) => setCompanyDetails({ ...companyDetails, description: e.target.value })}
-                rows={3}
-              />
-            </div>
-
-            <DialogFooter className="pt-2">
-              <Button type="button" variant="outline" className="border-gray-300" onClick={() => setShowEmployerModal(false)} disabled={upgrading}>
-                Cancel
-              </Button>
-              <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold cursor-pointer" disabled={upgrading}>
-                {upgrading ? "Upgrading..." : "Register Company Profile"}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
     </main>
   );
 }
