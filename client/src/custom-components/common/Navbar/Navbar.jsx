@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 
 const Navbar = () => {
+  const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const [mounted, setMounted] = useState(false); // ✅ Track client mount
@@ -28,6 +30,7 @@ const Navbar = () => {
   const logout = () => {
     localStorage.removeItem("token");
     setLoggedIn(false);
+    router.push("/login");
   };
 
   if (!mounted) return null; // Prevent SSR flash
@@ -77,7 +80,7 @@ const Navbar = () => {
           opacity: 1,
           transition: { type: "tween", stiffness: 100, damping: 5 },
         }}
-        className={`fixed top-0 w-full z-40 bg-white transition-all duration-300 ${
+        className={`fixed top-0 w-full z-45 bg-white transition-all duration-300 ${
           isScrolled ? "shadow-md" : ""
         }`}
         style={{ top: isScrolled ? "0" : "3rem" }}
@@ -115,6 +118,14 @@ const Navbar = () => {
               >
                 Contact
               </Link>
+              {loggedIn && (
+                <Link
+                  href="/dashboard"
+                  className="text-emerald-700 hover:text-emerald-800 font-semibold px-3 py-2 rounded-md text-sm"
+                >
+                  Dashboard
+                </Link>
+              )}
             </div>
 
             {loggedIn && (
@@ -186,7 +197,7 @@ const Navbar = () => {
               <span>Jobs</span>
             </Link>
             <Link
-              href="/saved"
+              href="/dashboard"
               className="flex flex-col items-center text-gray-800 hover:text-blue-600 text-xs"
             >
               <svg
@@ -200,31 +211,54 @@ const Navbar = () => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
+                  d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
                 />
               </svg>
-              <span>Saved</span>
+              <span>Dashboard</span>
             </Link>
-            <Link
-              href="/profile"
-              className="flex flex-col items-center text-gray-800 hover:text-blue-600 text-xs"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+            {loggedIn ? (
+              <button
+                onClick={logout}
+                className="flex flex-col items-center text-gray-800 hover:text-red-600 text-xs bg-transparent border-0 cursor-pointer outline-none"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                />
-              </svg>
-              <span>Profile</span>
-            </Link>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                  />
+                </svg>
+                <span>Logout</span>
+              </button>
+            ) : (
+              <Link
+                href="/login"
+                className="flex flex-col items-center text-gray-800 hover:text-blue-600 text-xs"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                  />
+                </svg>
+                <span>Login</span>
+              </Link>
+            )}
           </div>
         </div>
       </motion.nav>
