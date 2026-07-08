@@ -296,12 +296,6 @@ export default function Dashboard() {
                 </button>
               </Link>
             )}
-            <button 
-              className="border border-gray-300 text-gray-700 bg-white hover:bg-gray-150 px-4 py-2.5 rounded-lg flex items-center gap-2 text-sm transition duration-150 cursor-pointer"
-              onClick={handleLogout}
-            >
-              <LogOut className="w-4 h-4" /> Logout Session
-            </button>
           </div>
         </div>
 
@@ -411,6 +405,16 @@ export default function Dashboard() {
                     </button>
                   </>
                 )}
+                
+                {/* Unified Sidebar Logout Button */}
+                <div className="border-t border-slate-100 mt-4 pt-4">
+                  <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 hover:text-red-750 rounded-lg text-left text-sm font-semibold transition duration-150 cursor-pointer border-0 bg-transparent"
+                  >
+                    <LogOut className="w-4.5 h-4.5" /> Logout Session
+                  </button>
+                </div>
               </div>
             </div>
           </div>
