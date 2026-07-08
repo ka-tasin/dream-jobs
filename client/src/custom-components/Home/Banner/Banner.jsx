@@ -180,6 +180,7 @@ const InteractiveBanner = () => {
           </div>
 
           {/* Background texts with parallax */}
+          {/*
           {backgroundTexts.map((item) => (
             <motion.div
               key={item.id}
@@ -206,6 +207,7 @@ const InteractiveBanner = () => {
               {item.text}
             </motion.div>
           ))}
+          */}
 
           {/* Foreground content */}
           <div className="relative z-10 text-center p-4">
