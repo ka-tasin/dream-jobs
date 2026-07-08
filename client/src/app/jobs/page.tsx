@@ -41,6 +41,10 @@ export default function AllJobsPage() {
   // Mobile Filter Drawer State
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
+  // Pagination States
+  const [currentPage, setCurrentPage] = useState(1);
+  const jobsPerPage = 5;
+
   // Fetch jobs on mount
   useEffect(() => {
     const fetchData = async () => {
@@ -122,6 +126,7 @@ export default function AllJobsPage() {
     }
 
     setFilteredJobs(results);
+    setCurrentPage(1);
   }, [searchTerm, selectedExperiences, selectedWorkModes, selectedTypes, minSalary, maxSalary, allJobs]);
 
   // Toggle handlers for array filters
@@ -330,19 +335,44 @@ export default function AllJobsPage() {
                 ))}
               </div>
             ) : filteredJobs.length > 0 ? (
-              <div className="flex flex-col gap-4">
-                {filteredJobs.map((job) => (
-                  <JobCard
-                    key={job.id}
-                    title={job.title}
-                    company={job.company}
-                    location={job.location}
-                    salary={job.salary}
-                    type={job.type}
-                    id={job.id}
-                  />
-                ))}
-              </div>
+              <>
+                <div className="flex flex-col gap-4">
+                  {filteredJobs.slice((currentPage - 1) * jobsPerPage, currentPage * jobsPerPage).map((job) => (
+                    <JobCard
+                      key={job.id}
+                      title={job.title}
+                      company={job.company}
+                      location={job.location}
+                      salary={job.salary}
+                      type={job.type}
+                      id={job.id}
+                    />
+                  ))}
+                </div>
+
+                {/* Pagination Controls */}
+                {filteredJobs.length > jobsPerPage && (
+                  <div className="flex justify-between items-center bg-white border border-slate-200 rounded-xl p-4 shadow-xs mt-6">
+                    <button
+                      disabled={currentPage === 1}
+                      onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                      className="px-4 py-2 border border-slate-300 hover:bg-slate-50 text-slate-700 rounded-lg text-sm font-semibold transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed bg-white"
+                    >
+                      Previous
+                    </button>
+                    <span className="text-sm font-medium text-slate-650">
+                      Page {currentPage} of {Math.ceil(filteredJobs.length / jobsPerPage)}
+                    </span>
+                    <button
+                      disabled={currentPage === Math.ceil(filteredJobs.length / jobsPerPage)}
+                      onClick={() => setCurrentPage((prev) => Math.min(prev + 1, Math.ceil(filteredJobs.length / jobsPerPage)))}
+                      className="px-4 py-2 border border-slate-300 hover:bg-slate-50 text-slate-700 rounded-lg text-sm font-semibold transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed bg-white"
+                    >
+                      Next
+                    </button>
+                  </div>
+                )}
+              </>
             ) : (
               <div className="text-center py-20 bg-white border border-slate-200 rounded-xl shadow-xs">
                 <Briefcase className="w-12 h-12 text-gray-300 mx-auto mb-3" />
