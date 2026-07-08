@@ -20,11 +20,12 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setPasswordError("");
 
     // Password validation
     const uppercaseRegex = /^(?=.*[A-Z])/;
     const lowercaseRegex = /^(?=.*[a-z])/;
-    const lengthRegex = /^.{6,}$/;
+    const lengthRegex = /^.{8,}$/;
 
     if (!uppercaseRegex.test(password)) {
       setPasswordError("Password must have at least one uppercase letter.");
@@ -39,7 +40,18 @@ export default function RegisterPage() {
     }
 
     if (!lengthRegex.test(password)) {
-      setPasswordError("Password must be at least 6 characters long.");
+      setPasswordError("Password must be at least 8 characters long.");
+      setIsLoading(false);
+      return;
+    }
+
+    // Split name to firstName and lastName to match backend createUserSchema
+    const nameParts = name.trim().split(/\s+/);
+    const firstName = nameParts[0] || "User";
+    const lastName = nameParts.slice(1).join(" ") || "Profile";
+
+    if (firstName.length < 2 || lastName.length < 2) {
+      toast.error("Please enter a first and last name of at least 2 characters each");
       setIsLoading(false);
       return;
     }
@@ -47,7 +59,7 @@ export default function RegisterPage() {
     try {
       const data = await apiClient("/api/v1/auth/register", {
         method: "POST",
-        body: { name, email, password },
+        body: { firstName, lastName, email, password },
       });
 
       localStorage.setItem("token", data.token);

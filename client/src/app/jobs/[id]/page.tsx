@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import apiClient from "@/lib/utils/axiosFetcher";
 import { Button } from "@/components/ui/button";
@@ -35,6 +35,7 @@ interface Job {
 
 export default function JobDetailsPage() {
   const { id } = useParams();
+  const router = useRouter();
   const [job, setJob] = useState<Job | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -46,25 +47,19 @@ export default function JobDetailsPage() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    setToken(localStorage.getItem("token"));
-  }, []);
-
-  useEffect(() => {
-    if (!token) return;
+    const t = localStorage.getItem("token");
+    if (!t) {
+      toast.error("Please login to view details of this job listing");
+      router.push("/login");
+      return;
+    }
+    setToken(t);
 
     const fetchJob = async () => {
-      const token = localStorage.getItem("token");
-
-      if (!token) {
-        setError("No token found, please login");
-        setLoading(false);
-        return;
-      }
-
       try {
         const response = await apiClient(`/api/v1/jobs/${id}`, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${t}`,
           },
         });
 
@@ -81,7 +76,7 @@ export default function JobDetailsPage() {
     };
 
     fetchJob();
-  }, [token, id]);
+  }, [id, router]);
 
   console.log(job, id);
 
