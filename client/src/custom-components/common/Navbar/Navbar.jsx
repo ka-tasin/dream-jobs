@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
 
 const Navbar = () => {
   const router = useRouter();
@@ -38,13 +37,7 @@ const Navbar = () => {
   return (
     <div className="z-[1000]">
       {/* Top Story */}
-      <motion.header
-        initial={{ y: -100, opacity: 0 }}
-        animate={{
-          y: 0,
-          opacity: 1,
-          transition: { type: "tween", stiffness: 100, damping: 5 },
-        }}
+      <header
         className={`fixed top-0 w-full z-50 bg-white shadow-gray-200 transition-all duration-300 ${
           isScrolled ? "transform -translate-y-full" : ""
         }`}
@@ -70,16 +63,10 @@ const Navbar = () => {
             </div>
           )}
         </div>
-      </motion.header>
+      </header>
 
       {/* Main Navbar */}
-      <motion.nav
-        initial={{ y: -100, opacity: 0 }}
-        animate={{
-          y: 0,
-          opacity: 1,
-          transition: { type: "tween", stiffness: 100, damping: 5 },
-        }}
+      <nav
         className={`fixed top-0 w-full z-45 bg-white transition-all duration-300 ${
           isScrolled ? "shadow-md" : ""
         }`}
@@ -142,16 +129,10 @@ const Navbar = () => {
             )}
           </div>
         </div>
-      </motion.nav>
+      </nav>
 
       {/* Bottom Navbar */}
-      <motion.nav
-        initial={{ y: 100, opacity: 0 }}
-        animate={{
-          y: 0,
-          opacity: 1,
-          transition: { type: "tween", stiffness: 100, damping: 5 },
-        }}
+      <nav
         className="fixed md:hidden bottom-0 w-full z-50 bg-white shadow-md border-t border-gray-200"
       >
         <div className="max-w-6xl mx-auto px-4">
@@ -211,7 +192,7 @@ const Navbar = () => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+                  d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012 2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
                 />
               </svg>
               <span>Dashboard</span>
@@ -261,7 +242,7 @@ const Navbar = () => {
             )}
           </div>
         </div>
-      </motion.nav>
+      </nav>
     </div>
   );
 };

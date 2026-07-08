@@ -1,8 +1,6 @@
 "use client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { JobCard } from "./JobCard";
-import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import apiClient from "@/lib/utils/axiosFetcher";
@@ -14,10 +12,6 @@ export function TopJobsSection() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [tabKey, setTabKey] = useState("all");
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
 
   // Filter jobs based on type
   const remoteJobs = jobs.filter((job) => job.type === "REMOTE").slice(0, 3);
@@ -27,44 +21,6 @@ export function TopJobsSection() {
   const internshipJobs = jobs
     .filter((job) => job.type === "INTERNSHIP")
     .slice(0, 3);
-
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut",
-        when: "beforeChildren",
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-        ease: "easeOut",
-      },
-    },
-  };
-
-  const tabContentVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        duration: 0.3,
-        ease: "easeInOut",
-      },
-    },
-  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -85,22 +41,13 @@ export function TopJobsSection() {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <motion.section
-      ref={ref}
-      initial="hidden"
-      animate={inView ? "visible" : "hidden"}
-      variants={containerVariants}
-      className="w-full py-12 sm:py-16 lg:py-20 bg-white"
-    >
+    <section className="w-full py-12 sm:py-16 lg:py-20 bg-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.h2
-          variants={itemVariants}
-          className="text-2xl sm:text-3xl lg:text-4xl text-center font-semibold text-black mb-8 sm:mb-10 lg:mb-12"
-        >
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl text-center font-semibold text-black mb-8 sm:mb-10 lg:mb-12">
           Top Jobs Available
-        </motion.h2>
+        </h2>
 
-        <motion.div variants={itemVariants}>
+        <div>
           <Tabs
             defaultValue="all"
             className="w-full"
@@ -133,12 +80,7 @@ export function TopJobsSection() {
               </TabsTrigger>
             </TabsList>
 
-            <motion.div
-              key={tabKey}
-              initial="hidden"
-              animate="visible"
-              variants={tabContentVariants}
-            >
+            <div key={tabKey}>
               {/* All Jobs Tab */}
               <TabsContent value="all" className="mt-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 px-0 sm:px-4 md:px-8 lg:px-14">
@@ -224,21 +166,20 @@ export function TopJobsSection() {
                   )}
                 </div>
               </TabsContent>
-            </motion.div>
+            </div>
           </Tabs>
-        </motion.div>
+        </div>
 
-        <div className="flex justify-center px-4">
-          <Link href={"/jobs"}>
+        <div className="flex justify-center px-4 mt-8">
+          <Link href="/jobs" className="w-full sm:w-auto">
             <Button
-              variants={itemVariants}
-              className="mt-6 sm:mt-8 hover:scale-110 text-center py-4 sm:py-5 px-6 sm:px-8 text-sm sm:text-base w-full sm:w-auto"
+              className="text-center py-4 sm:py-5 px-6 sm:px-8 text-sm sm:text-base w-full sm:w-auto hover:scale-102 transition duration-200"
             >
               View All Jobs
             </Button>
           </Link>
         </div>
       </div>
-    </motion.section>
+    </section>
   );
 }

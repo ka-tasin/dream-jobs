@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
 import { Loader2 } from "lucide-react";
@@ -85,19 +84,6 @@ export default function AddJobPage() {
           salary: parseFloat(job.salary),
         },
       });
-      // await axios.post(
-      //   "http://localhost:3000/api/v1/jobs",
-      //   {
-      //     ...job,
-      //     salary: parseFloat(job.salary),
-      //   },
-      //   {
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //       Authorization: `Bearer ${localStorage.getItem("token")}`,
-      //     },
-      //   }
-      // );
 
       toast.success("Job posted successfully!");
       router.push("/jobs");
@@ -147,180 +133,157 @@ export default function AddJobPage() {
       </div>
 
       <form ref={formRef} onSubmit={handleSubmit}>
-        <AnimatePresence mode="wait">
-          {/* Step 1 */}
-          {step === 1 && (
-            <motion.div
-              key="step1"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              transition={{ duration: 0.3 }}
-              className="space-y-6"
+        {/* Step 1 */}
+        {step === 1 && (
+          <div className="space-y-6">
+            <Input
+              name="title"
+              placeholder="Job Title"
+              value={job.title}
+              onChange={handleChange}
+              required
+              className={""}
+              type={"text"}
+            />
+            <Input
+              name="role"
+              placeholder="Role (Frontend Developer)"
+              value={job.role}
+              onChange={handleChange}
+              required
+              className={""}
+              type={"text"}
+            />
+            <Input
+              name="company"
+              placeholder="Company Name"
+              value={job.company}
+              onChange={handleChange}
+              required
+              className={""}
+              type={"text"}
+            />
+            <Input
+              name="location"
+              placeholder="Location"
+              value={job.location}
+              onChange={handleChange}
+              required
+              className={""}
+              type={"text"}
+            />
+            <Button
+              type="button"
+              className="w-full"
+              onClick={nextStep}
+              disabled={
+                !job.title || !job.role || !job.company || !job.location
+              }
             >
-              <Input
-                name="title"
-                placeholder="Job Title"
-                value={job.title}
-                onChange={handleChange}
-                required
-                className={""}
-                type={"text"}
-              />
-              <Input
-                name="role"
-                placeholder="Role (Frontend Developer)"
-                value={job.role}
-                onChange={handleChange}
-                required
-                className={""}
-                type={"text"}
-              />
-              <Input
-                name="company"
-                placeholder="Company Name"
-                value={job.company}
-                onChange={handleChange}
-                required
-                className={""}
-                type={"text"}
-              />
-              <Input
-                name="location"
-                placeholder="Location"
-                value={job.location}
-                onChange={handleChange}
-                required
-                className={""}
-                type={"text"}
-              />
+              Next
+            </Button>
+          </div>
+        )}
+
+        {/* Step 2 */}
+        {step === 2 && (
+          <div className="space-y-6">
+            <Select value={job.type} onValueChange={handleSelect}>
+              <SelectTrigger className={""}>
+                <SelectValue placeholder="Select job type" />
+              </SelectTrigger>
+              <SelectContent className={""}>
+                <SelectItem className={""} value="ONSITE">
+                  On-site
+                </SelectItem>
+                <SelectItem className={""} value="REMOTE">
+                  Remote
+                </SelectItem>
+                <SelectItem className={""} value="HYBRID">
+                  Hybrid
+                </SelectItem>
+                <SelectItem className={""} value="PART_TIME">
+                  Part-time
+                </SelectItem>
+                <SelectItem className={""} value="FULL">
+                  Full-time
+                </SelectItem>
+                <SelectItem className={""} value="INTERNSHIP">
+                  Internship
+                </SelectItem>
+                <SelectItem className={""} value="CONTRACT">
+                  Contract
+                </SelectItem>
+              </SelectContent>
+            </Select>
+            <Input
+              name="officeTime"
+              placeholder="Office Time (9 AM - 5 PM)"
+              value={job.officeTime}
+              onChange={handleChange}
+              required
+              className={""}
+              type={""}
+            />
+            <Input
+              name="salary"
+              placeholder="Salary (BDT)"
+              type="number"
+              value={job.salary}
+              onChange={handleChange}
+              required
+              className={""}
+            />
+            <Input
+              name="deadline"
+              type="date"
+              value={job.deadline}
+              onChange={handleChange}
+              required
+              className={""}
+            />
+            <div className="flex justify-between">
+              <Button type="button" onClick={prevStep}>
+                Back
+              </Button>
               <Button
                 type="button"
-                className="w-full"
                 onClick={nextStep}
-                disabled={
-                  !job.title || !job.role || !job.company || !job.location
-                }
+                disabled={!job.type || !job.officeTime}
               >
                 Next
               </Button>
-            </motion.div>
-          )}
+            </div>
+          </div>
+        )}
 
-          {/* Step 2 */}
-          {step === 2 && (
-            <motion.div
-              key="step2"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              transition={{ duration: 0.3 }}
-              className="space-y-6"
-            >
-              <Select value={job.type} onValueChange={handleSelect}>
-                <SelectTrigger className={""}>
-                  <SelectValue placeholder="Select job type" />
-                </SelectTrigger>
-                <SelectContent className={""}>
-                  <SelectItem className={""} value="ONSITE">
-                    On-site
-                  </SelectItem>
-                  <SelectItem className={""} value="REMOTE">
-                    Remote
-                  </SelectItem>
-                  <SelectItem className={""} value="HYBRID">
-                    Hybrid
-                  </SelectItem>
-                  <SelectItem className={""} value="PART_TIME">
-                    Part-time
-                  </SelectItem>
-                  <SelectItem className={""} value="FULL">
-                    Full-time
-                  </SelectItem>
-                  <SelectItem className={""} value="INTERNSHIP">
-                    Internship
-                  </SelectItem>
-                  <SelectItem className={""} value="CONTRACT">
-                    Contract
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-              <Input
-                name="officeTime"
-                placeholder="Office Time (9 AM - 5 PM)"
-                value={job.officeTime}
-                onChange={handleChange}
-                required
-                className={""}
-                type={""}
-              />
-              <Input
-                name="salary"
-                placeholder="Salary (BDT)"
-                type="number"
-                value={job.salary}
-                onChange={handleChange}
-                required
-                className={""}
-              />
-              <Input
-                name="deadline"
-                type="date"
-                value={job.deadline}
-                onChange={handleChange}
-                required
-                className={""}
-              />
-              <div className="flex justify-between">
-                <Button type="button" onClick={prevStep}>
-                  Back
-                </Button>
-                <Button
-                  type="button"
-                  onClick={nextStep}
-                  disabled={!job.type || !job.officeTime}
-                >
-                  Next
-                </Button>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Step 3 */}
-          {step === 3 && (
-            <motion.div
-              key="step3"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              transition={{ duration: 0.3 }}
-              className="space-y-6"
-            >
-              <Textarea
-                name="description"
-                placeholder="Job Description"
-                value={job.description}
-                onChange={handleChange}
-                required
-              />
-              <div className="flex justify-between items-center">
-                <Button type="button" onClick={prevStep} disabled={posting}>
-                  Back
-                </Button>
-                <Button type="submit" className="w-full" disabled={posting}>
-                  {posting ? (
-                    <div className="flex items-center justify-center gap-2">
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Posting...
-                    </div>
-                  ) : (
-                    "Post Job"
-                  )}
-                </Button>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Step 3 */}
+        {step === 3 && (
+          <div className="space-y-6">
+            <Textarea
+              name="description"
+              placeholder="Job Description"
+              value={job.description}
+              onChange={handleChange}
+              required
+            />
+            <div className="flex justify-between items-center">
+              <Button type="button" onClick={prevStep} disabled={posting}>
+                Back
+              </Button>
+              <Button type="submit" className="w-full" disabled={posting}>
+                {posting ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Posting...
+                  </div>
+                ) : (
+                  "Post Job"
+                )}
+              </Button>
+            </div>
+          </div>
+        )}
       </form>
     </div>
   );

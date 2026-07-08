@@ -1,6 +1,4 @@
 "use client";
-import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,26 +30,6 @@ export default function AllJobsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
   const [jobTypeFilter, setJobTypeFilter] = useState("all");
-  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
-
-  // Animations
-  const containerVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: "easeOut", staggerChildren: 0.1 },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5, ease: "easeOut" },
-    },
-  };
 
   // Fetch jobs
   useEffect(() => {
@@ -102,26 +80,14 @@ export default function AllJobsPage() {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <motion.section
-      ref={ref}
-      initial="hidden"
-      animate={inView ? "visible" : "hidden"}
-      variants={containerVariants}
-      className="container mx-auto min-h-screen mt-24 py-12 bg-white"
-    >
+    <section className="container mx-auto min-h-screen mt-24 py-12 bg-white">
       <div className="container mx-auto px-4">
-        <motion.h2
-          variants={itemVariants}
-          className="text-4xl text-center font-semibold text-black mb-8"
-        >
+        <h2 className="text-4xl text-center font-semibold text-black mb-8">
           All Job Opportunities
-        </motion.h2>
+        </h2>
 
         {/* Filters */}
-        <motion.div
-          variants={itemVariants}
-          className="flex flex-col md:flex-row gap-4 mb-8 p-6 bg-white rounded-lg border border-gray-300 shadow-sm"
-        >
+        <div className="flex flex-col md:flex-row gap-4 mb-8 p-6 bg-white rounded-lg border border-gray-300 shadow-xs">
           {/* Search */}
           <Input
             type="text"
@@ -139,13 +105,10 @@ export default function AllJobsPage() {
             onChange={(e) => setLocationFilter(e.target.value)}
             className="pl-4 py-2 border border-gray-300 focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
           />
-        </motion.div>
+        </div>
 
         {/* Job Type Quick Filters */}
-        <motion.div
-          variants={itemVariants}
-          className="flex  gap-2 mb-8 flex-wrap"
-        >
+        <div className="flex gap-2 mb-8 flex-wrap">
           <div className="flex w-full justify-between items-center">
             <div>
               {["all", "PART_TIME", "FULL_TIME", "REMOTE", "INTERNSHIP"].map(
@@ -167,34 +130,27 @@ export default function AllJobsPage() {
               )}
             </div>
             <div>
-              <motion.div
-                variants={itemVariants}
-                className="flex justify-end mb-6"
-              >
+              <div className="flex justify-end mb-6">
                 <Link href="/add-jobs">
                   <Button className="bg-gray-800 hover:bg-gray-700 text-white px-6 py-2">
                     + Add Job
                   </Button>
                 </Link>
-              </motion.div>
+              </div>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Job Count */}
-        <motion.div variants={itemVariants} className="text-gray-600 mb-6">
-          Showing {filteredJobs.length}{" "}
-          {filteredJobs.length === 1 ? "job" : "jobs"}
-        </motion.div>
+        <div className="text-gray-600 mb-6 font-medium">
+          Showing {filteredJobs.length} {filteredJobs.length === 1 ? "job" : "jobs"}
+        </div>
 
         {/* Jobs Grid */}
         {filteredJobs.length > 0 ? (
-          <motion.div
-            variants={containerVariants}
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredJobs.map((job) => (
-              <motion.div key={job.id} variants={itemVariants}>
+              <div key={job.id}>
                 <JobCard
                   title={job.title}
                   company={job.company}
@@ -203,21 +159,18 @@ export default function AllJobsPage() {
                   type={job.type}
                   id={job.id}
                 />
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
         ) : (
-          <motion.div
-            variants={itemVariants}
-            className="text-center py-12 bg-gray-50 rounded-lg"
-          >
+          <div className="text-center py-12 bg-gray-50 rounded-lg">
             <h3 className="text-xl font-medium text-gray-700 mb-2">
               No jobs found
             </h3>
             <p className="text-gray-500">Try adjusting your search filters</p>
-          </motion.div>
+          </div>
         )}
       </div>
-    </motion.section>
+    </section>
   );
 }
