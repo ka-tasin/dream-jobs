@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import apiClient from "@/lib/utils/axiosFetcher";
 import { JobCard } from "@/custom-components/Home/TopJobs/JobCard";
-import { DreamJobsLoader } from "@/custom-components/common/DataLoading/DataLoading";
 import Link from "next/link";
 import { Search, Briefcase, Filter, X, RefreshCw } from "lucide-react";
 
@@ -153,7 +152,6 @@ export default function AllJobsPage() {
     setMaxSalary("");
   };
 
-  if (loading) return <DreamJobsLoader title={"All Job Opportunities"} />;
   if (error) return <div className="text-center py-20 text-red-650 mt-20">{error}</div>;
 
   // Filter Sidebar Content Component (Reusable for Desktop & Mobile drawer)
@@ -320,9 +318,19 @@ export default function AllJobsPage() {
               </div>
             </div>
 
-            {/* Jobs Cards Grid */}
-            {filteredJobs.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Jobs Cards Stack / Loader */}
+            {loading ? (
+              <div className="space-y-4">
+                {[1, 2, 3].map((n) => (
+                  <div key={n} className="border border-slate-200 rounded-xl p-6 bg-white animate-pulse shadow-xs">
+                    <div className="h-5 bg-slate-200 rounded w-1/3 mb-2"></div>
+                    <div className="h-4 bg-slate-100 rounded w-1/4 mb-4"></div>
+                    <div className="h-4 bg-slate-50 rounded w-1/2"></div>
+                  </div>
+                ))}
+              </div>
+            ) : filteredJobs.length > 0 ? (
+              <div className="flex flex-col gap-4">
                 {filteredJobs.map((job) => (
                   <JobCard
                     key={job.id}
