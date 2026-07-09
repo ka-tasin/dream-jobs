@@ -15,6 +15,33 @@ export const applyJobSchema = z.object({
   coverLetter: z.string()
     .max(5000, { message: "Cover letter must be less than 5000 characters" })
     .optional()
+    .nullable(),
+
+  phoneNumber: z.string()
+    .max(50, { message: "Phone number must be less than 50 characters" })
+    .optional()
+    .nullable(),
+
+  linkedinUrl: z.string()
+    .url({ message: "Invalid LinkedIn URL format" })
+    .max(500, { message: "LinkedIn URL must be less than 500 characters" })
+    .or(z.literal(""))
+    .optional()
+    .nullable(),
+
+  portfolioUrl: z.string()
+    .url({ message: "Invalid Portfolio URL format" })
+    .max(500, { message: "Portfolio URL must be less than 500 characters" })
+    .or(z.literal(""))
+    .optional()
+    .nullable(),
+
+  yearsOfExp: z.union([
+    z.number(),
+    z.string().transform(val => val === "" ? null : Number(val))
+  ])
+    .pipe(z.number().int().min(0, { message: "Years of experience must be at least 0" }).nullable())
+    .optional()
     .nullable()
 });
 

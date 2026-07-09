@@ -45,6 +45,10 @@ export default function AllJobsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const jobsPerPage = 5;
 
+  // Search Suggestions State
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
   // Fetch jobs on mount
   useEffect(() => {
     const fetchData = async () => {
@@ -148,6 +152,33 @@ export default function AllJobsPage() {
     );
   };
 
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+    if (value.trim().length < 2) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    const val = value.toLowerCase();
+    const uniqueSuggestions = new Set<string>();
+
+    allJobs.forEach((job) => {
+      if (job.title?.toLowerCase().includes(val)) {
+        uniqueSuggestions.add(job.title);
+      }
+      if (job.company?.toLowerCase().includes(val)) {
+        uniqueSuggestions.add(job.company);
+      }
+      if (job.position?.toLowerCase().includes(val) || job.role?.toLowerCase().includes(val)) {
+        uniqueSuggestions.add(job.position || job.role);
+      }
+    });
+
+    setSuggestions(Array.from(uniqueSuggestions).slice(0, 5));
+    setShowSuggestions(true);
+  };
+
   const handleResetFilters = () => {
     setSearchTerm("");
     setSelectedExperiences([]);
@@ -155,6 +186,8 @@ export default function AllJobsPage() {
     setSelectedTypes([]);
     setMinSalary("");
     setMaxSalary("");
+    setSuggestions([]);
+    setShowSuggestions(false);
   };
 
   if (error) return <div className="text-center py-20 text-red-650 mt-20">{error}</div>;
@@ -174,18 +207,59 @@ export default function AllJobsPage() {
         </button>
       </div>
 
-      {/* Keyword Search */}
-      <div>
+      {/* Keyword Search with Suggestions Dropdown */}
+      <div className="relative">
         <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Search Keyword</label>
         <div className="relative">
           <input
             type="text"
             placeholder="Title, company, skills..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => handleSearchChange(e.target.value)}
+            onFocus={() => { if (suggestions.length > 0) setShowSuggestions(true); }}
+            onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
             className="w-full h-10 pl-9 pr-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-amber-500"
           />
           <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+        </div>
+
+        {showSuggestions && suggestions.length > 0 && (
+          <div className="absolute left-0 right-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-35 divide-y divide-slate-100 max-h-48 overflow-y-auto">
+            {suggestions.map((suggestion, index) => (
+              <button
+                key={index}
+                type="button"
+                onClick={() => {
+                  setSearchTerm(suggestion);
+                  setShowSuggestions(false);
+                }}
+                className="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-amber-50 transition cursor-pointer border-0 bg-transparent"
+              >
+                {suggestion}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Salary Range */}
+      <div>
+        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Salary Range (BDT)</label>
+        <div className="grid grid-cols-2 gap-2 mt-1">
+          <input
+            type="number"
+            placeholder="Min BDT"
+            value={minSalary}
+            onChange={(e) => setMinSalary(e.target.value)}
+            className="w-full h-10 px-3 rounded-lg border border-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-amber-500"
+          />
+          <input
+            type="number"
+            placeholder="Max BDT"
+            value={maxSalary}
+            onChange={(e) => setMaxSalary(e.target.value)}
+            className="w-full h-10 px-3 rounded-lg border border-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-amber-500"
+          />
         </div>
       </div>
 
@@ -256,27 +330,6 @@ export default function AllJobsPage() {
               <span>{exp.label}</span>
             </label>
           ))}
-        </div>
-      </div>
-
-      {/* Salary Range */}
-      <div>
-        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Salary Range (BDT)</label>
-        <div className="grid grid-cols-2 gap-2 mt-1">
-          <input
-            type="number"
-            placeholder="Min BDT"
-            value={minSalary}
-            onChange={(e) => setMinSalary(e.target.value)}
-            className="w-full h-10 px-3 rounded-lg border border-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-amber-500"
-          />
-          <input
-            type="number"
-            placeholder="Max BDT"
-            value={maxSalary}
-            onChange={(e) => setMaxSalary(e.target.value)}
-            className="w-full h-10 px-3 rounded-lg border border-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-amber-500"
-          />
         </div>
       </div>
     </div>
