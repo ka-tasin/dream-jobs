@@ -118,13 +118,25 @@ export default function JobDetailsPage() {
     fetchJobAndSuggestions();
   }, [id, router]);
 
-  const sanitizeUrl = (urlStr: string) => {
-    if (!urlStr.trim()) return "";
-    const trimmed = urlStr.trim();
+  const sanitizeAndValidateUrl = (urlStr: string, fieldName: string) => {
+    let trimmed = urlStr.trim();
+    if (!trimmed) return { valid: true, value: null };
+
     if (!/^https?:\/\//i.test(trimmed)) {
-      return `https://${trimmed}`;
+      if (trimmed.includes(".")) {
+        trimmed = `https://${trimmed}`;
+      } else {
+        toast.error(`Please enter a valid URL with a domain suffix (e.g., .com) for ${fieldName}`);
+        return { valid: false, value: null };
+      }
     }
-    return trimmed;
+
+    const pattern = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{2,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/i;
+    if (pattern.test(trimmed)) {
+      return { valid: true, value: trimmed };
+    }
+    toast.error(`Please enter a valid URL for ${fieldName} (e.g. https://example.com)`);
+    return { valid: false, value: null };
   };
 
   const handleApply = async () => {
@@ -137,9 +149,18 @@ export default function JobDetailsPage() {
       return;
     }
 
-    const sanitizedResume = sanitizeUrl(resumeUrl);
-    const sanitizedLinkedin = linkedinUrl.trim() ? sanitizeUrl(linkedinUrl) : null;
-    const sanitizedPortfolio = portfolioUrl.trim() ? sanitizeUrl(portfolioUrl) : null;
+    const resumeRes = sanitizeAndValidateUrl(resumeUrl, "Resume Link");
+    if (!resumeRes.valid) return;
+    if (!resumeRes.value) {
+      toast.error("Resume URL is required");
+      return;
+    }
+
+    const linkedinRes = sanitizeAndValidateUrl(linkedinUrl, "LinkedIn Profile");
+    if (!linkedinRes.valid) return;
+
+    const portfolioRes = sanitizeAndValidateUrl(portfolioUrl, "Portfolio Link");
+    if (!portfolioRes.valid) return;
 
     setSubmitting(true);
     try {
@@ -147,11 +168,11 @@ export default function JobDetailsPage() {
         method: "POST",
         body: {
           jobId: job?.id,
-          resumeUrl: sanitizedResume,
+          resumeUrl: resumeRes.value,
           coverLetter: coverLetter.trim() || null,
           phoneNumber: phoneNumber.trim() || null,
-          linkedinUrl: sanitizedLinkedin,
-          portfolioUrl: sanitizedPortfolio,
+          linkedinUrl: linkedinRes.value,
+          portfolioUrl: portfolioRes.value,
           yearsOfExp: yearsOfExp.trim() ? Number(yearsOfExp) : null,
         },
       });

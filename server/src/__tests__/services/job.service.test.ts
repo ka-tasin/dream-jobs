@@ -46,12 +46,26 @@ describe("JobService", () => {
     expect(result).toEqual(jobs);
   });
 
-  it("should list jobs by creator via Prisma", async () => {
-    const jobs = [{ id: "1", createdBy: "user1" }];
+  it("should list jobs by employer via Prisma", async () => {
+    const jobs = [{ id: "1", employerId: "emp1" }];
     (prisma.job.findMany as jest.Mock).mockResolvedValue(jobs);
 
-    const result = await jobService.listJobsByCreator("user1");
-    expect(prisma.job.findMany).toHaveBeenCalledWith({ where: { createdBy: "user1" } });
+    const result = await jobService.listJobsByEmployer("emp1");
+    expect(prisma.job.findMany).toHaveBeenCalledWith({
+      where: { 
+        employerId: "emp1" 
+      },
+      orderBy: { postedAt: "desc" },
+      include: {
+        employer: {
+          include: {
+            user: true,
+          },
+        },
+        applications: true,
+        savedBy: true,
+      },
+    });
     expect(result).toEqual(jobs);
   });
 

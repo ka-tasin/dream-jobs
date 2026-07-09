@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { AppStatus } from "../../../prisma/generated/prisma/index.js";
 
+const strictUrlRegex = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{2,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/i;
+
 // Validation schema for applying to a job
 export const applyJobSchema = z.object({
   jobId: z.string()
@@ -8,7 +10,7 @@ export const applyJobSchema = z.object({
     .cuid({ message: "Invalid job ID format" }),
   
   resumeUrl: z.string()
-    .url({ message: "Invalid resume URL format" })
+    .regex(strictUrlRegex, { message: "Invalid resume URL format (must be a valid URL with domain extension, e.g. https://example.com/resume)" })
     .min(1, { message: "Resume URL is required" })
     .max(500, { message: "Resume URL must be less than 500 characters" }),
   
@@ -23,14 +25,14 @@ export const applyJobSchema = z.object({
     .nullable(),
 
   linkedinUrl: z.string()
-    .url({ message: "Invalid LinkedIn URL format" })
+    .regex(strictUrlRegex, { message: "Invalid LinkedIn URL format (must be a valid URL with domain extension, e.g. https://linkedin.com/in/username)" })
     .max(500, { message: "LinkedIn URL must be less than 500 characters" })
     .or(z.literal(""))
     .optional()
     .nullable(),
 
   portfolioUrl: z.string()
-    .url({ message: "Invalid Portfolio URL format" })
+    .regex(strictUrlRegex, { message: "Invalid Portfolio URL format (must be a valid URL with domain extension, e.g. https://myportfolio.com)" })
     .max(500, { message: "Portfolio URL must be less than 500 characters" })
     .or(z.literal(""))
     .optional()

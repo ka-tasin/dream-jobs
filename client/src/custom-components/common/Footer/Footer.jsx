@@ -9,60 +9,48 @@ export function Footer() {
       title: "Company",
       links: [
         { name: "About Us", href: "/about-us" },
-        { name: "Careers", href: "/jobs" },
-        { name: "Blog", href: "#" },
-        { name: "Press", href: "#" },
+        { name: "Contact Us", href: "/contact" },
       ],
     },
     {
-      title: "Resources",
+      title: "Quick Links",
       links: [
-        { name: "Job Search", href: "/jobs" },
-        { name: "Resume Builder", href: "#" },
-        { name: "Interview Prep", href: "#" },
-        { name: "Salary Calculator", href: "#" },
-      ],
-    },
-    {
-      title: "Legal",
-      links: [
-        { name: "Privacy Policy", href: "#" },
-        { name: "Terms of Service", href: "#" },
-        { name: "Cookie Policy", href: "#" },
+        { name: "Find Jobs", href: "/jobs" },
+        { name: "My Dashboard", href: "/dashboard" },
       ],
     },
   ];
 
   const contactInfo = [
     {
-      icon: <Mail className="w-5 h-5 text-red-600" />,
-      text: "contact@dreamjobs.com",
-      href: "mailto:contact@dreamjobs.com",
+      icon: <Mail className="w-5 h-5 text-red-650" />,
+      text: "support@dreamjobs.com",
+      href: "mailto:support@dreamjobs.com",
     },
     {
-      icon: <Phone className="w-5 h-5 text-red-600" />,
-      text: "+1 (555) 123-4567",
-      href: "tel:+15551234567",
+      icon: <Phone className="w-5 h-5 text-red-650" />,
+      text: "+880 1234-567890",
+      href: "tel:+8801234567890",
     },
     {
-      icon: <MapPin className="w-5 h-5 text-red-600" />,
-      text: "123 Career St, San Francisco, CA",
-      href: "#",
+      icon: <MapPin className="w-5 h-5 text-red-650" />,
+      text: "Dhaka, Bangladesh",
+      href: "/contact",
     },
   ];
 
   const socialLinks = [
     {
       icon: <Linkedin className="w-5 h-5" />,
-      href: "#",
+      href: "https://linkedin.com",
     },
     {
       icon: <Twitter className="w-5 h-5" />,
-      href: "#",
+      href: "https://twitter.com",
     },
     {
       icon: <Github className="w-5 h-5" />,
-      href: "#",
+      href: "https://github.com",
     },
   ];
 
@@ -176,31 +164,11 @@ export function Footer() {
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
           viewport={{ once: true }}
-          className="text-center md:text-left flex flex-col md:flex-row justify-between items-center"
+          className="text-center"
         >
-          <p className="mb-4 md:mb-0">
+          <p className="text-gray-500 text-sm">
             © {new Date().getFullYear()} DreamJobs. All rights reserved.
           </p>
-          <div className="flex space-x-6">
-            <Link
-              href="#"
-              className="hover:text-red-500 transition-colors text-sm"
-            >
-              Privacy Policy
-            </Link>
-            <Link
-              href="#"
-              className="hover:text-red-500 transition-colors text-sm"
-            >
-              Terms of Service
-            </Link>
-            <Link
-              href="#"
-              className="hover:text-red-500 transition-colors text-sm"
-            >
-              Cookies
-            </Link>
-          </div>
         </motion.div>
       </div>
     </footer>
