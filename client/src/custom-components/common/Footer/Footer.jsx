@@ -78,7 +78,7 @@ export function Footer() {
             viewport={{ once: true }}
           >
             <h3 className="text-2xl font-bold text-white mb-4">
-              <span className="text-red-600">Career</span>Solutions
+              <span className="text-red-600">Dream</span>Jobs
             </h3>
             <p className="mb-6">
               Empowering professionals to find their dream careers through
