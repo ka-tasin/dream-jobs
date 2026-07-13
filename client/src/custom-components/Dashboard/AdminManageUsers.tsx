@@ -23,7 +23,7 @@ export default function AdminManageUsers() {
         });
         if (search) params.set("search", search);
 
-        const res = await fetchClient<any>(`/api/v1/admin/users?${params.toString()}`);
+        const res = await fetchClient<any>(`/api/v1/admin?${params.toString()}`);
         setUsers(res.data?.users || res.data || []);
       } catch (err: any) {
         toast.error(err.message || "Failed to load users");
@@ -38,7 +38,7 @@ export default function AdminManageUsers() {
     if (!confirm(`Are you sure you want to delete user account "${email}"? This is permanent.`)) return;
     setDeletingId(userId);
     try {
-      await fetchClient(`/api/v1/admin/users/${userId}`, { method: "DELETE" });
+      await fetchClient(`/api/v1/admin/${userId}`, { method: "DELETE" });
       toast.success("User deleted successfully");
       setUsers((prev) => prev.filter((u) => u.id !== userId));
     } catch (err: any) {

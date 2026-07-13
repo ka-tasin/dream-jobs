@@ -24,8 +24,6 @@ const Navbar = () => {
     setLoggedIn(!!localStorage.getItem("token"));
   }, [mounted]);
 
-  if (!mounted) return null; // Prevent SSR flash
-
   return (
     <div className="z-[1000]">
       {/* Top Story */}
@@ -38,7 +36,7 @@ const Navbar = () => {
           <div className="text-sm text-gray-600">
             Welcome to DreamJobs! Find your dream career today.
           </div>
-          {!loggedIn && (
+          {mounted && !loggedIn && (
             <div className="flex items-center space-x-4">
               <Link
                 href="/login"
@@ -97,7 +95,7 @@ const Navbar = () => {
               >
                 Contact
               </Link>
-              {loggedIn && (
+              {mounted && loggedIn && (
                 <Link
                   href="/dashboard"
                   className="ml-2 px-4.5 py-1.5 text-xs font-bold uppercase tracking-wider text-emerald-700 hover:text-white border border-emerald-500 hover:bg-emerald-650 rounded-lg transition duration-150 shadow-xs inline-flex items-center"
@@ -180,7 +178,7 @@ const Navbar = () => {
               </svg>
               <span>Dashboard</span>
             </Link>
-            {!loggedIn && (
+            {mounted && !loggedIn && (
               <Link
                 href="/login"
                 className="flex flex-col items-center text-gray-800 hover:text-blue-600 text-xs"
