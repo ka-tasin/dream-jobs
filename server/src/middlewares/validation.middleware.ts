@@ -26,7 +26,12 @@ export const validate = (schema: ZodSchema) => {
 export const validateParams = (schema: ZodSchema) => {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      req.params = await schema.parseAsync(req.params) as any;
+      const parsedParams = await schema.parseAsync(req.params);
+      Object.defineProperty(req, "params", {
+        value: parsedParams,
+        writable: true,
+        configurable: true,
+      });
       next();
     } catch (error) {
       if (error instanceof ZodError) {
@@ -48,7 +53,12 @@ export const validateParams = (schema: ZodSchema) => {
 export const validateQuery = (schema: ZodSchema) => {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      req.query = await schema.parseAsync(req.query) as any;
+      const parsedQuery = await schema.parseAsync(req.query);
+      Object.defineProperty(req, "query", {
+        value: parsedQuery,
+        writable: true,
+        configurable: true,
+      });
       next();
     } catch (error) {
       if (error instanceof ZodError) {
