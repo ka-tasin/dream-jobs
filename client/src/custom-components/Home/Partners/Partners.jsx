@@ -1,88 +1,86 @@
 "use client";
-import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
 
-const partners = [
-  "Amazon",
-  "Google",
-  "Microsoft",
-  "Apple",
-  "Netflix",
-  "Tesla",
-  "Adobe",
-  "Spotify",
-  "Uber",
-  "Airbnb",
+const partnersList = [
+  {
+    name: "Google",
+    svg: (
+      <svg className="h-7 w-auto fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12.24 10.285V13.4h6.887c-.275 1.565-1.88 4.604-6.887 4.604-4.33 0-7.859-3.578-7.859-8s3.53-8 7.859-8c2.46 0 4.105 1.025 5.047 1.926l2.427-2.334C17.955 2.192 15.34 1 12.24 1 5.92 1 1 5.92 1 12s4.92 11 11.24 11c6.59 0 11-4.637 11-11.19 0-.752-.082-1.32-.178-1.81H12.24z" />
+      </svg>
+    ),
+    hoverColor: "hover:text-blue-600",
+  },
+  {
+    name: "Microsoft",
+    svg: (
+      <svg className="h-6 w-auto fill-current" viewBox="0 0 23 23" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 0h11v11H0zM12 0h11v11H12zM0 12h11v11H0zM12 12h11v11H12z" />
+      </svg>
+    ),
+    hoverColor: "hover:text-red-500",
+  },
+  {
+    name: "Amazon",
+    svg: (
+      <svg className="h-6 w-auto fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M15.53 15.4c-1.38 1.05-3.66 1.62-5.7 1.62-2.9 0-5.55-1.12-7.3-3-.25-.28-.02-.6.28-.42 2.27 1.34 5.1 2.16 8 2.16 2.05 0 4.27-.5 5.78-1.57.34-.24.63.1.28.4l-.34.21zm.74-2c-.17-.23-.08-.55.18-.52 1.25.17 2.5-.54 2.87-1.74.34-1.13-.25-2.35-1.36-2.78-1.04-.4-2.24.1-2.73 1.13-.1.2-.38.23-.46.03l-.4-1.05c-.1-.28.1-.56.38-.5 1.95.42 3.42 2.14 3.2 4.14-.18 1.7-1.42 2.92-3.1 2.92-.7 0-1.34-.23-1.85-.63-.2-.17-.07-.46.16-.4l3.1.4zm6.66-3.8c-.85-.82-2.1-1.2-3.4-1.2-2.74 0-5.06 1.83-5.76 4.46-.22.8-.24 1.7-.02 2.5.54 2.1 2.3 3.65 4.54 3.75 1.5.07 2.94-.48 3.86-1.5.2-.23.47-.03.35.23-.9 1.93-2.83 3.12-4.98 3.12-2.6 0-4.88-1.74-5.54-4.22-.26-1-.22-2.07.13-3.04.83-2.34 3.03-3.9 5.57-3.9 1.48 0 2.86.53 3.84 1.5.24.24-.04.55-.3.35z" />
+      </svg>
+    ),
+    hoverColor: "hover:text-amber-500",
+  },
+  {
+    name: "Apple",
+    svg: (
+      <svg className="h-7 w-auto fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.17c.66-.81 1.11-1.93.99-3.06-1 .04-2.2.67-2.92 1.51-.64.73-1.2 1.87-1.05 2.98 1.1.09 2.22-.57 2.98-1.43z" />
+      </svg>
+    ),
+    hoverColor: "hover:text-slate-800",
+  },
+  {
+    name: "Spotify",
+    svg: (
+      <svg className="h-7 w-auto fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424c-.18.295-.565.387-.86.207-2.377-1.454-5.37-1.783-8.893-.982-.336.075-.668-.135-.744-.47-.077-.337.135-.668.47-.745 3.856-.88 7.15-.5 9.85 1.153.3.18.39.563.21.865zm1.224-2.723c-.226.367-.707.487-1.074.26-2.72-1.672-6.87-2.157-10.08-1.182-.413.125-.85-.107-.978-.52-.128-.414.108-.85.522-.978 3.67-1.114 8.243-.574 11.35 1.337.368.226.488.708.262 1.073.002.002 0 .002 0 .004zm.105-2.832C14.392 8.76 8.575 8.567 5.2 9.59c-.547.165-1.122-.143-1.288-.69-.165-.546.143-1.12.69-1.287 3.87-1.175 10.3-0.952 14.34 1.448.49.29.654.922.36 1.41-.29.492-.924.655-1.413.362z" />
+      </svg>
+    ),
+    hoverColor: "hover:text-emerald-500",
+  },
+  {
+    name: "Airbnb",
+    svg: (
+      <svg className="h-7 w-auto fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M22.952 14.156c-.347-.692-.93-1.282-1.701-1.724a18.258 18.258 0 01-.659-.395l-.101-.064-.09-.06a45.714 45.714 0 01-1.391-.989l-.27-.2a32.905 32.905 0 01-1.46-1.144c-1.33-1.1-2.431-2.316-3.27-3.62A10.373 10.373 0 0113.06 2.5a5.556 5.556 0 00-2.12 0c-.397 1.092-.72 2.257-.95 3.465a10.37 10.37 0 01-1.25 3.62c-.84 1.304-1.94 2.52-3.27 3.62a32.91 32.91 0 01-1.46 1.144l-.27.2c-.482.35-.95.7-1.392.99l-.09.06-.1.063c-.22.13-.44.263-.66.395-.77.442-1.354 1.032-1.701 1.724-.37.734-.413 1.543-.12 2.278a3.784 3.784 0 001.992 2.28 7.375 7.375 0 003.58.74c1.88-.047 3.62-.647 5.09-1.765a26.236 26.236 0 004.72-4.582 26.242 26.242 0 004.721 4.582c1.47 1.118 3.21 1.718 5.09 1.765a7.374 7.374 0 003.58-.74 3.784 3.784 0 001.992-2.28c.293-.735.25-1.544-.12-2.278zm-10.952 2.378c-.732 0-1.412-.132-2.012-.39a6.837 6.837 0 01-1.71-1.127 10.231 10.231 0 01-1.261-1.39 12.394 12.394 0 01-.892-1.554 14.887 14.887 0 011.661-1.396 28.535 28.535 0 001.55-1.282c.983-.883 1.79-1.854 2.4-2.887a7.712 7.712 0 00.264-.473 7.708 7.708 0 00.264.473c.61 1.033 1.417 2.004 2.4 2.887a28.528 28.528 0 001.55 1.282c.621.503 1.176.97 1.662 1.396a12.392 12.392 0 01-.892 1.554c-.36.527-.78 1-1.261 1.39a6.838 6.838 0 01-1.71 1.128 5.86 5.86 0 01-2.012.39z" />
+      </svg>
+    ),
+    hoverColor: "hover:text-rose-500",
+  },
 ];
 
 export function PartnersSection() {
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.2,
-  });
-
   return (
-    <section ref={ref} className="py-16">
-      <div className="px-4">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-3xl font-bold text-center mb-12 text-red-700"
-        >
-          Our Trusted Partners
-        </motion.h2>
+    <section className="py-16 bg-slate-50 border-y border-slate-100">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-3xl mx-auto mb-10">
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 tracking-tight">
+            Our Trusted Partners
+          </h2>
+          <p className="text-sm text-slate-500 mt-2">
+            We collaborate with industry leaders and fast-growing organizations to help candidates land their dream careers globally.
+          </p>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="overflow-hidden"
-        >
-          <div className="relative">
-            {/* First Marquee */}
-            <motion.div
-              animate={{
-                x: ["0%", "-100%"],
-              }}
-              transition={{
-                duration: 20,
-                repeat: Infinity,
-                ease: "linear",
-              }}
-              className="flex whitespace-nowrap py-4"
+        <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-8 md:gap-x-16 lg:gap-x-20 py-4">
+          {partnersList.map((partner) => (
+            <div
+              key={partner.name}
+              className={`text-slate-400 opacity-60 hover:opacity-100 ${partner.hoverColor} transition-all duration-200 ease-in-out cursor-pointer`}
+              title={partner.name}
             >
-              {[...partners, ...partners].map((partner, i) => (
-                <div key={`first-${i}`} className="inline-block mx-8">
-                  <span className="text-2xl font-medium text-black">
-                    {partner}
-                  </span>
-                </div>
-              ))}
-            </motion.div>
-
-            {/* Second Marquee (reverse direction) */}
-            <motion.div
-              animate={{
-                x: ["-100%", "0%"],
-              }}
-              transition={{
-                duration: 20,
-                repeat: Infinity,
-                ease: "linear",
-              }}
-              className="flex whitespace-nowrap py-4"
-            >
-              {[...partners, ...partners].map((partner, i) => (
-                <div key={`second-${i}`} className="inline-block mx-8">
-                  <span className="text-2xl font-medium text-black">
-                    {partner}
-                  </span>
-                </div>
-              ))}
-            </motion.div>
-          </div>
-        </motion.div>
+              {partner.svg}
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
