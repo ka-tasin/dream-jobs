@@ -6,9 +6,11 @@ import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import apiClient from "@/lib/utils/axiosFetcher";
+import { useAuth } from "@/context/AuthContext";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -23,11 +25,14 @@ export default function LoginPage() {
         body: { email, password },
       });
 
-      const rawToken = res.data?.token?.replace(/^Bearer\s+/i, "");
-      localStorage.setItem("token", rawToken);
+      const rawToken = res.data?.token;
+      if (!rawToken) {
+        throw new Error("No token returned from server");
+      }
+      login(rawToken);
 
       toast.success("Logged in successfully!");
-      router.back();
+      router.push("/dashboard");
     } catch (error: any) {
       toast.error(error.message || "Login failed. Please try again.");
       setIsLoading(false);
