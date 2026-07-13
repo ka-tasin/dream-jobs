@@ -30,6 +30,7 @@ export default function LoginPage() {
       router.back();
     } catch (error: any) {
       toast.error(error.message || "Login failed. Please try again.");
+      setIsLoading(false);
     }
   };
 
