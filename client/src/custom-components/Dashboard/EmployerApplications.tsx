@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Users, ChevronLeft, ChevronRight, Filter, CheckCircle, XCircle, Eye, FileText, ExternalLink, Loader2 } from "lucide-react";
+import { Users, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Filter, CheckCircle, XCircle, Eye, FileText, ExternalLink, Loader2 } from "lucide-react";
 import { toast } from "react-toastify";
 import fetchClient from "@/lib/utils/axiosFetcher";
 import StatusBadge from "./StatusBadge";
@@ -63,7 +63,7 @@ export default function EmployerApplications() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
         <div>
           <h2 className="text-xl font-bold text-slate-800">Applications</h2>
-          <p className="text-sm text-slate-500 mt-1">Review and manage job applications</p>
+          <p className="text-sm text-slate-500 mt-1">Review and manage job applications. Click any row to expand details.</p>
         </div>
         <div className="flex items-center gap-2">
           <Filter className="w-4 h-4 text-slate-400" />
@@ -102,7 +102,7 @@ export default function EmployerApplications() {
                 >
                   {/* Application Row */}
                   <div
-                    className="flex items-center justify-between px-5 py-4 cursor-pointer hover:bg-slate-50/40"
+                    className="flex items-center justify-between px-5 py-4 cursor-pointer hover:bg-slate-50/50 group"
                     onClick={() => setExpandedId(expandedId === app.id ? null : app.id)}
                   >
                     <div className="flex items-center gap-3 min-w-0">
@@ -110,7 +110,7 @@ export default function EmployerApplications() {
                         {app.user?.firstName?.charAt(0)?.toUpperCase() || "?"}
                       </div>
                       <div className="min-w-0">
-                        <p className="text-sm font-semibold text-slate-800">
+                        <p className="text-sm font-semibold text-slate-800 group-hover:text-red-600 transition-colors">
                           {app.user?.firstName || "Unknown"} {app.user?.lastName || ""}
                         </p>
                         <p className="text-xs text-slate-550 truncate mt-0.5">{app.user?.email}</p>
@@ -122,6 +122,13 @@ export default function EmployerApplications() {
                         <p className="text-[10px] text-slate-500 mt-0.5">{formatDate(app.appliedAt)}</p>
                       </div>
                       <StatusBadge status={app.status} />
+                      <div className="text-slate-400 group-hover:text-slate-600 transition-colors ml-1">
+                        {expandedId === app.id ? (
+                          <ChevronUp className="w-4.5 h-4.5" />
+                        ) : (
+                          <ChevronDown className="w-4.5 h-4.5" />
+                        )}
+                      </div>
                     </div>
                   </div>
 
