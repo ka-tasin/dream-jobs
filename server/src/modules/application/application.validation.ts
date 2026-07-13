@@ -83,6 +83,12 @@ export const applicationParamsSchema = z.object({
     .cuid({ message: "Invalid job ID format" })
 });
 
+// Schema for updating application status
+export const updateStatusSchema = z.object({
+  status: z.enum(["PENDING", "REVIEWED", "ACCEPTED", "REJECTED"]),
+  reviewNote: z.string().max(1000).optional(),
+});
+
 // Alternative approach: Handle defaults at the end
 export const applicationQuerySchemaAlt = z.object({
   status: z.enum(Object.values(AppStatus) as [string, ...string[]])

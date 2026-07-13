@@ -97,6 +97,37 @@ export class ApplicationController {
       next(err);
     }
   }
+
+  async updateApplicationStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { id } = req.params;
+      const { status, reviewNote } = req.body;
+
+      const application = await applicationService.updateApplicationStatus(id, status, reviewNote);
+
+      res.status(200).json({
+        success: true,
+        data: application,
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async getApplicationStats(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const user = (req as any).user;
+
+      const stats = await applicationService.getApplicationStats(user.id);
+
+      res.status(200).json({
+        success: true,
+        data: stats,
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 export const applicationController = new ApplicationController();

@@ -7,7 +7,8 @@ import { validate, validateParams, validateQuery } from "../../middlewares/valid
 import {
   applyJobSchema,
   applicationQuerySchema,
-  applicationParamsSchema
+  applicationParamsSchema,
+  updateStatusSchema
 } from "./application.validation.js";
 
 const applicationRouter = Router();
@@ -35,12 +36,27 @@ applicationRouter.get(
 );
 
 applicationRouter.get(
+  "/stats",
+  authenticate,
+  authorize([Role.EMPLOYER, Role.ADMIN]),
+  (req, res, next) => applicationController.getApplicationStats(req, res, next)
+);
+
+applicationRouter.get(
   "/job/:jobId",
   authenticate,
   authorize([Role.EMPLOYER, Role.ADMIN]),
   validateParams(applicationParamsSchema), 
   validateQuery(applicationQuerySchema),
   (req, res, next) => applicationController.getApplicationsByJob(req, res, next)
+);
+
+applicationRouter.patch(
+  "/:id/status",
+  authenticate,
+  authorize([Role.EMPLOYER, Role.ADMIN]),
+  validate(updateStatusSchema),
+  (req, res, next) => applicationController.updateApplicationStatus(req, res, next)
 );
 
 export default applicationRouter;

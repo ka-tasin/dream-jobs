@@ -35,6 +35,13 @@ employerRouter.get(
 );
 
 employerRouter.get(
+  "/stats",
+  authenticate,
+  authorize([Role.EMPLOYER, Role.ADMIN]),
+  (req, res, next) => employerController.getEmployerStats(req, res, next)
+);
+
+employerRouter.get(
   "/:id",
   (req, res, next) => employerController.getEmployerById(req, res, next)
 );
