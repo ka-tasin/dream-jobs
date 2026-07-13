@@ -4,7 +4,6 @@ import { JobCard } from "./JobCard";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import apiClient from "@/lib/utils/axiosFetcher";
-import { DreamJobsLoader } from "@/custom-components/common/DataLoading/DataLoading";
 import Link from "next/link";
 
 export function TopJobsSection() {
@@ -37,7 +36,26 @@ export function TopJobsSection() {
     fetchData();
   }, []);
 
-  if (loading) return <DreamJobsLoader title={"Top Jobs Available"} />;
+  if (loading) {
+    return (
+      <section className="w-full py-12 sm:py-16 lg:py-20 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl text-center font-semibold text-black mb-8 sm:mb-10 lg:mb-12">
+            Top Jobs Available
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 px-0 sm:px-4 md:px-8 lg:px-14">
+            {[1, 2, 3].map((n) => (
+              <div key={n} className="border border-slate-200 rounded-xl p-6 bg-white animate-pulse shadow-xs">
+                <div className="h-5 bg-slate-200 rounded w-1/3 mb-2"></div>
+                <div className="h-4 bg-slate-100 rounded w-1/4 mb-4"></div>
+                <div className="h-4 bg-slate-50 rounded w-1/2"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
   if (error) return <div>Error: {error}</div>;
 
   return (
