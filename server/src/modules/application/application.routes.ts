@@ -10,12 +10,14 @@ import {
   applicationParamsSchema,
   updateStatusSchema
 } from "./application.validation.js";
+import { applyLimiter } from "../../middlewares/rateLimiter.middleware.js";
 
 const applicationRouter = Router();
 
 applicationRouter.post(
   "/apply",
   authenticate,
+  applyLimiter,
   validate(applyJobSchema),
   (req, res, next) => applicationController.apply(req, res, next)
 );
