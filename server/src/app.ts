@@ -3,8 +3,11 @@ import routes from "./routes/index.js";
 import cors from "cors";
 import { errorHandler } from "./middlewares/error.middleware.js";
 import cookieParser from "cookie-parser";
+import helmet from "helmet";
 
 const app: Express = express();
+
+app.use(helmet());
 
 app.use(cors({
   origin: ["http://localhost:5173", "https://dream-jobs-kat.vercel.app"],
