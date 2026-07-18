@@ -25,6 +25,7 @@ const fetchClient = async <T = any>(
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...headers,
       },
+      credentials: "include",
       ...rest,
     };
 

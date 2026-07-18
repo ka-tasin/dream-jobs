@@ -7,6 +7,7 @@ import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import apiClient from "@/lib/utils/axiosFetcher";
 import { useAuth } from "@/context/AuthContext";
+import { jwtDecode } from "jwt-decode";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -25,11 +26,23 @@ export default function LoginPage() {
         body: { email, password },
       });
 
-      const rawToken = res.data?.token;
-      if (!rawToken) {
-        throw new Error("No token returned from server");
+      // Extract user info and optional token from response
+      const user = res.data?.user || res.data?.data?.user || res.data;
+      const token = res.data?.token || res.data?.data?.token;
+
+      // Fallback decoding if user object is not directly present but token is
+      let finalUser = user;
+      if (!user && token) {
+        try {
+          finalUser = jwtDecode<any>(token);
+        } catch {}
       }
-      login(rawToken);
+
+      if (!finalUser) {
+        throw new Error("No user profile returned from server");
+      }
+
+      login(finalUser, token);
 
       toast.success("Logged in successfully!");
       router.push("/dashboard");

@@ -2,6 +2,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useRouter } from "next/navigation";
+import fetchClient from "@/lib/utils/axiosFetcher";
 
 interface UserDecoded {
   id: string;
@@ -17,8 +18,8 @@ interface AuthContextType {
   isAdmin: boolean;
   isUser: boolean;
   loading: boolean;
-  login: (token: string) => void;
-  logout: () => void;
+  login: (userData: UserDecoded, token?: string) => void;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -30,36 +31,60 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    if (storedToken) {
+    const checkAuth = async () => {
       try {
-        const decoded = jwtDecode<UserDecoded>(storedToken);
-        setUser(decoded);
-        setToken(storedToken);
+        // Verify token with cookies first
+        const res = await fetchClient<any>("/api/v1/auth/verifyToken", { method: "POST" });
+        if (res.success && res.data) {
+          setUser(res.data);
+          setToken(localStorage.getItem("token") || "cookie-authenticated");
+        } else {
+          setUser(null);
+        }
       } catch {
-        localStorage.removeItem("token");
+        // Fallback to checking localStorage if cookies check fails or is not supported
+        const storedToken = localStorage.getItem("token");
+        if (storedToken) {
+          try {
+            const decoded = jwtDecode<UserDecoded>(storedToken);
+            setUser(decoded);
+            setToken(storedToken);
+          } catch {
+            localStorage.removeItem("token");
+            setUser(null);
+          }
+        } else {
+          setUser(null);
+        }
+      } finally {
+        setLoading(false);
       }
-    }
-    setLoading(false);
+    };
+    checkAuth();
   }, []);
 
-  const login = (newToken: string) => {
-    const cleanToken = newToken.replace("Bearer ", "");
-    localStorage.setItem("token", cleanToken);
-    try {
-      const decoded = jwtDecode<UserDecoded>(cleanToken);
-      setUser(decoded);
+  const login = (userData: UserDecoded, newToken?: string) => {
+    setUser(userData);
+    if (newToken) {
+      const cleanToken = newToken.replace("Bearer ", "");
+      localStorage.setItem("token", cleanToken);
       setToken(cleanToken);
-    } catch {
-      localStorage.removeItem("token");
+    } else {
+      setToken("cookie-authenticated");
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    setUser(null);
-    setToken(null);
-    router.push("/login");
+  const logout = async () => {
+    try {
+      await fetchClient("/api/v1/auth/logout", { method: "POST" });
+    } catch (err) {
+      console.error("Logout API failed", err);
+    } finally {
+      localStorage.removeItem("token");
+      setUser(null);
+      setToken(null);
+      router.push("/login");
+    }
   };
 
   return (

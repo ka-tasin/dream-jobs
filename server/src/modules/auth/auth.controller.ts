@@ -87,7 +87,7 @@ export class AccountController {
     next: NextFunction,
   ): Promise<void> {
     try {
-      const token = req.headers.authorization?.split(" ")[1];
+      const token = req.cookies?.token || req.headers.authorization?.split(" ")[1];
       if (!token) {
         res.status(401).json({ message: "Token missing!" });
         return;
