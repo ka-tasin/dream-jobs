@@ -18,10 +18,12 @@ const fetchClient = async <T = any>(
     const token =
       typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
+    const isFormData = typeof window !== "undefined" && body instanceof FormData;
+
     const config: RequestInit = {
       method,
       headers: {
-        "Content-Type": "application/json",
+        ...(isFormData ? {} : { "Content-Type": "application/json" }),
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...headers,
       },
@@ -30,7 +32,7 @@ const fetchClient = async <T = any>(
     };
 
     if (body && method !== "GET") {
-      config.body = JSON.stringify(body);
+      config.body = isFormData ? body : JSON.stringify(body);
     }
 
     const res = await fetch(`${BASE_URL}${endpoint}`, config);

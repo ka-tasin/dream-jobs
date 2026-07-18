@@ -2,6 +2,7 @@
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
 import { toast } from "react-toastify";
 import { 
   Briefcase, 
@@ -57,10 +58,11 @@ export default function JobDetailsPage() {
   const [suggestedJobs, setSuggestedJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [token, setToken] = useState<string | null>(null);
+  const { isAuthenticated, loading: authLoading } = useAuth();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [resumeUrl, setResumeUrl] = useState("");
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [coverLetter, setCoverLetter] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [linkedinUrl, setLinkedinUrl] = useState("");
@@ -69,20 +71,18 @@ export default function JobDetailsPage() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    const t = localStorage.getItem("token");
-    if (!t) {
+    if (authLoading) return;
+
+    if (!isAuthenticated) {
       toast.error("Please login to view details of this job listing");
       router.push("/login");
       return;
     }
-    setToken(t);
 
     const fetchJobAndSuggestions = async () => {
       try {
         // Fetch current job
-        const jobResponse = await apiClient(`/api/v1/jobs/${id}`, {
-          headers: { Authorization: `Bearer ${t}` },
-        });
+        const jobResponse = await apiClient(`/api/v1/jobs/${id}`);
 
         if (!jobResponse?.data) {
           setError("Job not found");
@@ -116,7 +116,7 @@ export default function JobDetailsPage() {
     };
 
     fetchJobAndSuggestions();
-  }, [id, router]);
+  }, [id, router, isAuthenticated, authLoading]);
 
   const sanitizeAndValidateUrl = (urlStr: string, fieldName: string) => {
     let trimmed = urlStr.trim();
@@ -140,19 +140,43 @@ export default function JobDetailsPage() {
   };
 
   const handleApply = async () => {
-    if (!token) {
+    if (!isAuthenticated) {
       toast.error("Please login first");
       return;
     }
-    if (!resumeUrl.trim()) {
-      toast.error("Resume URL is required");
-      return;
-    }
 
-    const resumeRes = sanitizeAndValidateUrl(resumeUrl, "Resume Link");
-    if (!resumeRes.valid) return;
-    if (!resumeRes.value) {
-      toast.error("Resume URL is required");
+    let finalResumeUrl = "";
+
+    if (resumeFile) {
+      setSubmitting(true);
+      try {
+        const formData = new FormData();
+        formData.append("resume", resumeFile);
+
+        const uploadRes = await fetchClient<any>("/api/v1/upload/resume", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!uploadRes.resumeUrl) {
+          throw new Error("Failed to retrieve upload URL");
+        }
+        finalResumeUrl = uploadRes.resumeUrl;
+      } catch (err: any) {
+        toast.error(err.message || "Resume upload failed. Please try again.");
+        setSubmitting(false);
+        return;
+      }
+    } else if (resumeUrl.trim()) {
+      const resumeRes = sanitizeAndValidateUrl(resumeUrl, "Resume Link");
+      if (!resumeRes.valid) return;
+      if (!resumeRes.value) {
+        toast.error("Resume URL is invalid");
+        return;
+      }
+      finalResumeUrl = resumeRes.value;
+    } else {
+      toast.error("Please upload a resume file or provide a resume URL link");
       return;
     }
 
@@ -168,7 +192,7 @@ export default function JobDetailsPage() {
         method: "POST",
         body: {
           jobId: job?.id,
-          resumeUrl: resumeRes.value,
+          resumeUrl: finalResumeUrl,
           coverLetter: coverLetter.trim() || null,
           phoneNumber: phoneNumber.trim() || null,
           linkedinUrl: linkedinRes.value,
@@ -180,6 +204,7 @@ export default function JobDetailsPage() {
       toast.success("Application submitted successfully");
       setIsModalOpen(false);
       setResumeUrl("");
+      setResumeFile(null);
       setCoverLetter("");
       setPhoneNumber("");
       setLinkedinUrl("");
@@ -200,7 +225,7 @@ export default function JobDetailsPage() {
     return `৳${(sJob.salary || sJob.salaryMax)?.toLocaleString()}`;
   };
 
-  if (loading) {
+  if (loading || authLoading) {
     return (
       <div className="flex justify-center items-center h-screen bg-slate-50">
         <DetailsLoading />
@@ -421,15 +446,51 @@ export default function JobDetailsPage() {
 
           <div className="space-y-4 mt-4">
             <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Resume Link *</label>
-              <input
-                type="url"
-                placeholder="https://drive.google.com/... or dropbox link"
-                value={resumeUrl}
-                onChange={(e) => setResumeUrl(e.target.value)}
-                className="w-full h-10 px-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-amber-500"
-                required
-              />
+              <div className="flex justify-between items-center mb-1.5">
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider">Resume (PDF file or Link) *</label>
+              </div>
+              <div className="space-y-2">
+                {/* File Upload Input */}
+                <div className="flex items-center gap-2">
+                  <input
+                    type="file"
+                    accept=".pdf"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setResumeFile(e.target.files[0]);
+                        setResumeUrl(""); // Clear URL input if file is chosen
+                      }
+                    }}
+                    className="w-full text-xs text-slate-550 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100 transition cursor-pointer"
+                  />
+                  {resumeFile && (
+                    <button
+                      type="button"
+                      onClick={() => setResumeFile(null)}
+                      className="text-xs text-red-500 hover:text-red-700 font-semibold bg-transparent border-0 cursor-pointer"
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
+                
+                {/* Divider */}
+                <div className="flex items-center gap-2">
+                  <hr className="flex-grow border-slate-100" />
+                  <span className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Or</span>
+                  <hr className="flex-grow border-slate-100" />
+                </div>
+
+                {/* Text URL Input */}
+                <input
+                  type="url"
+                  placeholder="https://drive.google.com/... or dropbox link"
+                  value={resumeUrl}
+                  disabled={!!resumeFile}
+                  onChange={(e) => setResumeUrl(e.target.value)}
+                  className="w-full h-10 px-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-amber-500 disabled:opacity-50 disabled:bg-slate-50"
+                />
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
