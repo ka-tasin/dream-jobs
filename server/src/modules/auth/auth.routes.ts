@@ -18,6 +18,11 @@ accountRouter.post(
 );
 
 accountRouter.post(
+  "/logout",
+  (req, res, next) => accountController.logout(req, res, next)
+);
+
+accountRouter.post(
   "/verifyToken",
   (req, res, next) => accountController.verifyToken(req, res, next)
 );

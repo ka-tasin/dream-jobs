@@ -6,7 +6,7 @@ export class AccountController {
   async register(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const validatedData = req.body;
@@ -18,9 +18,11 @@ export class AccountController {
       }
 
       const newUser = await userService.create(validatedData, Role.USER);
-      
+
       if (!newUser || !newUser.success) {
-        res.status(400).json({ message: newUser?.message || "Failed to create user!" });
+        res
+          .status(400)
+          .json({ message: newUser?.message || "Failed to create user!" });
         return;
       }
 
@@ -34,11 +36,7 @@ export class AccountController {
     }
   }
 
-  async login(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async login(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { email, password } = req.body;
       const result = await userService.login(email, password);
@@ -48,10 +46,35 @@ export class AccountController {
         return;
       }
 
+      res.cookie("token", result.token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 24 * 60 * 60 * 1000,
+      });
+
       res.status(200).json({
         success: true,
         message: "Login successful!",
-        data: result,
+        data: { user: result.user },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async logout(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      // Clear the cookie named 'token'
+      res.clearCookie("token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+      });
+
+      res.status(200).json({
+        success: true,
+        message: "Logged out successfully!",
       });
     } catch (error) {
       next(error);
@@ -61,7 +84,7 @@ export class AccountController {
   async verifyToken(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const token = req.headers.authorization?.split(" ")[1];
