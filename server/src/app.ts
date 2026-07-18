@@ -7,7 +7,8 @@ import cookieParser from "cookie-parser";
 const app: Express = express();
 
 app.use(cors({
-  origin: ["http://localhost:5173", "https://dream-jobs-kat.vercel.app"]
+  origin: ["http://localhost:5173", "https://dream-jobs-kat.vercel.app"],
+  credentials: true
 }));
 app.use(express.json());
 app.use(cookieParser())
