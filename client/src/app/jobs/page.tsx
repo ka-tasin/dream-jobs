@@ -345,7 +345,7 @@ export default function AllJobsPage() {
           {/* Desktop Filter Sidebar */}
           <aside className="hidden lg:block lg:col-span-1">
             <div className="sticky top-28 bg-white border border-slate-200 rounded-xl p-5 shadow-xs">
-              <FilterSidebarContent />
+              {FilterSidebarContent()}
             </div>
           </aside>
 
@@ -458,7 +458,7 @@ export default function AllJobsPage() {
               </div>
 
               <div className="flex-1 overflow-y-auto px-6 py-6">
-                <FilterSidebarContent />
+                {FilterSidebarContent()}
               </div>
 
               <div className="px-6 py-4 border-t border-slate-100 flex gap-3">
