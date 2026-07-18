@@ -1,5 +1,5 @@
 import { Router } from "express";
-import accountRouter from "../modules/account/account.routes.js";
+import accountRouter from "../modules/auth/auth.routes.js";
 import jobRouter from "../modules/job/job.routes.js";
 import userRouter from "../modules/user/user.routes.js";
 import applicationRouter from "../modules/application/application.routes.js";
