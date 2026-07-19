@@ -1,8 +1,13 @@
 import { Request, Response, NextFunction } from "express";
 import { applicationService } from "./application.service.js";
+import { addEmailJob } from "../../queues/email.queue.js";
 
 export class ApplicationController {
-  async getApplications(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async getApplications(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       const user = (req as any).user;
       if (!user) {
@@ -10,8 +15,9 @@ export class ApplicationController {
         return;
       }
 
-      const applications =
-        await applicationService.getApplicationsForEmployer(user.id);
+      const applications = await applicationService.getApplicationsForEmployer(
+        user.id,
+      );
 
       res.json({ success: true, data: applications });
     } catch (err) {
@@ -19,7 +25,11 @@ export class ApplicationController {
     }
   }
 
-  async getApplicationsByJob(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async getApplicationsByJob(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       const { jobId } = req.params;
       const user = (req as any).user;
@@ -41,24 +51,24 @@ export class ApplicationController {
   async apply(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const user = (req as any).user;
-      const { 
-        jobId, 
-        resumeUrl, 
-        coverLetter,
-        phoneNumber,
-        linkedinUrl,
-        portfolioUrl,
-        yearsOfExp
-      } = req.body;
-
-      console.log("Received data:", { 
+      const {
         jobId,
         resumeUrl,
         coverLetter,
         phoneNumber,
         linkedinUrl,
         portfolioUrl,
-        yearsOfExp
+        yearsOfExp,
+      } = req.body;
+
+      console.log("Received data:", {
+        jobId,
+        resumeUrl,
+        coverLetter,
+        phoneNumber,
+        linkedinUrl,
+        portfolioUrl,
+        yearsOfExp,
       });
 
       const application = await applicationService.applyToJob(
@@ -69,16 +79,28 @@ export class ApplicationController {
         phoneNumber,
         linkedinUrl,
         portfolioUrl,
-        yearsOfExp
+        yearsOfExp,
       );
 
+      const targetEmail = (req as any).user?.email;
+      if (targetEmail) {
+        await addEmailJob("applicationConfirmation", {
+          to: targetEmail,
+          subject: "Application Submitted Successfully!",
+          body: `Your application has been received by the employer. Good luck!`,
+        });
+      }
       res.status(201).json({ success: true, data: application });
     } catch (err: any) {
       next(err);
     }
   }
 
-  async getUserApplications(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async getUserApplications(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       const user = (req as any).user;
       const apps = await applicationService.getUserApplications(user.id);
@@ -88,7 +110,11 @@ export class ApplicationController {
     }
   }
 
-  async getJobApplications(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async getJobApplications(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       const { jobId } = req.params;
       const apps = await applicationService.getJobApplications(jobId);
@@ -98,12 +124,20 @@ export class ApplicationController {
     }
   }
 
-  async updateApplicationStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async updateApplicationStatus(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       const { id } = req.params;
       const { status, reviewNote } = req.body;
 
-      const application = await applicationService.updateApplicationStatus(id, status, reviewNote);
+      const application = await applicationService.updateApplicationStatus(
+        id,
+        status,
+        reviewNote,
+      );
 
       res.status(200).json({
         success: true,
@@ -114,7 +148,11 @@ export class ApplicationController {
     }
   }
 
-  async getApplicationStats(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async getApplicationStats(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       const user = (req as any).user;
 

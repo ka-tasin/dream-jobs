@@ -1,12 +1,19 @@
-import {Queue} from "bullmq"
-import { redisConnectionOption } from  "../config/redis.config.js";
+import { Queue } from "bullmq";
+import { redisConnectionOptions } from "../config/redis.config.js";
+
 
 export const emailQueue = new Queue("email-queue", {
-    connection: redisConnectionOption
-})
+  connection: redisConnectionOptions,
+});
 
-// Helper function to push jobs into the queue
-export const addEmailJob = async (jobName: string, data: { to: string; subject: string; body: string }) => {
+export interface EmailJobPayload {
+  to: string;
+  subject: string;
+  body: string;
+}
+
+
+export const addEmailJob = async (jobName: string, data: EmailJobPayload) => {
   await emailQueue.add(jobName, data, {
     attempts: 3,
     backoff: {
