@@ -49,15 +49,19 @@ export default function AllJobsPage() {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  // Fetch jobs on mount
+  // Fetch jobs on mount and when searchTerm changes
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await apiClient("/api/v1/jobs");
+        const queryParams = new URLSearchParams();
+        if (searchTerm.trim()) {
+          queryParams.set("search", searchTerm.trim());
+        }
+
+        const response = await apiClient(`/api/v1/jobs?${queryParams.toString()}`);
         // API response structure could be raw array or wrapped in { data: [...] }
         const jobsArray = response.data?.data || response.data || response || [];
         setAllJobs(jobsArray);
-        setFilteredJobs(jobsArray);
       } catch (err: any) {
         setError(err.message || "Failed to fetch jobs listings");
       } finally {
@@ -65,24 +69,16 @@ export default function AllJobsPage() {
       }
     };
 
-    fetchData();
-  }, []);
+    const timer = setTimeout(() => {
+      fetchData();
+    }, 300);
 
-  // Apply filters whenever states change
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  // Apply secondary sidebar filters (experience, work mode, job type, salary) whenever states change
   useEffect(() => {
     let results = allJobs;
-
-    // 1. Keyword search (title, company, position, description)
-    if (searchTerm.trim()) {
-      const term = searchTerm.toLowerCase();
-      results = results.filter(
-        (job) =>
-          job.title?.toLowerCase().includes(term) ||
-          job.company?.toLowerCase().includes(term) ||
-          job.position?.toLowerCase().includes(term) ||
-          job.description?.toLowerCase().includes(term)
-      );
-    }
 
     // 2. Experience Level Filter
     if (selectedExperiences.length > 0) {
@@ -152,31 +148,28 @@ export default function AllJobsPage() {
     );
   };
 
-  const handleSearchChange = (value: string) => {
-    setSearchTerm(value);
-    if (value.trim().length < 2) {
+  // Update search suggestions automatically whenever server returns allJobs
+  useEffect(() => {
+    if (searchTerm.trim().length >= 2 && allJobs.length > 0) {
+      const uniqueSuggestions = new Set<string>();
+      allJobs.forEach((job) => {
+        if (job.title) uniqueSuggestions.add(job.title);
+        if (job.company) uniqueSuggestions.add(job.company);
+        if (job.position) uniqueSuggestions.add(job.position);
+      });
+      const list = Array.from(uniqueSuggestions).slice(0, 5);
+      setSuggestions(list);
+      if (document.activeElement?.tagName === "INPUT") {
+        setShowSuggestions(list.length > 0);
+      }
+    } else if (searchTerm.trim().length < 2) {
       setSuggestions([]);
       setShowSuggestions(false);
-      return;
     }
+  }, [allJobs, searchTerm]);
 
-    const val = value.toLowerCase();
-    const uniqueSuggestions = new Set<string>();
-
-    allJobs.forEach((job) => {
-      if (job.title?.toLowerCase().includes(val)) {
-        uniqueSuggestions.add(job.title);
-      }
-      if (job.company?.toLowerCase().includes(val)) {
-        uniqueSuggestions.add(job.company);
-      }
-      if (job.position?.toLowerCase().includes(val) || job.role?.toLowerCase().includes(val)) {
-        uniqueSuggestions.add(job.position || job.role);
-      }
-    });
-
-    setSuggestions(Array.from(uniqueSuggestions).slice(0, 5));
-    setShowSuggestions(true);
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
   };
 
   const handleResetFilters = () => {
@@ -443,7 +436,7 @@ export default function AllJobsPage() {
       {/* Mobile Drawer / Overlay Modal */}
       {showMobileFilters && (
         <div className="fixed inset-0 z-50 overflow-hidden lg:hidden" aria-modal="true" role="dialog">
-          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity" onClick={() => setShowMobileFilters(false)}></div>
+          <div className="absolute inset-0 bg-slate-900/40 transition-opacity" onClick={() => setShowMobileFilters(false)}></div>
           
           <div className="absolute inset-y-0 right-0 max-w-full flex pl-10">
             <div className="w-screen max-w-md bg-white shadow-xl flex flex-col">
