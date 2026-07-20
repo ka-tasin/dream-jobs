@@ -7607,6 +7607,74 @@ export namespace Prisma {
   export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
+  export const UserOrderByRelevanceFieldEnum: {
+    id: 'id',
+    firstName: 'firstName',
+    lastName: 'lastName',
+    email: 'email',
+    providerId: 'providerId',
+    password: 'password',
+    emailVerifyToken: 'emailVerifyToken',
+    resetPasswordToken: 'resetPasswordToken'
+  };
+
+  export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]
+
+
+  export const JobOrderByRelevanceFieldEnum: {
+    id: 'id',
+    title: 'title',
+    description: 'description',
+    position: 'position',
+    employerId: 'employerId',
+    location: 'location',
+    officeTime: 'officeTime',
+    currency: 'currency',
+    skills: 'skills'
+  };
+
+  export type JobOrderByRelevanceFieldEnum = (typeof JobOrderByRelevanceFieldEnum)[keyof typeof JobOrderByRelevanceFieldEnum]
+
+
+  export const ApplicationOrderByRelevanceFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    jobId: 'jobId',
+    resumeUrl: 'resumeUrl',
+    coverLetter: 'coverLetter',
+    phoneNumber: 'phoneNumber',
+    linkedinUrl: 'linkedinUrl',
+    portfolioUrl: 'portfolioUrl',
+    reviewNote: 'reviewNote'
+  };
+
+  export type ApplicationOrderByRelevanceFieldEnum = (typeof ApplicationOrderByRelevanceFieldEnum)[keyof typeof ApplicationOrderByRelevanceFieldEnum]
+
+
+  export const SavedJobOrderByRelevanceFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    jobId: 'jobId'
+  };
+
+  export type SavedJobOrderByRelevanceFieldEnum = (typeof SavedJobOrderByRelevanceFieldEnum)[keyof typeof SavedJobOrderByRelevanceFieldEnum]
+
+
+  export const EmployerOrderByRelevanceFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    companyName: 'companyName',
+    companyLogo: 'companyLogo',
+    website: 'website',
+    industry: 'industry',
+    size: 'size',
+    description: 'description',
+    location: 'location'
+  };
+
+  export type EmployerOrderByRelevanceFieldEnum = (typeof EmployerOrderByRelevanceFieldEnum)[keyof typeof EmployerOrderByRelevanceFieldEnum]
+
+
   /**
    * Field references
    */
@@ -7807,6 +7875,7 @@ export namespace Prisma {
     employer?: EmployerOrderByWithRelationInput
     applications?: ApplicationOrderByRelationAggregateInput
     savedJobs?: SavedJobOrderByRelationAggregateInput
+    _relevance?: UserOrderByRelevanceInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -7929,6 +7998,7 @@ export namespace Prisma {
     employer?: EmployerOrderByWithRelationInput
     applications?: ApplicationOrderByRelationAggregateInput
     savedBy?: SavedJobOrderByRelationAggregateInput
+    _relevance?: JobOrderByRelevanceInput
   }
 
   export type JobWhereUniqueInput = Prisma.AtLeast<{
@@ -8050,6 +8120,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     user?: UserOrderByWithRelationInput
     job?: JobOrderByWithRelationInput
+    _relevance?: ApplicationOrderByRelevanceInput
   }
 
   export type ApplicationWhereUniqueInput = Prisma.AtLeast<{
@@ -8136,6 +8207,7 @@ export namespace Prisma {
     savedAt?: SortOrder
     user?: UserOrderByWithRelationInput
     job?: JobOrderByWithRelationInput
+    _relevance?: SavedJobOrderByRelevanceInput
   }
 
   export type SavedJobWhereUniqueInput = Prisma.AtLeast<{
@@ -8202,6 +8274,7 @@ export namespace Prisma {
     isVerified?: SortOrder
     user?: UserOrderByWithRelationInput
     jobs?: JobOrderByRelationAggregateInput
+    _relevance?: EmployerOrderByRelevanceInput
   }
 
   export type EmployerWhereUniqueInput = Prisma.AtLeast<{
@@ -8829,6 +8902,7 @@ export namespace Prisma {
     contains?: string | StringFieldRefInput<$PrismaModel>
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
+    search?: string
     mode?: QueryMode
     not?: NestedStringFilter<$PrismaModel> | string
   }
@@ -8858,6 +8932,7 @@ export namespace Prisma {
     contains?: string | StringFieldRefInput<$PrismaModel>
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
+    search?: string
     mode?: QueryMode
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
@@ -8917,6 +8992,12 @@ export namespace Prisma {
 
   export type SavedJobOrderByRelationAggregateInput = {
     _count?: SortOrder
+  }
+
+  export type UserOrderByRelevanceInput = {
+    fields: UserOrderByRelevanceFieldEnum | UserOrderByRelevanceFieldEnum[]
+    sort: SortOrder
+    search: string
   }
 
   export type UserCountOrderByAggregateInput = {
@@ -8987,6 +9068,7 @@ export namespace Prisma {
     contains?: string | StringFieldRefInput<$PrismaModel>
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
+    search?: string
     mode?: QueryMode
     not?: NestedStringWithAggregatesFilter<$PrismaModel> | string
     _count?: NestedIntFilter<$PrismaModel>
@@ -9025,6 +9107,7 @@ export namespace Prisma {
     contains?: string | StringFieldRefInput<$PrismaModel>
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
+    search?: string
     mode?: QueryMode
     not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
     _count?: NestedIntNullableFilter<$PrismaModel>
@@ -9122,6 +9205,12 @@ export namespace Prisma {
   export type EmployerScalarRelationFilter = {
     is?: EmployerWhereInput
     isNot?: EmployerWhereInput
+  }
+
+  export type JobOrderByRelevanceInput = {
+    fields: JobOrderByRelevanceFieldEnum | JobOrderByRelevanceFieldEnum[]
+    sort: SortOrder
+    search: string
   }
 
   export type JobCountOrderByAggregateInput = {
@@ -9290,6 +9379,12 @@ export namespace Prisma {
     isNot?: JobWhereInput
   }
 
+  export type ApplicationOrderByRelevanceInput = {
+    fields: ApplicationOrderByRelevanceFieldEnum | ApplicationOrderByRelevanceFieldEnum[]
+    sort: SortOrder
+    search: string
+  }
+
   export type ApplicationUserIdJobIdCompoundUniqueInput = {
     userId: string
     jobId: string
@@ -9380,6 +9475,12 @@ export namespace Prisma {
     _max?: NestedEnumAppStatusFilter<$PrismaModel>
   }
 
+  export type SavedJobOrderByRelevanceInput = {
+    fields: SavedJobOrderByRelevanceFieldEnum | SavedJobOrderByRelevanceFieldEnum[]
+    sort: SortOrder
+    search: string
+  }
+
   export type SavedJobUserIdJobIdCompoundUniqueInput = {
     userId: string
     jobId: string
@@ -9414,6 +9515,12 @@ export namespace Prisma {
 
   export type JobOrderByRelationAggregateInput = {
     _count?: SortOrder
+  }
+
+  export type EmployerOrderByRelevanceInput = {
+    fields: EmployerOrderByRelevanceFieldEnum | EmployerOrderByRelevanceFieldEnum[]
+    sort: SortOrder
+    search: string
   }
 
   export type EmployerCountOrderByAggregateInput = {
@@ -9869,6 +9976,7 @@ export namespace Prisma {
     contains?: string | StringFieldRefInput<$PrismaModel>
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
+    search?: string
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
@@ -9897,6 +10005,7 @@ export namespace Prisma {
     contains?: string | StringFieldRefInput<$PrismaModel>
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
+    search?: string
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
@@ -9938,6 +10047,7 @@ export namespace Prisma {
     contains?: string | StringFieldRefInput<$PrismaModel>
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
+    search?: string
     not?: NestedStringWithAggregatesFilter<$PrismaModel> | string
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedStringFilter<$PrismaModel>
@@ -9997,6 +10107,7 @@ export namespace Prisma {
     contains?: string | StringFieldRefInput<$PrismaModel>
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
+    search?: string
     not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>

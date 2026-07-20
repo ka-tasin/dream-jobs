@@ -212,6 +212,59 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+
+exports.Prisma.UserOrderByRelevanceFieldEnum = {
+  id: 'id',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  email: 'email',
+  providerId: 'providerId',
+  password: 'password',
+  emailVerifyToken: 'emailVerifyToken',
+  resetPasswordToken: 'resetPasswordToken'
+};
+
+exports.Prisma.JobOrderByRelevanceFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  position: 'position',
+  employerId: 'employerId',
+  location: 'location',
+  officeTime: 'officeTime',
+  currency: 'currency',
+  skills: 'skills'
+};
+
+exports.Prisma.ApplicationOrderByRelevanceFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  jobId: 'jobId',
+  resumeUrl: 'resumeUrl',
+  coverLetter: 'coverLetter',
+  phoneNumber: 'phoneNumber',
+  linkedinUrl: 'linkedinUrl',
+  portfolioUrl: 'portfolioUrl',
+  reviewNote: 'reviewNote'
+};
+
+exports.Prisma.SavedJobOrderByRelevanceFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  jobId: 'jobId'
+};
+
+exports.Prisma.EmployerOrderByRelevanceFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  companyName: 'companyName',
+  companyLogo: 'companyLogo',
+  website: 'website',
+  industry: 'industry',
+  size: 'size',
+  description: 'description',
+  location: 'location'
+};
 exports.Role = exports.$Enums.Role = {
   USER: 'USER',
   ADMIN: 'ADMIN',
