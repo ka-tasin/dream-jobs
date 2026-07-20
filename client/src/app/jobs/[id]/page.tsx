@@ -201,7 +201,7 @@ export default function JobDetailsPage() {
         },
       });
 
-      toast.success("Application submitted successfully");
+      toast.success("Application submitted! A confirmation email has been sent to your inbox.");
       setIsModalOpen(false);
       setResumeUrl("");
       setResumeFile(null);
