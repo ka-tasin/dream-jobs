@@ -1,0 +1,99 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: dreamjobs-postgres
+
+    environment:
+      POSTGRES_USER: dreamjobs
+      POSTGRES_PASSWORD: dreamjobs_secret
+      POSTGRES_DB: dreamjobs_dev
+    
+    ports:
+      - "5433:5432"
+    
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dreamjobs -d dreamjobs_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+  redis:
+      image: redis:7-alpine
+      container_name: dreamjobs_redis
+
+      command: redis-server --appendonly yes
+
+      ports:
+      - "6379:6379"
+
+      volumes:
+      - redis_data:/data
+
+      healthcheck:
+        test: ["CMD", "redis-cli", "ping"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
+  
+
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    
+    container_name: dreamjobs_backend
+
+    environment: 
+      NODE_ENV: development
+      PORT: 3000
+
+      DATABASE_URL: postgresql://dreamjobs:dreamjobs_secret@postgres:5432/dreamjobs_dev
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+
+    env_file:
+      - ./server/.env
+    
+    ports:
+      - "3000:3000"
+    
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    
+    command: npm run dev
+  
+
+  migrate:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+      target: builder  
+
+    container_name: dreamjobs-migrate
+
+    environment:
+      DATABASE_URL: postgresql://dreamjobs:dreamjobs_secret@postgres:5432/dreamjobs_dev
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+        
+    command: npx prisma migrate dev
+    
+    profiles:
+      - tools
+  
+volumes:
+  postgres_data:
+  redis_data: 
