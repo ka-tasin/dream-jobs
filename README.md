@@ -87,6 +87,35 @@ describe('JobService', () => {
 npm test
 ```
 
+---
+
+## 💾 Database & Performance Optimization
+
+### 1. N+1 Query Resolution
+To prevent database query loops, all nested relational assets are fetched using Prisma's eager-loading `include` and selective `select` options. For example, when fetching job details or list items, the system utilizes joined queries to retrieve employer metadata in a single network round-trip rather than executing separate downstream lookups for each row.
+
+*   **Anti-Pattern (N+1 Queries)**: Fetching `N` jobs, then running `N` separate queries inside a loop to look up company profiles.
+*   **Optimized Pattern (Single Query)**: Joining `Job` and `Employer` models at the database level inside a single query block implemented in job.service.ts:
+    ```ts
+    const jobs = await prisma.job.findMany({
+      include: {
+        employer: {
+          select: {
+            companyName: true,
+            companyLogo: true,
+          }
+        }
+      }
+    });
+  ```
+
+### 2. Database Indexing
+Database indexes are strategically configured on key filter columns in `schema.prisma` to keep search and ordering processes performing at $\mathcal{O}(\log N)$ time:
+*   `@@index([jobId, status])`: Optimizes employer dashboard queries when filtering candidates by application status.
+*   `@@index([title])` and `@@index([type])`: Speeds up job listings search queries on the main page.
+*   `@unique` on email: Generates an automatic unique B-Tree index to keep credentials lookup instantaneous during login.
+
+---
 
 ### Setup and Run
 ***Backend Setup***

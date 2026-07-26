@@ -1,11 +1,24 @@
-import { Prisma, PrismaClient } from "./generated/prisma";
+import dotenv from "dotenv";
+dotenv.config();
+
+import { Prisma, PrismaClient } from "./generated/prisma/client.js";
+import { PrismaPg } from "@prisma/adapter-pg";
+
+const connectionString = process.env.DATABASE_URL;
+
+if (!connectionString) {
+  throw new Error("DATABASE_URL environment variable is not set");
+}
+
+const adapter = new PrismaPg({
+  connectionString,
+  // You can add pool options here if needed
+});
 
 const prisma = new PrismaClient({
-  datasources: {
-    db: {
-      url: process.env.DATABASE_URL || "",
-    },
-  },
+    adapter,
+  //  datasourceUrl: process.env.DATABASE_URL || "",
+   
   log:
     process.env.NODE_ENV === "development"
       ? ["query", "info", "warn", "error"]

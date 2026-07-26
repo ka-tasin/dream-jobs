@@ -1,18 +1,28 @@
 import express, { Express, Request, Response } from "express";
-import dotenv from "dotenv";
-import routes from "./routes";
+import routes from "./routes/index.js";
 import cors from "cors";
-
-dotenv.config();
+import { errorHandler } from "./middlewares/error.middleware.js";
+import cookieParser from "cookie-parser";
+import helmet from "helmet";
 
 const app: Express = express();
 
-app.use(cors());
+app.use(helmet());
+
+app.use(cors({
+  origin: ["http://localhost:5173", "https://dream-jobs-kat.vercel.app"],
+  credentials: true
+}));
 app.use(express.json());
+app.use(cookieParser())
+
+
 app.use("/api/v1", routes);
 
 app.get("/", (req: Request, res: Response) => {
   res.json({ message: "Welcome to Dream Jobs" });
 });
+
+app.use(errorHandler);
 
 export default app;

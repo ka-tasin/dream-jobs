@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -25,23 +24,10 @@ const Navbar = () => {
     setLoggedIn(!!localStorage.getItem("token"));
   }, [mounted]);
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    setLoggedIn(false);
-  };
-
-  if (!mounted) return null; // Prevent SSR flash
-
   return (
     <div className="z-[1000]">
       {/* Top Story */}
-      <motion.header
-        initial={{ y: -100, opacity: 0 }}
-        animate={{
-          y: 0,
-          opacity: 1,
-          transition: { type: "tween", stiffness: 100, damping: 5 },
-        }}
+      <header
         className={`fixed top-0 w-full z-50 bg-white shadow-gray-200 transition-all duration-300 ${
           isScrolled ? "transform -translate-y-full" : ""
         }`}
@@ -50,7 +36,7 @@ const Navbar = () => {
           <div className="text-sm text-gray-600">
             Welcome to DreamJobs! Find your dream career today.
           </div>
-          {!loggedIn && (
+          {mounted && !loggedIn && (
             <div className="flex items-center space-x-4">
               <Link
                 href="/login"
@@ -67,17 +53,11 @@ const Navbar = () => {
             </div>
           )}
         </div>
-      </motion.header>
+      </header>
 
       {/* Main Navbar */}
-      <motion.nav
-        initial={{ y: -100, opacity: 0 }}
-        animate={{
-          y: 0,
-          opacity: 1,
-          transition: { type: "tween", stiffness: 100, damping: 5 },
-        }}
-        className={`fixed top-0 w-full z-40 bg-white transition-all duration-300 ${
+      <nav
+        className={`fixed top-0 w-full z-45 bg-white transition-all duration-300 ${
           isScrolled ? "shadow-md" : ""
         }`}
         style={{ top: isScrolled ? "0" : "3rem" }}
@@ -115,32 +95,25 @@ const Navbar = () => {
               >
                 Contact
               </Link>
+              {mounted && loggedIn && (
+                <Link
+                  href="/dashboard"
+                  className="ml-2 px-4.5 py-1.5 text-xs font-bold uppercase tracking-wider text-emerald-700 hover:text-white border border-emerald-500 hover:bg-emerald-650 rounded-lg transition duration-150 shadow-xs inline-flex items-center"
+                >
+                  Dashboard
+                </Link>
+              )}
             </div>
 
-            {loggedIn && (
-              <div className="flex items-center">
-                <div className="hidden md:block">
-                  <button
-                    onClick={logout}
-                    className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition font-medium"
-                  >
-                    Logout
-                  </button>
-                </div>
-              </div>
-            )}
+            <div className="flex items-center">
+              {/* Omitted Logout button from header */}
+            </div>
           </div>
         </div>
-      </motion.nav>
+      </nav>
 
       {/* Bottom Navbar */}
-      <motion.nav
-        initial={{ y: 100, opacity: 0 }}
-        animate={{
-          y: 0,
-          opacity: 1,
-          transition: { type: "tween", stiffness: 100, damping: 5 },
-        }}
+      <nav
         className="fixed md:hidden bottom-0 w-full z-50 bg-white shadow-md border-t border-gray-200"
       >
         <div className="max-w-6xl mx-auto px-4">
@@ -186,7 +159,7 @@ const Navbar = () => {
               <span>Jobs</span>
             </Link>
             <Link
-              href="/saved"
+              href="/dashboard"
               className="flex flex-col items-center text-gray-800 hover:text-blue-600 text-xs"
             >
               <svg
@@ -200,34 +173,36 @@ const Navbar = () => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
+                  d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
                 />
               </svg>
-              <span>Saved</span>
+              <span>Dashboard</span>
             </Link>
-            <Link
-              href="/profile"
-              className="flex flex-col items-center text-gray-800 hover:text-blue-600 text-xs"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+            {mounted && !loggedIn && (
+              <Link
+                href="/login"
+                className="flex flex-col items-center text-gray-800 hover:text-blue-600 text-xs"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                />
-              </svg>
-              <span>Profile</span>
-            </Link>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                  />
+                </svg>
+                <span>Login</span>
+              </Link>
+            )}
           </div>
         </div>
-      </motion.nav>
+      </nav>
     </div>
   );
 };
