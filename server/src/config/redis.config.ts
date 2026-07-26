@@ -1,11 +1,11 @@
 import { ConnectionOptions } from "bullmq";
 
-const redisUrl = process.env.REDIS_URL;
+const rawConnection = process.env.REDIS_URL || process.env.REDIS_HOST || "";
 
 function getRedisOptions(): ConnectionOptions {
-  if (redisUrl) {
+  if (rawConnection.includes("://")) {
     try {
-      const parsed = new URL(redisUrl);
+      const parsed = new URL(rawConnection);
       return {
         host: parsed.hostname,
         port: Number(parsed.port) || 6379,
@@ -15,7 +15,7 @@ function getRedisOptions(): ConnectionOptions {
         maxRetriesPerRequest: null,
       };
     } catch (err) {
-      console.error("[Redis Config] Failed to parse REDIS_URL:", err);
+      console.error("[Redis Config] Failed to parse Redis connection string:", err);
     }
   }
 
