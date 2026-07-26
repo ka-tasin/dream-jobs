@@ -204,17 +204,17 @@ See [`server/.env.example`](server/.env.example) for the full list of required e
 
 ```
 ┌────────────────────────────────────────────────┐
-│          Docker Bridge Network                  │
-│                                                 │
+│          Docker Bridge Network                 │
+│                                                │
 │  ┌────────────┐  ┌────────┐  ┌──────────────┐  │
-│  │ PostgreSQL  │  │ Redis  │  │   Backend    │  │
-│  │  :5432      │  │ :6379  │  │   :3000      │  │
+│  │ PostgreSQL │  │ Redis  │  │   Backend    │  │
+│  │  :5432     │  │ :6379  │  │   :3000      │  │
 │  └────────────┘  └────────┘  └──────────────┘  │
 └────────────────────────────────────────────────┘
                                       ↕ port mapping
 ┌────────────────────────────────────────────────┐
-│          Host Machine                           │
-│   Frontend (Next.js) → localhost:3000 (API)     │
+│          Host Machine                          │
+│   Frontend (Next.js) → localhost:3000 (API)    │
 └────────────────────────────────────────────────┘
 ```
 
