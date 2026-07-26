@@ -1,184 +1,229 @@
 # Dream Jobs
 
-**Dream Jobs** is a full-stack job platform that connects **employers** and **job seekers**.  
-This repository includes both the frontend (`client/`) and backend (`server/`) — with the backend being the core logic layer, designed for scalability, and clean architecture.
+A multi-role job platform connecting **Employers** and **Job Seekers**, with role-based access control, async email processing, fuzzy search, and containerized infrastructure.
+
+**Live:** [dream-jobs-kat.vercel.app](https://dream-jobs-kat.vercel.app/)
 
 ---
 
-## Overview
+## Tech Stack
 
-The backend of Dream Jobs is built with **Node.js**, **TypeScript**, **Express**, and **Prisma ORM**, **PostgreSQL** following the **Controller–Service–Repository** architecture pattern with **inversion of control/DI** for dependency management.  
-This ensures a **Scalable**, **testable**, **maintainable**, and **loosely coupled** codebase.
-
----
-
-### Live link: https://dream-jobs-kat.vercel.app/
-
-## Features
-
-### Backend Highlights
--  **Clean Architecture** (Controller → Service → Repository)
--  **Inversion of control / Dependency Injection** (InversifyJS) 
--  **Prisma ORM** (type-safe DB access)
--  **Unit Testing** with Jest
--  **TypeScript** for static typing and scalability
--  **Express.js** API design with modular routes
--  **Environment-based configuration** via dotenv
-
-### Frontend (Client)
--  **Next.js** with TypeScript for type-safe components
--  **Tailwind CSS** for responsive, modern UI
--  **API integration** with backend endpoints
--  **Dynamic job listings** and detail views
+| Layer | Technology |
+| :--- | :--- |
+| **Backend** | Node.js, TypeScript, Express 5 |
+| **Frontend** | Next.js, Tailwind CSS, Shadcn UI |
+| **Database** | PostgreSQL, Prisma ORM |
+| **Queue** | Redis, BullMQ |
+| **Auth** | JWT (HTTP-only cookies), OAuth 2.0 (Google) via Passport.js |
+| **File Storage** | Cloudinary (resumes, company logos) |
+| **Infrastructure** | Docker, Docker Compose |
+| **Validation** | Zod |
 
 ---
 
-##  Architecture Explanation
+## Architecture
 
-The backend is structured using a **3-layered clean architecture**:
-
-### 1. Controller Layer
-- Handles incoming HTTP requests.
-- Delegates logic to the service layer.
-- Sends structured API responses.
-
-### 2. Service Layer
-- Contains the **business logic**.
-- Interacts with repositories for data access.
-- Abstracts application logic from request/response flow.
-
-### 3. Repository Layer
-- Interacts directly with the **database** via Prisma.
-- Responsible for querying, updating, and deleting records.
-
-### 4. IOC / Dependency Injection (InversifyJS)
-Dependencies (controllers, services, repositories) are registered in an IoC container and injected automatically, promoting testability and modularity.
-
-Example:
-```ts
-@injectable()
-class JobService {
-  constructor(
-    @inject(TYPES.JobRepository) private jobRepository: JobRepository
-  ) {}
-
-  async getAllJobs() {
-    return this.jobRepository.findAll();
-  }
-}
 ```
-## #Testing
-Unit testing is implemented using Jest.
-Each service and repository is tested in isolation to verify functionality.
-
-Example test (job.service.test.ts):
-
-```ts
-describe('JobService', () => {
-  it('should create a job via repository', async () => {
-    const job = await jobService.createJob(mockJobData);
-    expect(job.title).toBe(mockJobData.title);
-  });
-});
+client/          → Next.js frontend (deployed on Vercel)
+server/          → Express API (containerized with Docker)
+├── src/
+│   ├── modules/       → Feature modules (controller + service + routes + validation)
+│   ├── middlewares/    → Auth, RBAC, rate limiting, validation, error handling
+│   ├── config/        → Redis, Cloudinary, SMTP configuration
+│   ├── queues/        → BullMQ job definitions
+│   ├── workers/       → Background job processors (email)
+│   ├── utils/         → Shared utilities
+│   ├── app.ts         → Express app setup
+│   └── server.ts      → Server entrypoint
+├── prisma/            → Schema, migrations, seed data
+├── Dockerfile         → Multi-stage production build
+└── docker-compose.dev.yml → Dev environment (Postgres + Redis + Backend)
 ```
 
-### Run Tests
+The backend follows a **modular Controller → Service** architecture. Each feature (auth, jobs, applications, employers, admin) is a self-contained module with its own routes, controller, service, and validation schemas.
+
+---
+
+## Key Features
+
+### Backend
+- **RBAC with 3 roles** (User, Employer, Admin) — middleware-enforced authorization per route
+- **JWT auth stored in HTTP-only cookies** — XSS-resistant token storage with secure/sameSite flags
+- **OAuth 2.0** — Google sign-in via Passport.js
+- **Fuzzy search** — PostgreSQL `pg_trgm` extension for typo-tolerant job search
+- **Async email processing** — Redis-backed BullMQ workers decouple SMTP from the request lifecycle
+- **File uploads** — Multer + Cloudinary for resume PDFs and company logos
+- **Input validation** — Zod schemas validated at the middleware layer before reaching controllers
+- **Security hardening** — Helmet headers, CORS whitelisting, API rate limiting
+- **Database indexing** — Strategic indexes on filter/sort columns for O(log N) query performance
+- **Centralized error handling** — Custom `ApiError` class with consistent error response format
+
+### Frontend
+- **Next.js** with server-side rendering
+- **Shadcn UI + Tailwind CSS** — component library with responsive design
+- **Debounced search** — minimizes API calls during user input
+- **Role-based UI** — different dashboards for Job Seekers, Employers, and Admins
+
+---
+
+## API Endpoints
+
+All endpoints are prefixed with `/api/v1`.
+
+### Auth (`/auth`)
+
+| Method | Endpoint | Description | Auth |
+| :--- | :--- | :--- | :--- |
+| POST | `/auth/register` | Register a new user | No |
+| POST | `/auth/login` | Log in | No |
+| POST | `/auth/logout` | Log out | Yes |
+| GET | `/auth/google` | Initiate Google OAuth | No |
+| GET | `/auth/google/callback` | Google OAuth callback | No |
+
+### Jobs (`/jobs`)
+
+| Method | Endpoint | Description | Auth |
+| :--- | :--- | :--- | :--- |
+| GET | `/jobs` | List jobs (filters, search, pagination) | No |
+| GET | `/jobs/:id` | Get job details | No |
+| POST | `/jobs` | Create a job | Employer |
+| PUT | `/jobs/:id` | Update a job | Employer |
+| DELETE | `/jobs/:id` | Delete a job | Employer, Admin |
+
+### Applications (`/applications`)
+
+| Method | Endpoint | Description | Auth |
+| :--- | :--- | :--- | :--- |
+| GET | `/applications` | List applications | User, Employer, Admin |
+| GET | `/applications/stats` | Application statistics | Employer, Admin |
+| GET | `/applications/:id` | Get application details | User, Employer, Admin |
+| POST | `/applications` | Submit an application | User |
+| PATCH | `/applications/:id/status` | Update application status | Employer, Admin |
+| DELETE | `/applications/:id` | Withdraw an application | User, Admin |
+
+### Employers (`/employers`)
+
+| Method | Endpoint | Description | Auth |
+| :--- | :--- | :--- | :--- |
+| POST | `/employers/register` | Register as employer | User |
+| GET | `/employers/me` | Get own employer profile | Employer |
+| PATCH | `/employers/me` | Update employer profile | Employer |
+| GET | `/employers/stats` | Employer statistics | Employer, Admin |
+| GET | `/employers/:id` | Public employer profile | No |
+| GET | `/employers/:id/jobs` | Jobs by employer | No |
+
+### Admin (`/admin`)
+
+| Method | Endpoint | Description | Auth |
+| :--- | :--- | :--- | :--- |
+| GET | `/admin` | List all users (paginated) | Admin |
+| GET | `/admin/stats` | Platform-wide statistics | Admin |
+| DELETE | `/admin/:id` | Delete a user | Admin |
+
+### Upload (`/upload`)
+
+| Method | Endpoint | Description | Auth |
+| :--- | :--- | :--- | :--- |
+| POST | `/upload/resume` | Upload resume PDF | User |
+| POST | `/upload/company-logo` | Upload company logo | Employer |
+
+### User (`/users`)
+
+| Method | Endpoint | Description | Auth |
+| :--- | :--- | :--- | :--- |
+| GET | `/users/me` | Get current user profile | Yes |
+
+---
+
+## Database Schema
+
+```
+Users ──< Applications >── Jobs ──< SavedJobs >── Users
+  │                          │
+  └── Employer ──────────────┘
+```
+
+Key design decisions:
+- **Composite unique constraint** on `[userId, jobId]` in Applications — prevents duplicate applications
+- **Cascade deletes** on User → Applications and Job → Applications
+- **Strategic indexes** on `[jobId, status]`, `[title]`, `[employerId, isActive]` for query performance
+- **`pg_trgm` extension** enabled for fuzzy text search on job titles and descriptions
+
+---
+
+## Getting Started
+
+### Prerequisites
+- [Node.js](https://nodejs.org/) v22+
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+
+### Option 1: Docker (Recommended)
+
 ```bash
-npm test
+# Clone the repository
+git clone https://github.com/ka-tasin/dream-jobs.git
+cd dream-jobs
+
+# Copy environment template and fill in your values
+cp server/.env.example server/.env
+
+# Start PostgreSQL, Redis, and Backend
+docker compose -f docker-compose.dev.yml up -d --build
+
+# Run database migrations
+docker compose -f docker-compose.dev.yml run --rm migrate
+
+# Start the frontend (in a separate terminal)
+cd client && npm install && npm run dev
 ```
 
----
-
-## 💾 Database & Performance Optimization
-
-### 1. N+1 Query Resolution
-To prevent database query loops, all nested relational assets are fetched using Prisma's eager-loading `include` and selective `select` options. For example, when fetching job details or list items, the system utilizes joined queries to retrieve employer metadata in a single network round-trip rather than executing separate downstream lookups for each row.
-
-*   **Anti-Pattern (N+1 Queries)**: Fetching `N` jobs, then running `N` separate queries inside a loop to look up company profiles.
-*   **Optimized Pattern (Single Query)**: Joining `Job` and `Employer` models at the database level inside a single query block implemented in job.service.ts:
-    ```ts
-    const jobs = await prisma.job.findMany({
-      include: {
-        employer: {
-          select: {
-            companyName: true,
-            companyLogo: true,
-          }
-        }
-      }
-    });
-  ```
-
-### 2. Database Indexing
-Database indexes are strategically configured on key filter columns in `schema.prisma` to keep search and ordering processes performing at $\mathcal{O}(\log N)$ time:
-*   `@@index([jobId, status])`: Optimizes employer dashboard queries when filtering candidates by application status.
-*   `@@index([title])` and `@@index([type])`: Speeds up job listings search queries on the main page.
-*   `@unique` on email: Generates an automatic unique B-Tree index to keep credentials lookup instantaneous during login.
-
----
-
-### Setup and Run
-***Backend Setup***
-- Install Dependencies
+### Option 2: Manual Setup
 
 ```bash
+# Backend
 cd server
 npm install
-```
-- Setup Environment Variables
-- Create a .env file in the server/ folder:
-
-.env
-```.env
-DATABASE_URL=your_database_url
-PORT=3000
-JWT_SECRET=your_secret
-```
-- Setup Prisma
-
-```bash
+cp .env.example .env        # Fill in your values
 npx prisma generate
-```
-
-```bash
 npx prisma migrate dev
-```
+npm run dev                  # Runs on http://localhost:3000
 
-- Run the Server
-  
-```bash
-npm run dev
-```
-
-
-
-**Frontend Setup**
-- Navigate to client directory
-
-```bash
+# Frontend (separate terminal)
 cd client
-```
-
-```bash
 npm install
-```
-- Start development server
-
-```bash
-npm run dev
+npm run dev                  # Runs on http://localhost:5173
 ```
 
-Frontend runs at: http://localhost:5173 (Vite default)
+### Environment Variables
 
-Backend runs at: http://localhost:3000
+See [`server/.env.example`](server/.env.example) for the full list of required environment variables.
 
-### API Endpoints
-Endpoint	Method	Description
+---
+
+## Docker Architecture
+
 ```
-/api/jobs	GET	Fetch all jobs
-/api/jobs/:id	GET	Get job by ID
-/api/jobs	POST	Create a new job
-/api/jobs/:id	PUT	Update existing job
-/api/jobs/:id	DELETE	Delete a job
+┌────────────────────────────────────────────────┐
+│          Docker Bridge Network                  │
+│                                                 │
+│  ┌────────────┐  ┌────────┐  ┌──────────────┐  │
+│  │ PostgreSQL  │  │ Redis  │  │   Backend    │  │
+│  │  :5432      │  │ :6379  │  │   :3000      │  │
+│  └────────────┘  └────────┘  └──────────────┘  │
+└────────────────────────────────────────────────┘
+                                      ↕ port mapping
+┌────────────────────────────────────────────────┐
+│          Host Machine                           │
+│   Frontend (Next.js) → localhost:3000 (API)     │
+└────────────────────────────────────────────────┘
 ```
 
+- **Multi-stage Dockerfile** — builder stage compiles TypeScript, final stage contains only production dependencies
+- **Health checks** on PostgreSQL and Redis — backend waits until dependencies are ready
+- **Named volumes** for data persistence across container restarts
+
+---
+
+## License
+
+This project is for educational purposes.
