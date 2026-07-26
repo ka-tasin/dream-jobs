@@ -53,13 +53,9 @@ export default function LoginPage() {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    try {
-      const data = await apiClient("/api/v1/auth/google");
-      window.location.href = data.url;
-    } catch (error: any) {
-      toast.error(error.message || "Google login failed.");
-    }
+  const handleGoogleLogin = () => {
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+    window.location.href = `${backendUrl}/api/v1/auth/google`;
   };
 
   return (

@@ -87,7 +87,8 @@ export class AccountController {
     next: NextFunction,
   ): Promise<void> {
     try {
-      const token = req.cookies?.token || req.headers.authorization?.split(" ")[1];
+      const token =
+        req.cookies?.token || req.headers.authorization?.split(" ")[1];
       if (!token) {
         res.status(401).json({ message: "Token missing!" });
         return;
@@ -104,6 +105,37 @@ export class AccountController {
         message: "Token valid",
         data: payload,
       });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async googleCallback(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const user = req.user as any;
+      if (!user) {
+        res.redirect(
+          `${process.env.CLIENT_URL || "http://localhost:5173"}/login?error=auth_failed`,
+        );
+        return;
+      }
+      // Generate JWT token for the user
+      const token = userService.generateToken(user);
+      // Set cookie
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 24 * 60 * 60 * 1000,
+      });
+      // Redirect to frontend dashboard or auth success page
+      res.redirect(
+        `${process.env.CLIENT_URL || "http://localhost:5173"}/dashboard`,
+      );
     } catch (error) {
       next(error);
     }

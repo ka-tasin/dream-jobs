@@ -14,13 +14,13 @@ export class UserService {
     data: CreateUserModel,
     role: Role,
   ): Promise<{ success: boolean; message?: string; data?: UserDto }> {
-    if (!data.password) {
+    if (!data.password && (!data.provider || data.provider === AuthProvider.CREDENTIALS)) {
       throw new Error("Password is required to create a user");
     }
 
     const emailVerifyToken = crypto.randomBytes(32).toString("hex");
 
-    const hashedPassword = await PasswordUtils.hashPassword(data.password);
+    const hashedPassword = data.password ? await PasswordUtils.hashPassword(data.password) : null;
 
     const user = await prisma.user.create({
       data: {
@@ -32,7 +32,7 @@ export class UserService {
         provider: data.provider ?? AuthProvider.CREDENTIALS,
         providerId: data.providerId ?? null,
         emailVerifyToken: emailVerifyToken,
-        isEmailVerified: false,
+        isEmailVerified: data.provider === AuthProvider.GOOGLE,
       },
       select: {
         id: true,
@@ -55,6 +55,14 @@ export class UserService {
       success: true,
       data: user,
     };
+  }
+
+  generateToken(user: { id: string; email: string; role: Role }): string {
+    return jwt.sign(
+      { id: user.id, email: user.email, role: user.role },
+      process.env.JWT_SECRET as string,
+      { expiresIn: "1d" },
+    );
   }
 
   async getUserByEmail(email: string) {

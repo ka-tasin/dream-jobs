@@ -3,6 +3,7 @@ import { accountController } from "./auth.controller.js";
 import { validate } from "../../middlewares/validation.middleware.js";
 import { createUserSchema, loginSchema } from "../user/user.validation.js";
 import { authLimiter } from "../../middlewares/rateLimiter.middleware.js";
+import passport from "../../config/passport.config.js";
 
 const accountRouter = Router();
 
@@ -28,6 +29,17 @@ accountRouter.post(
 accountRouter.post(
   "/verifyToken",
   (req, res, next) => accountController.verifyToken(req, res, next)
+);
+
+accountRouter.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"], session: false })
+);
+
+accountRouter.get(
+  "/google/callback",
+  passport.authenticate("google", { session: false, failureRedirect: "/login" }),
+  (req, res, next) => accountController.googleCallback(req, res, next)
 );
 
 export default accountRouter;

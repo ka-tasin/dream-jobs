@@ -4,6 +4,8 @@ import cors from "cors";
 import { errorHandler } from "./middlewares/error.middleware.js";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
+import passport from "./config/passport.config.js";
+
 
 const app: Express = express();
 
@@ -15,6 +17,7 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(cookieParser())
+app.use(passport.initialize());
 
 
 app.use("/api/v1", routes);
